@@ -1,7 +1,7 @@
 ---
 date: 2020-10-02 12:36:40
 layout: post
-title: NAMES & Naming Conventions
+title: Names & Naming Conventions
 subtitle: Following the naming conventions in Python can be really helpful.
 
 series: PYTHON FOR BIOINFORMATICS
