@@ -1,7 +1,7 @@
 ---
 date: 2020-11-15 12:36:40
 layout: post
-title: DEFINING FUNCTIONS
+title: Defining Functions
 subtitle: It's like building your own vocabulary of useful functions.
 
 series: PYTHON FOR BIOINFORMATICS
