@@ -1,7 +1,7 @@
 ---
 date: 2021-02-23 12:36:40
 layout: post
-title: MODULES
+title: Unlocking Python Modules
 subtitle: Modules will enable you to access millions and billions of useful functions.
 
 series: PYTHON FOR BIOINFORMATICS
