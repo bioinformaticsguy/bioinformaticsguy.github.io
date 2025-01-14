@@ -102,3 +102,6 @@ Once you have successfully openend the terminal you should see something like be
 
 Next, we'll learn how you can access bach ot terminal on your machine, be it mac, linux or windows. All different operating systems will be covered. Thanks for your time and will see you next time ;)
 
+
+
+{% include next-prev.html %}

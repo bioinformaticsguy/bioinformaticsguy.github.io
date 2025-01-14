@@ -313,3 +313,5 @@ $ cd
 ## Tab Completion Shortcut
 We've recently covered some shorthand notations that help us save time when typing. Another highly useful shortcut is known as tab completion. 
 When entering a directory or file name, simply type the first few characters and then press the `tab` button. Your computer will automatically append the subsequent unique characters.
+
+{% include next-prev.html %}

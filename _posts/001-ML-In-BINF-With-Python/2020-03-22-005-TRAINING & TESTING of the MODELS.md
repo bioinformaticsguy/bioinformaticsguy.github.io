@@ -95,3 +95,5 @@ This time accuracy is **0.9714285714285714** which is approximately 97%, not to 
 
 
 That's all for now, we are done with training of our models and in the next we will be making some predictions with the help of our trained models. 
+
+{% include next-prev.html %}

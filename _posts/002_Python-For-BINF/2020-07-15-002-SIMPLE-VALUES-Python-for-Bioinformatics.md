@@ -153,3 +153,6 @@ Strings enable us to represent and manipulate textual data efficiently,
 making them indispensable in bioinformatics workflows.
 
 Next we will be talking about [Expressions](/003-EXPRESSIONS-python-for-Bioinformatics/).
+
+
+{% include next-prev.html %}

@@ -177,6 +177,8 @@ Modules are a core feature of Python, enabling modular and maintainable code. Ex
 
 Thank you for reading! In our next post, we'll explore [Importing .py Python Files](/007-IMPORTING-.py-PYTHON-FILES-python-for-Bioinformatics/), where we'll learn how to create, import and use our own Python modules and packages. We'll cover different import methods, package structures, and best practices for organizing larger Python projects.
 
+{% include next-prev.html %}
+
 <!--
 # Examples with Built-in Modules
 ## Generating Random Numbers

@@ -100,3 +100,4 @@ Well, if you already have linux installed on your machine you probably know how 
 Thats all for this blog. Stay tuned for our next blog post, where we'll explore how to navigate directories, check file sizes, and perform other essential tasks using the terminal. Happy coding!
 
 
+{% include next-prev.html %}
