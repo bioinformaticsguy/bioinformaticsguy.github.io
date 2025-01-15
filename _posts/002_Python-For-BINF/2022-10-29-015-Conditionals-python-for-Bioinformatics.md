@@ -1,7 +1,7 @@
 ---
 date: 2022-10-29 12:36:40
 layout: post
-title: Conditionals
+title: Conditionals | The Basics of Decision-Making
 subtitle: We will be talking about conditionals which are generally known as if and else in programming languages.
 
 
@@ -25,8 +25,155 @@ paginate: true
 
 {% include youtube_embed.html %}
 
+Welcome back, bioinformatics enthusiasts!
 
-> Website is under developement written material will be added soon!
+In this post, we’re diving into conditionals, one of the most fundamental concepts in programming. Conditionals allow your code to make decisions, and mastering them is key to writing flexible and intelligent scripts.
+
+# What Are Conditionals?
+Conditionals in Python let you execute specific blocks of code based on whether certain conditions are true or false. There are three main types of conditionals in Python:
+
+- if Statement
+- if-else Statement
+- if-elif-else Statement
+
+# 1. The if Statement
+The `if` statement is the simplest type of conditional. It checks a condition, and if the condition is True, it executes the block of code inside it.
+
+Syntax
+```python
+if expression:
+    # Statements to execute if the condition is True
+```
+
+Example: Basic Comparison
+
+```python
+a = 10
+b = 100
+
+if a < b:
+    print("a is less than b")
+```
+
+Output:
+`a is less than b`
+
+## Example: Validating a DNA Sequence
+We can integrate conditionals with bioinformatics by using the validate_base_sequence function from the pyforbinf module.
+
+```python
+from pyforbinf import validate_base_sequence
+
+seq = "ATGC"
+
+if validate_base_sequence(seq):
+    print("This is a DNA sequence")
+```
+
+Output:
+`This is a DNA sequence`
+
+# 2. The if-else Statement
+The `if-else` statement provides an alternative action if the condition in the if statement is not met.
+
+```python
+if expression:
+    # Statements if the condition is True
+else:
+    # Statements if the condition is False
+```
+
+Example: Basic Comparison
+
+```python
+a = 10000
+b = 100
+
+if a < b:
+    print("a is less than b")
+else:
+    print("a is greater than b")
+```
+
+Output:
+`a is greater than b`
+
+Example: Validating a Potential DNA Sequence
+
+```python
+seq = "AXGC"
+
+if validate_base_sequence(seq):
+    print("This is a valid DNA sequence")
+else:
+    print("This is not a valid DNA sequence")
+```
+
+Output:
+`This is not a valid DNA sequence`
+
+# 3. The if-elif-else Statement
+The `if-elif-else` statement allows you to check multiple conditions in sequence. The first condition that evaluates to True gets executed.
+
+```python
+if expression1:
+    # Statements if expression1 is True
+elif expression2:
+    # Statements if expression2 is True
+...
+else:
+    # Statements if none of the above conditions are True
+```
+
+## Example: Comparing Values
+
+```python
+a = 100
+b = 100
+
+if a < b:
+    print("a is less than b")
+elif a > b:
+    print("a is greater than b")
+else:
+    print("a is equal to b")
+```
+
+Output:
+`a is equal to b`
+
+## Example: Identifying DNA and RNA Sequences
+Here’s an example where we use if-elif-else to classify a sequence as DNA, RNA, or invalid:
+
+```python
+seq = "AUGC"
+
+if validate_base_sequence(seq):
+    print("This is a valid DNA sequence")
+elif validate_base_sequence(seq, True):
+    print("This is a valid RNA sequence")
+else:
+    print("This is not a valid DNA nor RNA sequence")
+```
+
+Output:
+`This is a valid RNA sequence`
+
+# Key Takeaways
+- The if statement is used for simple, single-condition checks.
+- The if-else statement is great when there are two possible outcomes.
+- The if-elif-else statement is ideal for handling multiple conditions.
+
+Combining conditionals with bioinformatics functions, such as sequence validation, allows us to solve domain-specific problems efficiently.
+
+# What’s Next?
+Ready to learn more about control flow in Python? Join us in our next post, [While Loops in Python](/016-While-Loop-python-for-Bioinformatics/), where we'll explore how to repeat actions until a condition is met - a crucial concept for processing biological sequences and implementing iterative algorithms in bioinformatics.
+ 
+If you have questions or want to share how you’re using conditionals in your bioinformatics projects, drop a comment below or join our bioinformatics community on Facebook. Don’t forget to check out my GitHub repository for all the code examples.
+
+
+
+Happy coding! 🚀
 
 {% include next-prev.html %}
 
