@@ -1,7 +1,7 @@
 ---
 date: 2022-03-14 12:36:40
 layout: post
-title: List Comprehensions (Advanced) II/II
+title: List Comprehensions (Advanced) II/III
 subtitle: This is advanced topic for List Comprehensions.
 
 
@@ -26,7 +26,163 @@ paginate: true
 {% include youtube_embed.html %}
 
 
-> Website is under developement written material will be added soon!
+Welcome back, bioinformatics enthusiasts! 
+
+In Part I, we introduced the power of list comprehensions and showed how to simplify tasks like generating lists and validating DNA/RNA sequences. In this post, we’ll explore more advanced applications of list comprehensions, focusing on translating RNA codons to amino acids, generating random sequences, and working with FASTA files.
+
+
+# Translating RNA Codons to Amino Acids
+In bioinformatics, translating RNA sequences into their corresponding amino acids is a fundamental task. Using a dictionary of RNA codons (RNA_codon_table), we can map each codon to its amino acid in a clean, Pythonic way.
+
+## Function to Translate a Single Codon
+Here’s a simple function that uses the dictionary to return the amino acid for a given RNA codon:
+
+```python
+from random import randint
+
+# First we will get our RNA_codon_table
+RNA_codon_table = {
+#                       Second Base
+#      U             C             A               G
+# U
+ 'UUU': 'Phe', 'UCU': 'Ser', 'UAU': 'Tyr', 'UGU': 'Cys', # UxU
+ 'UUC': 'Phe', 'UCC': 'Ser', 'UAC': 'Tyr', 'UGC': 'Cys', # UxC
+ 'UUA': 'Leu', 'UCA': 'Ser', 'UAA': '---', 'UGA': '---', # UxA
+ 'UUG': 'Leu', 'UCG': 'Ser', 'UAG': '---', 'UGG': 'Urp', # UxG
+# C
+ 'CUU': 'Leu', 'CCU': 'Pro', 'CAU': 'His', 'CGU': 'Arg', # CxU
+ 'CUC': 'Leu', 'CCC': 'Pro', 'CAC': 'His', 'CGC': 'Arg', # CxC
+ 'CUA': 'Leu', 'CCA': 'Pro', 'CAA': 'Gln', 'CGA': 'Arg', # CxA
+ 'CUG': 'Leu', 'CCG': 'Pro', 'CAG': 'Gln', 'CGG': 'Arg', # CxG
+# A
+ 'AUU': 'Ile', 'ACU': 'Thr', 'AAU': 'Asn', 'AGU': 'Ser', # AxU
+ 'AUC': 'Ile', 'ACC': 'Thr', 'AAC': 'Asn', 'AGC': 'Ser', # AxC
+ 'AUA': 'Ile', 'ACA': 'Thr', 'AAA': 'Lys', 'AGA': 'Arg', # AxA
+ 'AUG': 'Met', 'ACG': 'Thr', 'AAG': 'Lys', 'AGG': 'Arg', # AxG
+# G
+ 'GUU': 'Val', 'GCU': 'Ala', 'GAU': 'Asp', 'GGU': 'Gly', # GxU
+ 'GUC': 'Val', 'GCC': 'Ala', 'GAC': 'Asp', 'GGC': 'Gly', # GxC
+ 'GUA': 'Val', 'GCA': 'Ala', 'GAA': 'Glu', 'GGA': 'Gly', # GxA
+ 'GUG': 'Val', 'GCG': 'Ala', 'GAG': 'Glu', 'GGG': 'Gly'  # GxG
+}
+
+
+def translate_RNA_codon(codon):
+    """Returns the amino acid for the given codon."""
+    return RNA_codon_table[codon]
+```
+
+## Translating Random Codons Using List Comprehension
+With the ability to generate random codons from Part I, we can now translate these codons into their corresponding amino acids:
+
+
+```python
+def random_codons_translation(minlength=3, maxlength=10):
+    """Generates a random list of amino acids between minimum and maximum length."""
+    return [translate_RNA_codon(codon) for codon in random_codons(minlength, maxlength, RNAflag=True)]
+```
+
+Example Output:
+
+```python
+print(random_codons_translation(minlength=3, maxlength=10))
+# Example Output: ['Leu', 'Ser', 'Tyr', 'Arg']
+```
+
+This function uses list comprehension to iterate over randomly generated codons, translating each one into its respective amino acid.
+
+# Handling FASTA Files Efficiently
+FASTA files are widely used in bioinformatics to store nucleotide or protein sequences. Let’s dive into how list comprehensions simplify reading and processing these files.
+
+## Reading FASTA Strings
+The first step is to read sequences from a FASTA file:
+
+```python
+def read_FASTA_strings(filename):
+    with open(filename) as file:
+        return file.read().split(">")[1:]
+```
+
+This function splits the content of the file by the > delimiter, which marks the beginning of a new sequence.
+
+## Extracting FASTA Entries
+We can use list comprehensions to extract each entry’s header and sequence:
+
+```python
+def read_FASTA_entries(filename):
+    return [seq.partition("\n") for seq in read_FASTA_strings(filename)]
+```
+
+Here’s how it works:
+
+- `partition("\n")` separates the header (before `\n`) from the sequence (after `\n`).
+- The result is a list of tuples: `(header, '\n', sequence)`.
+
+## Formatting FASTA Sequences
+To clean up the data and remove newline characters from sequences, use this function:
+
+```python
+def read_FASTA_sequences(filename):
+    return [[seq[0], seq[2].replace("\n", "")] for seq in read_FASTA_entries(filename)]
+```
+
+This function processes the list of entries:
+
+- `seq[0]` extracts the header.
+- `seq[2].replace("\n", "")` removes newline characters from the sequence.
+
+Example Usage:
+
+```python
+print(read_FASTA_sequences("seqdump.txt"))
+# Example Output: [['Header1', 'ATGCGTACG'], ['Header2', 'GGCTACGTT']]
+```
+
+# Combining List Comprehensions for Complex Tasks
+What makes list comprehensions powerful is their ability to stack or combine tasks. For example, you can:
+
+- Parse a FASTA file.
+- Translate its sequences into amino acids.
+- Filter sequences based on specific criteria—all in one clean, Pythonic expression.
+
+Here’s a quick example:
+
+```python
+def translate_FASTA(filename):
+    fasta_sequences = read_FASTA_sequences(filename)
+    return [
+        [header, [translate_RNA_codon(seq[i:i+3]) for i in range(0, len(seq), 3)]]
+        for header, seq in fasta_sequences
+    ]
+```
+
+This function:
+
+- Reads sequences from a FASTA file.
+- Translates each sequence into amino acids by splitting it into codons.
+- Returns a list of headers and their corresponding amino acid sequences.
+
+
+# Takeaways
+## Key Benefits of List Comprehensions
+- Conciseness: Simplify multi-step operations into one-liners.
+- Readability: Make complex operations easy to understand at a glance.
+- Performance: Optimize tasks by reducing intermediate operations.
+
+## Applications in Bioinformatics
+- Sequence translation.
+- FASTA file parsing.
+- Generating random DNA/RNA sequences for testing.
+
+# What’s Next?
+
+Ready to take your list comprehension skills even further? Head over to [Part III: Advanced List Comprehensions](/013-Set-Dictionary-and-Conditional-Comprehensions-IIIofIII-python-for-Bioinformatics/) where we'll explore more complex applications in genomic data analysis. You won't want to miss these powerful techniques! 🧬
+
+
+As always, feel free to comment below with questions or ideas. Let us know how you’re using Python to make breakthroughs in your research!
+
+Happy coding! 🚀
+
 
 
 {% include next-prev.html %}
