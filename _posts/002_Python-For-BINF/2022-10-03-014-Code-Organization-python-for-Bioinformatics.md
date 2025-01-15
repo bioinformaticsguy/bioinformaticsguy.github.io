@@ -1,8 +1,8 @@
 ---
 date: 2022-10-03 12:36:40
 layout: post
-title: Code Organization
-subtitle: You can stay alive without organing the code but it won't be so much fun in the long run.
+title: Code Organization 
+subtitle: You can stay alive without organing the code but it won't be so much fun in the long run. So we need to unlock the Power of Well-Structured Code
 
 
 series: PYTHON FOR BIOINFORMATICS
@@ -25,8 +25,216 @@ paginate: true
 
 {% include youtube_embed.html %}
 
+Welcome back, bioinformatics enthusiasts!
 
-> Website is under developement written material will be added soon!
+Today, we're discussing code organization—a fundamental practice that can significantly improve your coding experience and efficiency. A well-organized codebase not only makes your life easier but also helps others collaborate effectively.
+
+# Why Organize Your Code?
+Good code organization is like having a well-labeled toolbox. Imagine searching for a screwdriver in a chaotic drawer versus picking it up from a neatly labeled section. The benefits of organizing your code include:
+
+- Readability: Clean code is easier to read and understand.
+- Reusability: Organized functions and modules can be reused across multiple projects.
+- Debugging and Maintenance: Locating and fixing bugs becomes a breeze.
+- Collaboration: Makes teamwork more productive and reduces onboarding time for new contributors.
+- Scalability: A structured codebase can handle growing project complexity.
+
+# Example: The <span style="background-color: black; color: white; padding: 2px 6px;">pyforbinf</span> Module
+
+To demonstrate the importance of code organization, I've created a sample Python module named pyforbinf. This module includes several bioinformatics-related utility functions. Most of these functions we have already learned how to write in previous blog posts. Feel free to check out some previous posts if you are confused about any of the functions in this file. You can also comment your confusions down below I will get back to you as soon as possible. You can download it from my GitHub repository to follow along.
+
+Check out the Sample [pyforbinf.py](https://github.com/bioinformaticsguy/0002YS_PythonForBioinformatics/blob/master/014CodeOrganization/pyforbinf.py) to see the complete implementation.
+
+```python
+from random import randint
+from os.path import dirname, join
+
+
+def validate_base_sequence(base_sequence, RNAflag=False):
+    """Return True if the string base_sequence contains only 
+    upper - or lowercase T, C, A, and G characters, 
+    otherwise False"""
+    seq = base_sequence.upper()
+    return len(seq) == (seq.count('U' if RNAflag else 'T') 
+                     + seq.count('C') 
+                     + seq.count('A') 
+                     + seq.count('G'))
+
+
+def recognition_site(base_sequence, recognition_seq):
+	return base_sequence.find(recognition_seq)
+
+
+def gc_content(base_sequence):
+    """Return the percentage of G and C characters in base_seq"""
+    assert validate_base_sequence(base_sequence), \
+            'argument has invalid characters'
+    seq = base_sequence.upper()
+    return ((base_sequence.count('G') + base_sequence.count('C')) / len(base_sequence))
+
+
+
+def random_base(RNAflag = True):
+	return ("UCAG" if RNAflag else "TCAG")[randint(0,3)]
+
+
+def random_codon(RNAflag = False):
+	return  random_base(RNAflag) + \
+			random_base(RNAflag) + \
+			random_base(RNAflag)
+
+def replace_base_randomly_using_names(base_sequence):
+	""" Return a sequence with the base at a randomly
+	selected position of base_seq replaced by a base 
+	chosen randomly from the three bases that are not 
+	at that position """
+	position = randint(0, len(base_sequence)-1) # -1 because len is one past end
+	base = base_sequence[position]
+	bases = "TCAG"
+	base.replace(base,"") #replace with empty string!
+	newbase = bases[randint(0,2)]
+	beginning = base_sequence[0:position] # up to position
+	end = base_sequence[position+1:] # omitting the base at position
+
+	return beginning + newbase + end
+
+def replace_base_randomly_using_expression(base_sequence):
+	position = randint(0, len(base_sequence)-1)
+	return (base_sequence[0:position] + "TCAG".replace(base_sequence[position], "")[randint(0,2)]+ base_sequence[position+1:])
+
+def replace_base_randomly(base_sequence):
+	position = randint(0, len(base_sequence)-1)
+	bases = 'TCAG'.replace(base_sequence[position], '')
+	return (base_sequence[0:position] + bases[randint(0,2)] + base_sequence[position+1:])
+
+
+def validate_base_sequence(base_sequence, RNAflag = False): 
+    """Return True if the string base_sequence contains only upper
+    or lowercase T (or U, if RNAflag), C, A, and G characters, 
+    otherwise False"""
+
+    DNAbases = {'T', 'C', 'A', 'G'}
+    RNAbases = {'U', 'C', 'A', 'G'}
+
+    return set(base_sequence) <= (RNAbases if RNAflag else DNAbases)
+
+
+
+
+# print(RNA_codon_table)
+
+DNABases=dict((('A', 'adenine'),
+               ('C', 'cytosine'),
+               ('G', 'guanine'),
+               ('T', 'thymine')))
+
+
+
+def translate_RNA_codon(codon):
+    """ returns the amino acid for the given codon """
+
+    RNA_codon_table = {
+    # Second Base
+    # U C A G
+    # U
+    'UUU': 'Phe', 'UCU': 'Ser', 'UAU': 'Tyr', 'UGU': 'Cys', # UxU
+    'UUC': 'Phe', 'UCC': 'Ser', 'UAC': 'Tyr', 'UGC': 'Cys', # UxC
+    'UUA': 'Leu', 'UCA': 'Ser', 'UAA': '---', 'UGA': '---', # UxA
+    'UUG': 'Leu', 'UCG': 'Ser', 'UAG': '---', 'UGG': 'Urp', # UxG
+    # C
+    'CUU': 'Leu', 'CCU': 'Pro', 'CAU': 'His', 'CGU': 'Arg', # CxU
+    'CUC': 'Leu', 'CCC': 'Pro', 'CAC': 'His', 'CGC': 'Arg', # CxC
+    'CUA': 'Leu', 'CCA': 'Pro', 'CAA': 'Gln', 'CGA': 'Arg', # CxA
+    'CUG': 'Leu', 'CCG': 'Pro', 'CAG': 'Gln', 'CGG': 'Arg', # CxG
+    # A
+    'AUU': 'Ile', 'ACU': 'Thr', 'AAU': 'Asn', 'AGU': 'Ser', # AxU
+    'AUC': 'Ile', 'ACC': 'Thr', 'AAC': 'Asn', 'AGC': 'Ser', # AxC
+    'AUA': 'Ile', 'ACA': 'Thr', 'AAA': 'Lys', 'AGA': 'Arg', # AxA
+    'AUG': 'Met', 'ACG': 'Thr', 'AAG': 'Lys', 'AGG': 'Arg', # AxG
+    # G
+    'GUU': 'Val', 'GCU': 'Ala', 'GAU': 'Asp', 'GGU': 'Gly', # GxU
+    'GUC': 'Val', 'GCC': 'Ala', 'GAC': 'Asp', 'GGC': 'Gly', # GxC
+    'GUA': 'Val', 'GCA': 'Ala', 'GAA': 'Glu', 'GGA': 'Gly', # GxA
+    'GUG': 'Val', 'GCG': 'Ala', 'GAG': 'Glu', 'GGG': 'Gly'  # GxG
+    }
+
+    return RNA_codon_table[codon]
+
+def random_codons(minlength = 3, maxlength = 10, RNAflag = False):
+    """ Generate a random list of codons (RNA if RNAflag, else DNA)
+    between minimum and maximum length, inclusive. 
+    """
+    return [random_codon(RNAflag) for n in range(randint(minlength, maxlength))]
+
+def random_codons_translation(minlength = 3, maxlength = 10):
+    """ Generates a random list of amino acids between minimum and 
+    maximum length inclusive. Then returns the translation of each 
+    codon in the form of a list.
+    """
+    return [translate_RNA_codon(codon) for codon in random_codons(minlength, maxlength, True)]
+
+def read_FASTA_strings(filename):
+    current_dir = dirname(__file__)
+    with open(current_dir + "./" + filename) as file:
+        return file.read().split(">")[1:]
+        
+def read_FASTA_entries(filename):
+    return [seq.partition("\n") for seq in read_FASTA_strings(filename)]
+
+def read_FASTA_sequences(filename):
+    return [[seq[0],
+            seq[2].replace("\n", "")]
+            for seq in read_FASTA_entries(filename)]
+
+
+def make_indexed_sequence_dictionary(filename):
+    return {info:seq for info, seq in read_FASTA_sequences(filename)}
+```
+
+
+# Using the pyforbinf Module
+Once you download the pyforbinf.py file, you can import and use its functions in your scripts:
+
+```python
+from pyforbinf import random_codon
+from pyforbinf import random_base
+
+# Generate a random RNA base
+print(random_base()) # outputs: 'U'
+
+# Generate a random RNA codon
+print(random_codon()) # outputs: 'UUC'
+
+# Translate a codon to its amino acid
+print(translate_codon("AUG")) # outputs: 'Met'
+```
+
+# Best Practices for Code Organization
+## 1. Use Modules
+Break down large scripts into smaller, reusable modules like pyforbinf.
+
+## 2. Add Comments and Docstrings
+Every function should have a brief docstring describing its purpose.
+
+## 3. Follow Naming Conventions
+Use descriptive names for variables and functions (e.g., random_base instead of rb).
+
+## 4. Separate Concerns
+Divide your code into sections such as input/output, data processing, and analysis.
+
+## 5. Version Control
+Use Git to track changes and collaborate effectively.
+
+## 6. Keep It Simple
+Avoid over-complicating your code. Use Python's built-in features like comprehensions where appropriate.
+
+# Final Thoughts
+Code organization might seem tedious at first, but it pays off in the long run. Whether you’re managing a small script or a large bioinformatics pipeline, a well-structured codebase will save you time and headaches.
+
+# Next Steps
+Ready to master decision-making in Python? Jump into our next exciting tutorial on [Conditionals](/015-Conditionals-python-for-Bioinformatics/) in Python where you'll learn how to make your code smarter with if-else statements. Perfect for handling different DNA sequences and biological data scenarios! Let's level up your Python skills! 🧬
+
+Happy coding! 🚀
+
 
 {% include next-prev.html %}
 
