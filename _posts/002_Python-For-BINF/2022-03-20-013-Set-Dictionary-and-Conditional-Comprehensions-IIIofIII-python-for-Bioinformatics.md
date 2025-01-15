@@ -25,8 +25,131 @@ paginate: true
 
 {% include youtube_embed.html %}
 
+Hello, bioinformatics enthusiasts! 
 
-> Website is under developement written material will be added soon!
+Welcome to Part III of our journey into Python list comprehensions. In this post, we’ll dive deeper into the versatility of list and dictionary comprehensions for bioinformatics tasks. By leveraging these tools, you can streamline processes like filtering sequences, parsing FASTA files, and creating indexed sequence dictionaries—all while keeping your code clean and Pythonic.
+
+Let's start by revising what we have done in last two posts.
+
+# What Are Comprehensions in Python?
+Comprehensions are compact ways to construct lists, sets, or dictionaries from an iterable. They offer a readable and concise way to process data in a single line of code.
+
+Basic syntax:
+
+- List comprehension: `[expression for item in collection]`
+- Set comprehension: `{expression for item in collection}`
+- Dictionary comprehension: `{key_expression: value_expression for item in collection}`
+
+## Breaking Down Comprehensions with Examples
+Let’s start with some simple examples before applying these concepts to bioinformatics problems.
+
+### 1. Iterating Over a Sequence
+Convert a DNA sequence into a list of its bases:
+
+```python
+seq = "ATGCA"
+[base for base in seq]
+# Output: ['A', 'T', 'G', 'C', 'A']
+```
+
+### 2. Creating a Set of Unique Bases
+Using set comprehensions, you can quickly identify the unique bases in a sequence:
+
+```python
+{base for base in seq}
+# Output: {'A', 'T', 'G', 'C'}
+```
+
+# Parsing FASTA Files with List and Dictionary Comprehensions
+FASTA files are a common format in bioinformatics. Using comprehensions, we can efficiently extract and organize sequence data.
+
+## Reading FASTA Sequences
+To extract sequences from a FASTA file, let’s start with these helper functions:
+
+### 1. Read and Split FASTA Strings
+This function splits the file contents by the > delimiter:
+
+```python
+def read_FASTA_strings(filename):
+    with open(filename) as file:
+        return file.read().split(">")[1:]
+```
+
+### 2. Extract Headers and Sequences
+Using list comprehensions, partition each entry into header and sequence:
+
+```python
+def read_FASTA_entries(filename):
+    return [seq.partition("\n") for seq in read_FASTA_strings(filename)]
+```
+
+### 3. Clean the Sequence Data
+Remove newline characters and return the headers alongside clean sequences:
+
+```python
+def read_FASTA_sequences(filename):
+    return [[seq[0], seq[2].replace("\n", "")] for seq in read_FASTA_entries(filename)]
+```
+
+Example Output:
+
+```python
+read_FASTA_sequences("seqdump.txt")
+# Output: [['Header1', 'ATGCGTACG'], ['Header2', 'GGCTACGTT']]
+```
+
+## Creating an Indexed Sequence Dictionary
+Dictionaries are excellent for associating FASTA headers with their sequences. Using a dictionary comprehension:
+
+```python
+def make_indexed_sequence_dictionary(filename):
+    return {info: seq for info, seq in read_FASTA_sequences(filename)}
+```
+
+Example Output:
+
+```python
+make_indexed_sequence_dictionary("seqdump.txt")
+# Output: {'Header1': 'ATGCGTACG', 'Header2': 'GGCTACGTT'}
+```
+
+# Filtering Sequences with Conditional Comprehensions
+You can include conditions in comprehensions to filter sequences that meet specific criteria. This is particularly useful for distinguishing between DNA and RNA sequences.
+
+## Identify RNA Sequences
+To filter sequences containing the base U (specific to RNA):
+
+```python
+rna_dna_list = ["ATGC", "TCGA", "AUGC", "UCGA"]
+[seq for seq in rna_dna_list if "U" in seq]
+# Output: ['AUGC', 'UCGA']
+```
+
+## Identify DNA Sequences
+Similarly, filter sequences containing the base T (specific to DNA):
+
+```python
+[seq for seq in rna_dna_list if "T" in seq]
+# Output: ['ATGC', 'TCGA']
+```
+
+# Practical Applications in Bioinformatics
+- Cleaning and Organizing Data: Use comprehensions to parse, filter, and clean large datasets quickly and efficiently.
+
+- Custom Data Structures: Create dictionaries, lists, or sets to organize sequence data for downstream analysis.
+
+- Filtering Large Datasets: Apply conditions to extract only the relevant data, such as filtering RNA sequences or specific codons.
+
+
+# Takeaways
+Python’s comprehensions are powerful tools for bioinformatics tasks, enabling you to write concise and efficient code. By mastering these techniques, you can streamline data parsing, filtering, and organization in your research projects.
+
+# What’s Next?
+Ready to level up your Python code structure? Join us in the next article about [Code Organization in Python](/014-Code-Organization-python-for-Bioinformatics/) where we'll learn how to write cleaner, more maintainable bioinformatics scripts. Your future self will thank you for mastering these essential coding practices! 🚀
+
+Feel free to comment below with questions or share how you’ve used Python comprehensions in your projects. 
+
+Happy coding! 🚀
 
 {% include next-prev.html %}
 
