@@ -1,7 +1,7 @@
 ---
 date: 2022-01-23 12:36:40
 layout: post
-title: READING AND WRITING FILES
+title: Reading and writing files with Python.
 subtitle: In this video we will talk about how we can modify files in python.
 
 
@@ -25,8 +25,120 @@ paginate: true
 
 {% include youtube_embed.html %}
 
+Hello, bioinformatics enthusiasts! 
 
-> Website is under developement written material will be added soon!
+Welcome back to another installment of our "Python for Bioinformatics" series. In this post, we’ll explore the essential concepts of reading and writing files in Python—a skill every programmer must master.
+
+
+# What Are Files in Python?
+Files in Python act as a portal for data storage and retrieval, offering a natural and intuitive way to interact with data. While they’re similar to physical files (like notebooks or floppy disks from the past), Python treats them with specific structures and methods. Let’s dive in!
+
+# Step 1: Getting a File
+For this example, we’ll work with sequence data from the well-known tumor suppressor gene, P53, frequently studied in cancer research.
+
+- Visit the NCBI Nucleotide database and search for P53.
+
+- Download the FASTA file for multiple sequences by running a BLAST query and selecting several results. For instance, choose sequences 8, 9, and 10.
+
+- Download the results in FASTA format and save the file as seqdump.txt.
+
+[GitHub Download Link](https://github.com/bioinformaticsguy/0002YS_PythonForBioinformatics/blob/master/010ReadingandWritingFiles/seqdump.txt)
+
+
+# Step 2: Reading Files in Python
+## Using the `open()` Function
+Here’s the basic way to read a file:
+
+```python
+# Open the file in read mode
+data = open("seqdump.txt", "r")
+
+# Loop through each line in the file
+for line in data:
+    print(line)
+
+data.close()  # Don’t forget to close the file!
+```
+
+
+## Using the with Statement
+
+A better and safer approach to handling files is using with:
+
+```python
+with open("seqdump.txt", "r") as file:
+    for line in file:
+        print(line)
+```
+
+This method ensures the file is closed automatically when the block ends.
+
+## Reading Specific Data
+
+To read specific parts of the file:
+
+```python
+By bytes:
+
+with open("seqdump.txt", "r") as file:
+    print(file.read(10))  # Reads the first 10 bytes
+
+By lines:
+
+with open("seqdump.txt", "r") as file:
+    print(file.readlines())  # Reads all lines into a list
+```
+
+# Step 3: Writing Files in Python
+
+## Writing Data
+
+To write data to a file, use the w mode (note: this overwrites the file):
+
+```python
+with open("output.txt", "w") as file:
+    file.write("Bioinformatics is awesome!\n")
+```
+
+
+## Appending Data
+
+To append data at the end of a file, use the a mode:
+
+```python
+with open("output.txt", "a") as file:
+    file.write("Adding more content!\n")
+```
+
+# Step 4: Working with FASTA Files
+
+For bioinformatics tasks, handling FASTA files is crucial. Let’s write a function to read sequences from a FASTA file:
+
+```python
+def read_fasta(file_name):
+    with open(file_name, "r") as file:
+        sequences = file.read().split(">")
+        return [seq.strip() for seq in sequences if seq]
+
+sequences = read_fasta("seqdump.txt")
+print(sequences[0])  # Print the first sequence
+```
+
+This function splits the file contents at each > symbol, which marks the beginning of a sequence in FASTA format.
+
+# Best Practices for File Handling
+
+- Always close files when done or use the with statement.
+
+- Use modes (r, w, a, r+, etc.) appropriately.
+
+- For large files, process data line by line to save memory.
+
+# What’s Next?
+Join us in the next post, [List Comprehensions in Python Part I](/011-List-Comprehensions-in-Python-IofII-python-for-Bioinformatics/), where we'll explore powerful techniques to write more concise and efficient code for data manipulation. We'll cover the basics of list comprehensions and their applications in bioinformatics data processing.
+
+
+
 
 {% include next-prev.html %}
 
