@@ -76,3 +76,6 @@ print(classes[int(result)])
 {% endhighlight %}
 
 Wollah! the result is Malignent. That's all for this whole series. You can check out the whole script of this code on this [git hub repo](https://github.com/bioinformaticsguy/0001YS_ML_IN_BINF_WITH_PYTHON).
+
+
+{% include next-prev.html %}

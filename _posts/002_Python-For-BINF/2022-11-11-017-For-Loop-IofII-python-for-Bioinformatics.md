@@ -245,3 +245,6 @@ def readFastaIteration(filename):
 
 print(readFastaIteration('seqdump.txt')) 
 ```
+
+
+{% include next-prev.html %}

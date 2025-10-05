@@ -102,3 +102,5 @@ data["Class"] = data["Class"].map(lambda x: 1 if x == 4 else 0)
 
 Print the head of the data and you will be able to see that the whole "Class" column is now contains zeros and ones. This is a very basic kind of data there are only two classes so that's all the pre-processing
 we are going to need for now. In the next article we will be talking about defining the features and the labels.
+
+{% include next-prev.html %}

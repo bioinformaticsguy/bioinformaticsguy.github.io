@@ -167,3 +167,4 @@ I hope this series has been helpful to you and that you have learned a lot about
 If you have any questions or comments, please don't hesitate to leave them in the comments section below. Thank you for joining, and I wish you the best of luck in your bioinformatics journey with Python.
 
 
+{% include next-prev.html %}

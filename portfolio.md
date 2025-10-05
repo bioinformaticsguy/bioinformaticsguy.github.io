@@ -1,6 +1,6 @@
 ---
 layout: page
-title: POrtfolio
+title: Portfolio
 description: Events seprated by timestamps.
 permalink: /portfolio/
 ---

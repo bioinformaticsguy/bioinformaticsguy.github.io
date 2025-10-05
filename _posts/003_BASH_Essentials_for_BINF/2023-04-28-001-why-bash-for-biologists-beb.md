@@ -1,7 +1,7 @@
 ---
 date: 2023-04-28 12:36:40
 layout: post
-title: Why biologists need to learn BASH?
+title: Why Biologists need to learn BASH?
 description: Learn why mastering Bash commands and the Command Line Interface is crucial for unlocking the full potential of bioinformatics in this essential guide for biologists. Ready to level up your bioinformatics skills? Check out our blog to learn more about mastering Bash commands and the Command Line Interface!
 subtitle: Unlocking the Full Potential of Bioinformatics with Command Line
 
@@ -102,3 +102,6 @@ Once you have successfully openend the terminal you should see something like be
 
 Next, we'll learn how you can access bach ot terminal on your machine, be it mac, linux or windows. All different operating systems will be covered. Thanks for your time and will see you next time ;)
 
+
+
+{% include next-prev.html %}

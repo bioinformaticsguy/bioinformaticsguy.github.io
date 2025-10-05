@@ -331,3 +331,6 @@ def print_codon_table():
 
 print_codon_table()
 ```
+
+
+{% include next-prev.html %}
