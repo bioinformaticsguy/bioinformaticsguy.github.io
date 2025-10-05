@@ -62,5 +62,5 @@ Let's say you don't have a computer in hand and all you have is a mobile phone s
 Now you can write code on the go even on your mobile phone. It's that easy we will formally start coding from the next post. That is all for now see you soon :)
 
 
-
+{% include next-prev.html %}
 

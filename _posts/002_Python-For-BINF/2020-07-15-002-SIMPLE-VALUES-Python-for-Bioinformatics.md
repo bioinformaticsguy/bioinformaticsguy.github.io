@@ -25,155 +25,134 @@ paginate: true
 {% include youtube_embed.html %}
 
 
-Hey there, bioinformatics enthusiasts! Welcome back to another installment of our Python for Bioinformatics series. 
-Today we'll delve into the fundamentals of simple values in Python, including booleans, integers,
-floats, special values, and the ever-important strings.
+Hello, bioinformatics enthusiasts! 
 
-# Booleans
-The boolean value (True or False), also known as logical values, forms the foundation of conditional statements in Python. 
-As you may recall from exams, boolean values can be either `True` or `False`. You can just type `True` in the python shell and
-you will see that python recognises it. You can also check the type of this by using the type function.
-
-Let's take a closer look:
-
-~~~ {.bash}
-Python 3.11.7 (main, Dec  4 2023, 18:10:11) ß
-Type "help", "copyright", "credits" or "license" for more information.
->>> True 
-~~~
-~~~ {.output}
-True
-~~~
-
-Then you can check the type of the bool.
+It’s the Bioinformatics Guy here, back with another installment in our series: Python for Bioinformatics. In this post, we’ll cover one of the fundamental building blocks of Python programming: simple values. These include Booleans, integers, floats, special values, and strings. Understanding these concepts is crucial for working with biological data, so let’s dive in!
 
 
+# Booleans: The Logical Values
+Booleans represent true or false states, often used in decision-making processes in programming.Booleans are case-sensitive, so True and False must start with uppercase letters.
 
+Here’s how you define a Boolean in Python:
+```python
+>>> True
+True  
+>>> False  
+False 
+```
 
-~~~ {.bash}
->>> type(True)
-~~~
-~~~ {.output}
+To check the type of a value, use the type() function:
+Here’s how you define a Boolean in Python:
+
+```python
+>>> type(True)  
 <class 'bool'>
-~~~
+```
+Remember, boolean values are case-sensitive in Python, so ensure correct spellings when using them in your code. Booleans will become very useful in future lessons when we discuss logical operations and conditional statements.
 
+# Integers: Whole Numbers
+Integers are the simplest form of numbers. Just type them in—no commas or extra characters. They are used extensively in various computations. They include both positive and negative whole numbers:
 
+```python
+>>> 3
+3
+>>> -7
+-7
+```
 
-Remember, boolean values are case-sensitive in Python, so ensure correct spellings when using them in your code.
+To check the type of an integer, use:
+```python
+>>> type(10)   
+<class 'int'>
+```
 
-# Integers
-Integers represent whole numbers like 1,2,3,4,5...., including both positive and negative values. 
-They are used extensively in various computations. Here's how you can work with integers:
-
-~~~ {.bash}
->>> 1
-~~~
-~~~ {.output}
-1
-~~~
-
+Note that Python does not use separators like commas or periods in large numbers. Instead, you’d write:
+```python
+>>> 1000000  
+1000000
+```
 
 You can also check the class of the integers.
 
-~~~ {.bash}
->>> type(1)
-~~~
-~~~ {.output}
+
+```python
+type(1)
 <class 'int'>
-~~~
+```
+
 
 You can also enter a very huge integer like this:
 
-~~~ {.bash}
+```python
 >>> 1234531244038974908237
-~~~
-~~~ {.output}
 1234531244038974908237
-~~~
+```
 
 You might have noted that commas and seprators (which are there to make the huge numbers more readable) 
 are not used in python for integers.
 
-
-
-
 # Floats
 Floats, short for floating point numbers (also known as Decimal Numbers), are used to represent 
-decimal values or numbers in scientific notation. In Python, the term "float" refers to a data type used to represent decimal numbers (numbers with a fractional part). 
+decimal values or numbers in scientific notation. In Python, the term "float" refers to a data type 
+used to represent decimal numbers (numbers with a fractional part). 
 
 Here's a glimpse:
 
-
-~~~ {.bash}
+```python
 >>> 2.5
-~~~
-~~~ {.output}
 2.5
-~~~
+```
 
 You can also check the type by using the type function:
-
-~~~ {.bash}
+```python
 >>> type(2.5)
-~~~
-~~~ {.output}
 <class 'float'>
-~~~
+```
 
 Python automatically switches to scientific notation for extremely large float values.
-~~~ {.bash}
+```python
 >>> 123213123123123123123.12321329
-~~~
-~~~ {.output}
 1.2321312312312313e+20
-~~~
+```
 
 
 # Special Values
 The special value `None` denotes the absence of a value, often used to indicate missing data in datasets. If you will 
 type None in the python shell and hit enter you will not get back any thing like you used to get with other types.
 See the code example below:
-
-~~~ {.bash}
+```python
 >>> None
-~~~
-~~~ {.output}
 >>>
-~~~
+```
 
 We will see how and where None can be used in later videos.
-
 
 # Strings
 Strings play a crucial role in bioinformatics, especially when dealing with DNA, RNA, or protein sequences. 
 They are enclosed within single quotes, double quotes, or triple quotes for multiline strings:
 
-
-~~~ {.bash}
+```python
 >>> "Python for Bioinformatics"
-~~~
-~~~ {.output}
 'Python for Bioinformatics'
-~~~
+```
+
 
 Lets take a look at the protein sequence:
-~~~ {.bash}
+```python
 >>> 'MKMDLMK'
-~~~
-~~~ {.output}
 'MKMDLMK'
-~~~
-
+```
 
 Lets take a look at the DNA sequence:
-~~~ {.bash}
+```python
 >>> "ATGCTCTCGTCGACGACDAT"
-~~~
-~~~ {.output}
 'ATGCTCTCGTCGACGACDAT'
-~~~
+```
 
 Strings enable us to represent and manipulate textual data efficiently, 
 making them indispensable in bioinformatics workflows.
 
 Next we will be talking about [Expressions](/003-EXPRESSIONS-python-for-Bioinformatics/).
+
+
+{% include next-prev.html %}

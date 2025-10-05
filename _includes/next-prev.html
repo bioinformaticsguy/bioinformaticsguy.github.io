@@ -1,0 +1,30 @@
+<div style="display: flex; justify-content: space-between; margin-top: 20px;">
+    {% assign posts = site.posts | where: "series", page.series | sort: "video_number" %}
+    {% for post in posts %}
+        {% if post.url == page.url %}
+            {% assign curr_idx = forloop.index0 %}
+            {% assign prev_idx = curr_idx | minus: 1 %}
+            {% assign next_idx = curr_idx | plus: 1 %}
+        {% endif %}
+    {% endfor %}
+
+    {% if prev_idx >= 0 %}
+        <a href="{{ posts[prev_idx].url }}" 
+           style="background-color:rgb(10, 10, 10); 
+                  color: white; 
+                  padding: 10px 20px; 
+                  text-decoration: none; 
+                  border-radius: 5px;
+                  transition: all 0.3s ease;">← Previous</a>
+    {% endif %}
+
+    {% if next_idx < posts.size %}
+        <a href="{{ posts[next_idx].url }}"
+           style="background-color:rgb(10, 10, 10); 
+                  color: white; 
+                  padding: 10px 20px; 
+                  text-decoration: none; 
+                  border-radius: 5px;
+                  transition: all 0.3s ease;">Next →</a>
+    {% endif %}
+</div>

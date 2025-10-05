@@ -67,3 +67,4 @@ y = np.array(data["Class"])
 That's all for this article. Our features and labels are ready for model training. So in the next article, we will be training and testing out models.
 
 
+{% include next-prev.html %}

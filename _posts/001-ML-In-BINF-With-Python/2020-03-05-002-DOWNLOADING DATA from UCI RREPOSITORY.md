@@ -114,3 +114,5 @@ data.to_csv("data.csv", index=None, header=True)
 
 A new file "data.csv" would have been created in your current folder and you can open this file using excel. You will see that there are "?" here and there in the columns. These are missing values. Then you can note that the last column has only two distinct values "4" or 
 "2", this means that this column coontains Binary data (Binary = having only two outcomes). We need to do a little preprocessing of this data. Let's discuss it in the next post.
+
+{% include next-prev.html %}
