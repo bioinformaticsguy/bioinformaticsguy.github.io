@@ -1,0 +1,654 @@
+    1  la 
+    2  ls 
+    3  cd /
+    4  ls 
+    5  cd 
+    6  ls
+    7  cd /
+    8  cd 
+    9  ls
+   10  cd /
+   11  ls
+   12  cd home/
+   13  ls 
+   14  pwd
+   15  cd .. 
+   16  ls 
+   17  cd mnt/
+   18  ls 
+   19  cd c
+   20  ls
+   21  cd Users/
+   22  ls 
+   23  sdfsd
+   24  htop
+   25  apt install htop 
+   26  htop
+   27  ls 
+   28  cd .
+   29  ls 
+   30  cd /
+   31  ls
+   32  cd mnt/
+   33  ls 
+   34  cd c
+   35  ls
+   36  cd Users/
+   37  ls 
+   38  cd Ali/
+   39  ls
+   40  cd Downloads/
+   41  ls 
+   42  cd ..
+   43  ls 
+   44  cd Documents/
+   45  ls 
+   46  git clone https://github.com/kircherlab/labintern.git
+   47  ls 
+   48  git clone https://github.com/kircherlab/labintern.git
+   49  ls 
+   50  ls /
+   51  ls 
+   52  cd /
+   53  ls
+   54  cd mnt/c/Users/Ali/Documents/
+   55  git clone https://github.com/kircherlab/labintern.git
+   56  ls 
+   57  git status 
+   58  git config --global user.name "bioinformaticsguy"
+   59  git config --global user.email "bioinformaticsguy@gmail.com"
+   60  ls 
+   61  cd ..
+   62  lks 
+   63  ls 
+   64  cd cd
+   65  cd .
+   66  cd /
+   67  ls
+   68  ls 
+   69  ls 
+   70  ls
+   71  cd /
+   72  ls 
+   73  cd mnt/
+   74  ls 
+   75  cd c
+   76  ls 
+   77  cd Users/
+   78  ls 
+   79  cd Al
+   80  cd Ali/
+   81  ls 
+   82  cd Documents/
+   83  ls
+   84  code .
+   85  ssh-keygen -t rsa -b 4096 -C "bioinformaticsguy@gmail.com"
+   86  cat ~/.ssh/id_rsa.pub
+   87  ls 
+   88  git clone https://github.com/kircherlab/MPRAsnakeflow.git
+   89  ls 
+   90  rm -r MPRAsnakeflow/
+   91  ls 
+   92  git clone https://github.com/kircherlab/labintern.git
+   93  code .
+   94  ls 
+   95  cd ..
+   96  ls 
+   97  conda info --envs
+   98  cd ..
+   99  ls
+  100  cd /
+  101  ls
+  102  cd
+  103  ls
+  104  cd ..
+  105  ls
+  106  cd home/
+  107  ls
+  108  ls 
+  109  cd .
+  110  cd /
+  111  ls 
+  112  ls 
+  113  ssh 
+  114  ssh hassan@headnode01.omics.uni-luebeck.de
+  115  ls 
+  116  clear 
+  117  ls 
+  118  cd ~./ssh
+  119  ls 
+  120  cd //
+  121  cd /
+  122  ls
+  123  cat ~/.ssh/id_rsa.pub
+  124  cd ~/.ssh
+  125  ls
+  126  ssh-copy-id -i ~/.ssh/id_rsa.pub hassan@headnode01.omics.uni-luebeck.de
+  127  ssh hassan@headnode01.omics.uni-luebeck.de
+  128  code .
+  129  ls 
+  130  cd /
+  131  ls
+  132  cd mnt/
+  133  ls
+  134  cd c/Users/Ali/Documents/
+  135  cdlear 
+  136  clear 
+  137  ls 
+  138  conda info --envs
+  139  git clone https://github.com/bioinformaticsguy/MPRAsnakeflow_fork.git
+  140  ls 
+  141  curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+  142  lks
+  143  ls
+  144  bash Miniforge3-$(uname)-$(uname -m).sh
+  145  conda 
+  146  conda info --envs
+  147  ls 
+  148  cd /mnt/c/Users/Ali/Documents/MPRAsnakeflow_fork/
+  149  ssh hassan@headnode01.omics.uni-luebeck.de
+  150  ~/.ssh/
+  151  pwd 
+  152  /bin/python3 /root/.vscode-server/extensions/ms-python.python-2024.18.0-linux-x64/python_files/printEnvVariablesToFile.py /root/.vscode-server/extensions/ms-python.python-2024.18.0-linux-x64/python_files/deactivate/bash/envVars.txt
+  153  code/
+  154  code .
+  155  sudo apt update
+  156  sudo apt install -y software-properties-common apt-transport-https wget
+  157  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+  158  sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
+  159  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
+  160  ls 
+  161  sudo apt update
+  162  sudo apt install code
+  163  code
+  164  /bin/python3 /root/.vscode-server/extensions/ms-python.python-2024.18.0-linux-x64/python_files/printEnvVariablesToFile.py /root/.vscode-server/extensions/ms-python.python-2024.18.0-linux-x64/python_files/deactivate/bash/envVars.txt
+  165  ls 
+  166  python3 -m http.server
+  167  ls 
+  168  conda create -c conda-forge -c bioconda -n snakemake snakemake
+  169  conda activate snakemake
+  170  ls 
+  171  cd resources/count_basic/
+  172  ls
+  173  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml -n
+  174  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml -n -q
+  175  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml 
+  176  conda config --set channel_priority strict
+  177  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml 
+  178  ls -a
+  179  rm -r .snakemake/
+  180  ls
+  181  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml 
+  182  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml -n
+  183  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml 
+  184  snakemake -c 1 --use-conda --snakefile ../../workflow/Snakefile --configfile config.yml -n
+  185  ls 
+  186  cd /
+  187  ls 
+  188  code .
+  189  sudo apt remove code
+  190  ls 
+  191  cd mnt/c/Users/Ali/Documents/backup_script/
+  192  code .
+  193  ks 
+  194  'ls 
+  195  ls 
+  196  ./rsync_backup.sh 
+  197  ls 
+  198  ./rsync_backup.sh 
+  199  cd ..
+  200  ls 
+  201  cd on_cloud/
+  202  pwd
+  203  ls 
+  204  cd ~
+  205  ls 
+  206  cd ~/.ssh/
+  207  ls 
+  208  pwd
+  209  pwd id_rsa.pub 
+  210  chmod 600 /root/.ssh/id_rsa
+  211  chmod 644 /root/.ssh/id_rsa.pub
+  212  ls -l id_rsa
+  213  ls -l id_rsa.pub
+  214  clear
+  215  ./rsync_backup.sh 
+  216  ls 
+  217  ssh hassan@node01.omics.uni-luebeck.de
+  218  ssh hassan@headnode01.omics.uni-luebeck.de
+  219  s
+  220  ssh hassan@headnode01.omics.uni-luebeck.de
+  221  cd mnt/c/Users/Ali/Documents/backup_script/
+  222  ls
+  223  cd /
+  224  ls
+  225  cd mnt/c/Users/Ali/Documents/backup_script/
+  226  code 
+  227  code .
+  228  ssh hassan@headnode01.omics.uni-luebeck.de
+  229  ls
+  230  ls
+  231  docker pull chuhongyuan/summer:latest 
+  232  apt install docker.io
+  233  docker pull chuhongyuan/summer:latest 
+  234  docker --version
+  235  sudo systemctl start docker
+  236  uname -a 
+  237  docker --version
+  238  docker
+  239  ls 
+  240  cd ..
+  241  ls 
+  242  docker pull chuhongyuan/summer:latest 
+  243  docker info
+  244  docker --version
+  245  docker run
+  246  docker pull
+  247  ls 
+  248  cd /
+  249  ls 
+  250  cd mnt/c/Users/Ali/Documents/
+  251  ls
+  252  docker pull chuhongyuan/summer:latest
+  253  docker pull chuhongyuan/summer
+  254  docker info 
+  255  docker --version
+  256  ls 
+  257  cd /
+  258  ls 
+  259  cd mnt/c/Users/Ali/Documents/
+  260  docker pull chuhongyuan/summer:latest
+  261  cd /
+  262  docker pull chuhongyuan/summer:latest
+  263  ls
+  264  download SUMMER at https://github.com/carolhuaxia/summer
+  265  git clone https://github.com/carolhuaxia/summer
+  266  ls
+  267  docker images 
+  268  docker run it chuhongyuan/summer
+  269  docker run -it chuhongyuan/summer
+  270  ssh hassan@headnode01.omics.uni-luebeck.de
+  271  ls 
+  272  conda 
+  273  conda info --envs 
+  274  conda create --name test_env
+  275  conda activate test_env
+  276  conda install -c bioconda samtools
+  277  samtools --version
+  278  ls 
+  279  cd .
+  280  cd 
+  281  ls 
+  282  cd /
+  283  ls
+  284  cd mnt/
+  285  ls
+  286  cd c/Users/Ali/Documents/
+  287  ls
+  288  cd SFB1665\ M04/
+  289  ls
+  290  cd r84149R1_20241028_142244/
+  291  ls
+  292  code .
+  293  samtools index S006_X33-24_WGS-Rv-0150.hifi_reads.bam
+  294  samtools sort S001_X29-24_WGS-Rv-0150.hifi_reads.bam -o S001_x29-24_WGS-Rv-0150.hifi_reads.bam.bai
+  295  cd 
+  296  ls
+  297  cd /
+  298  cd mnt/c/Users/Ali/Documents/SFB1665_M04/r84149R1_20241028_142244/
+  299  scp S006_X33-24_WGS-Rv-0150.hifi_reads.bam hassan@node01.omics.uni-luebeck.de:/data/humangen_kircherlab/hassan/PacBio
+  300  ls
+  301  ssh hassan@headnode01.omics.uni-luebeck.de
+  302  ssh hassan@headnode01.omics.uni-luebeck.de
+  303  ssh hassan@headnode01.omics.uni-luebeck.de
+  304  conda info --envs
+  305  conda activate snakemeke
+  306  conda activate snakemake
+  307  conda deactivate 
+  308  clear 
+  309  conda deactivat3e 
+  310  conda deactivate 
+  311  conda info --envs 
+  312  conda activate snakemake
+  313  conda deactivate 455f73f6cfa430197c750e96b4525c7e_
+  314  conda deactivate 
+  315  conda info --envs 
+  316  ls 
+  317  cd resources/count_basic/
+  318  ls
+  319  ls -lsh 
+  320  ls -a
+  321  rm -r -f .snakemake/
+  322  conda info --envs
+  323  conda deactivate
+  324  conda deactivate 
+  325  conda info -envs 
+  326  conda info --envs 
+  327  conda activate snakemake
+  328  conda clean --all
+  329  conda info --envs
+  330  conda deactivate 
+  331  ls
+  332  screen -ls
+  333  screen 
+  334  ls
+  335  cd /mnt/c/Users/Ali/Documents/SFB1665_M04/r84149R1_20241028_142244/
+  336  ls
+  337  samtools view -h S001_X29-24_WGS-Rv-0150.hifi_reads.bam | head 
+  338  conda activate test_env
+  339  samtools view -h S001_X29-24_WGS-Rv-0150.hifi_reads.bam | head 
+  340  ls 
+  341  sha256sum -c uksh.md5sums.txt 
+  342  touch checksum.txt\
+  343  ls
+  344  sha256sum -c checksum.txt 
+  345  sha256sum -c uksh.md5sums.txt \
+  346  sha256sum -c uksh.md5sums.txt
+  347  ssh hassan@headnode01.omics.uni-luebeck.de
+  348  conda deactivate 
+  349  ls
+  350  python3 -m http.server
+  351  conda info --envs
+  352  ls 
+  353  cd /
+  354  ls
+  355  cd mnt/
+  356  ls
+  357  cd c/Users/Ali/Documents/
+  358  ls
+  359  cd MPRAsnakeflow_fork/
+  360  ls
+  361  code .
+  362  cd ..
+  363  ls
+  364  java --version 
+  365  cd ..
+  366  cd Downloads/
+  367  lks
+  368  ls
+  369  curl -s https://get.sdkman.io | bash
+  370  sudo apt update 
+  371  sudo apt install unzip
+  372  curl -s https://get.sdkman.io | bash
+  373  ls
+  374  cd /
+  375  ls
+  376  cd mnt/c/Users/Ali/Downloads/
+  377  curl -s https://get.sdkman.io | bash
+  378  sudo apt update
+  379  sudo apt install unzip
+  380  unzip -v
+  381  curl -s https://get.sdkman.io | bash
+  382  unzip -v
+  383  curl -s "https://get.sdkman.io" | bash
+  384  sdk install java 17.0.10-tem
+  385  java -version 
+  386  ls 
+  387  cd /
+  388  cd mnt/c/Users/Ali/Downloads/
+  389  curl -s https://get.nextflow.io | bash
+  390  echo $PATH
+  391  echo $PATH | tr ':' '\n'
+  392  nextflow -v
+  393  pwd
+  394  cd ..
+  395  ls
+  396  cd Documents/
+  397  ls
+  398  clear 
+  399  pwd
+  400  nextflow run nf-core/raredisease     -revision dev -profile test,singularity     --outdir /mnt/c/Users/Ali/Documents
+  401  docker --version
+  402  nextflow run nf-core/raredisease     -revision dev -profile test,docker     --outdir /mnt/c/Users/Ali/Documents
+  403  python3 -m http.server 8000
+  404  cd ..
+  405  pwd
+  406  ls
+  407  pwd
+  408  cd /
+  409  pwd
+  410  cd usr/bin
+  411  ls
+  412  cd ..
+  413  ls
+  414  cd bin
+  415  ls
+  416  curl -s https://get.nextflow.io | bash
+  417  nextflow --version
+  418  nextflow -v
+  419  conda install -c conda-forge singularity
+  420  singularity --version 
+  421  ssh hassan@headnode01.omics.uni-luebeck.de
+  422  ls
+  423  cd 
+  424  ls
+  425  echo $PATH | tr ':' '\n'
+  426  clear 
+  427  ssh hassan@headnode01.omics.uni-luebeck.de
+  428  ls
+  429  cd /
+  430  lks
+  431  ls
+  432  cd mnt/c/Users/Ali/Downloads/
+  433  curl -s "https://get.sdkman.io" | bash
+  434  sudo apt update
+  435  sudo apt install zip
+  436  curl -s "https://get.sdkman.io" | bash
+  437  ls
+  438  sdk install java 17.0.10-tem\
+  439  sdk install java 17.0.10-tem
+  440  ssh hassan@headnode01.omics.uni-luebeck.de
+  441  nano ~/.bashrc
+  442  source ~/.bashrc
+  443  ls
+  444  sleep 2
+  445  sleep 5
+  446  nano ~/.bashrc\
+  447  source ~/.bashrc
+  448  sleep 2
+  449  nano ~/.bashrc\
+  450  source ~/.bashrc
+  451  sleep 2
+  452  source ~/.bashrc
+  453  sleep 2
+  454  ls 
+  455  ls'
+  456  clear 
+  457  ls
+  458  conda 
+  459  conda info --envs 
+  460  mamba
+  461  mamba info --envs 
+  462  ssh hassan@headnode01.omics.uni-luebeck.de
+  463  ls
+  464  ssh hassan@headnode01.omics.uni-luebeck.de
+  465  samtools 
+  466  conda info --envs 
+  467  conda activate test_env
+  468  samtools
+  469  l;s 
+  470  ls 
+  471  cd /
+  472  ls
+  473  cd mnt/c/Users/Ali/Documents/
+  474  kls
+  475  ls 
+  476  cd SFB1665_M04/
+  477  ls
+  478  cd r84149R1_20241028_142244/
+  479  ls
+  480  samtools view S001_X29-24_WGS-Rv-0150.hifi_reads.bam
+  481  samtools view -H S001_X29-24_WGS-Rv-0150.hifi_reads.bam
+  482  ssh hassan@headnode01.omics.uni-luebeck.de
+  483  ls
+  484  cd resources/
+  485  ls
+  486  cd decode/
+  487  touch ont_sv_high_confidence_SVs.sorted.vcf.gz
+  488  ls
+  489  touch ont_sv_high_confidence_SVs.sorted.vcf.gz.tbi
+  490  ls
+  491  cd ..
+  492  ls
+  493  touch EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz
+  494  touch EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz.tbi
+  495  ls
+  496  cd ..
+  497  ls
+  498  cd gnomad
+  499  mkdir -p sli.var/{1..22,X,Y}
+  500  ls
+  501  cd sli.var/
+  502  for i in {1..22} X Y; do mkdir -p sli.var/$i; done
+  503  ls
+  504  rm -r sli.var/
+  505  ls
+  506  rm -r 1..22/
+  507  ls
+  508  for i in {1..22} X Y; do mkdir -p $i; done
+  509  ls
+  510  cd ..
+  511  ls
+  512  cd sli.var/
+  513  ls
+  514  conda info --envs 
+  515  conda create pb-human-wgs
+  516  conda create -n pb-human-wgs
+  517  conda activate pb-human-wgs
+  518  snakemake --version
+  519  clear 
+  520  mamba install -c conda-forge -c bioconda snakemake=6.15.3 tabulate=0.8.10 pysam=0.16.0.1 python=3
+  521  ls 
+  522  cd ..
+  523  ls 
+  524  cd .. 
+  525  snakemake --version 
+  526  ls 
+  527  cd ..
+  528  l
+  529  ls
+  530  cd workflow/
+  531  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk --dry-run
+  532  ls
+  533  cd ..
+  534  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk -n
+  535  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk -n --conda-create-envs-only
+  536  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk --conda-create-envs-only
+  537  clear
+  538  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk --conda-create-envs-only
+  539  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk 
+  540  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk -n
+  541  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk 
+  542  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk -n
+  543  ls 
+  544  snakemake --reason --rerun-incomplete --keep-going --local-cores 1 --jobs 500 --max-jobs-per-second 1 --use-conda --conda-frontend mamba --latency-wait 120 --default-resources "tmpdir='$WORK/snakemake/tmp'" --snakefile workflow/process_smrtcells.smk -n
+  545  conda info --envs 
+  546  conda config --show channels
+  547  ls 
+  548  cd /
+  549  ls 
+  550  cd mnt/
+  551  ls
+  552  cd c/Users/Ali/Documents/
+  553  ls 
+  554  mkdir long_read_snake
+  555  cd long_read_snake/
+  556  ls
+  557  git clone --recursive https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake.git workflow
+  558  tree -d
+  559  snap install tree 
+  560  tree -d
+  561  mkdir -p cluster_logs smrtcells/ready smrtcells/done samples cohorts
+  562  tree -d
+  563  mkdir reference
+  564  ls
+  565  tree -d
+  566  cd reference/
+  567  ls
+  568  mkdir annotation
+  569  cd ..
+  570  tree -d
+  571  ls
+  572  mkdir resources
+  573  tree -d
+  574  ls
+  575  cd resources/
+  576  mkdir -p decode eee gnomad gnomadsv hpo hprc jellyfish slivar tandem-genotypes
+  577  ls
+  578  cd ..
+  579  tree -d
+  580  ls
+  581  cd smrtcells/ready/
+  582  ls
+  583  touch m64013e_210917_004210.hifi_reads.bam
+  584  ls
+  585  cd ..
+  586  ls
+  587  cd ..
+  588  ls
+  589  conda info --envs 
+  590  ls
+  591  code .
+  592  ssh hassan@headnode01.omics.uni-luebeck.de
+  593  ssh alhassa_m@hpc-login-1.cubi.bihealth.org
+  594  $ ssh alhassa_m@hpc-login-2.cubi.bihealth.org
+  595  ssh alhassa_m@hpc-login-2.cubi.bihealth.org
+  596  ssh -J alhassa_m@ssh1.mdc-berlin.de alhassa_m@hpc-login-1.cubi.bihealth.org
+  597  ssh -J alhassa_m@ssh1.mdc-berlin.de alhassa_m@hpc-login-1.cubi.bihealth.org -a 22
+  598  ssh -J alhassa_m@ssh1.mdc-berlin.de alhassa_m@hpc-login-1.cubi.bihealth.org 
+  599  ls 
+  600  cd resources/count_basic/
+  601  ls
+  602  cd data/
+  603  less SRR10800883_1.fastq.gz 
+  604  grep "^>" design.fa | head
+  605  grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#' | head
+  606  zcat SM2221119_liverEnhancer_label.txt.gz | head
+  607  zcat SM2221119_liverEnhancer_label.txt.gz | sed s/_\[/'#'/ | cut -f 1 | head
+  608  zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 | head
+  609  zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' | head
+  610  paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | head
+  611  join <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-)) | head
+  612  join <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | head
+  613  join <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | wc -l
+  614  cat design.fa | wc -l
+  615* cat design.fa | grep neg 
+  616  zcat SM2221119_liverEnhancer_label.txt.gz |grep neg
+  617  zcat SM2221119_liverEnhancer_label.txt.gz |grep pos
+  618  cat design.fa | grep pos
+  619  man join
+  620  join -t$(echo -e "\t") <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | zcat GSM2221119_liverEnhancer_most-labels.txt.gz
+  621  join -t$(echo -e "\t") <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | gzip -c > GSM2221119_liverEnhancer_most-labels.txt.gz
+  622  zless GSM2221119_liverEnhancer_most-labels.txt.gz 
+  623  join -t$(echo -e "\t") <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | head
+  624  join -t"$(echo -e "\t")" <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | head
+  625  join -t"$(echo -e "\t")" <(paste <(zcat SM2221119_liverEnhancer_label.txt.gz | sed s/'_\['/'#'/ | cut -f 1 -d'#' ) <(zcat SM2221119_liverEnhancer_label.txt.gz) | sort -k1,1 ) <(paste <(grep "^>" design.fa | cut -c 2- | sed s/'__'/'#'/ | cut -f 1 -d'#') <(grep "^>" design.fa | cut -c 2-) | sort -k1,1) | gzip -c > GSM2221119_liverEnhancer_most-labels.txt.gz 
+  626  zless GSM2221119_liverEnhancer_most-labels.txt.gz 
+  627* zcat GSM2221119_liverEnhancer_most-labels.txt.gz | cut -f 3 | sort | uniq -c[A
+  628  cat design.fa | grep SLEA
+  629  cat design.fa | "^>C:" | head
+  630  cat design.fa | grep "^>C:" | head
+  631  cat design.fa | grep "^>C:" | cut -c 2-
+  632  cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t$0"}' | head 
+  633  cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' | head 
+  634  (zcat GSM2221119_liverEnhancer_most-labels.txt.gz ; cut -f 3- cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' ) 
+  635  (zcat GSM2221119_liverEnhancer_most-labels.txt.gz ; cut -f 3- cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' ) | gzip -c  GSM2221119_liverEnhancer_all-labels.txt.g
+  636  (zcat GSM2221119_liverEnhancer_most-labels.txt.gz ; cut -f 3- cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' ) | gzip -c > GSM2221119_liverEnhancer_all-labels.txt.gz
+  637  (zcat GSM2221119_liverEnhancer_most-labels.txt.gz  cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' ) | gzip -c > GSM2221119_liverEnhancer_all-labels.txt.gz
+  638  (zcat GSM2221119_liverEnhancer_most-labels.txt.gz | cut -f 3- ; cat design.fa | grep "^>C:" | cut -c 2- | awk '{print "control\t"$0}' ) | gzip -c > GSM2221119_liverEnhancer_all-labels.txt.gz
+  639  zless GSM2221119_liverEnhancer_all-lab
+  640  els.txt.gz
+  641  zless GSM2221119_liverEnhancer_all-labels.txt.gz 
+  642  ls
+  643  zless SRR10800882_1.fastq.gz
+  644  zcat SRR10800882_2.fastq.gz 
+  645  zcat SRR10800882_1.fastq.gz | head 
+  646  zcat SRR10800882_3.fastq.gz | head 
+  647  zcat SRR10800882_2.fastq.gz | head 
+  648  zcat SRR10800882_2.fastq.gz | awk '{ counter+=1; if (counter == 2) { print "ACTACTACTA" } else { print }; if (counter == 4) { counter=0 }; }' | head
+  649  zcat SRR10800882_2.fastq.gz | awk '{ counter+=1; if (counter == 2) { print "ACTACTACTA" } else { print }; if (counter == 4) { counter=0 }; }' | gzip -c > SRR10800882_4.fastq.gz 
+  650  ls
+  651  zcat *_2.fastq.gz | gzip -c > read_2.fq.gz
+  652  ls
+  653  history
+  654  history > history.txt
