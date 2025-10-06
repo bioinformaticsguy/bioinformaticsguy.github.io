@@ -1,0 +1,4 @@
+command to run the server with reload:
+
+
+bundle exec jekyll serve --livereload --livereload_port 8888 --force-polling
