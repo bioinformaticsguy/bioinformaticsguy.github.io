@@ -153,8 +153,13 @@ When both arguments are in the same directory, `mv` renames the file instead of 
 
 The `rm` (remove) command permanently deletes files. **There is no recycle bin or undo!**
 
+
+| Warning: **There is no recycle bin or undo!**
+
+You can try the following command to delete the following file.
+
 ```bash
-rm copy-yeast_01_R2.fastq.gz
+rm tiny_n_L001_R1_xxx.fastq.gz.copy
 ```
 
 **💡 Safety tip:** Always double-check filenames before pressing Enter. Consider using `ls` first to verify the file exists.
