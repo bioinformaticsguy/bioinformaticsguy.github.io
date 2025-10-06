@@ -1,0 +1,5 @@
+1250 sample_03.fastq
+450 sample_01.fastq
+8920 sample_05.fastq
+3200 sample_04.fastq
+780 sample_02.fastq
