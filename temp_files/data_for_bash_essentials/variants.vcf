@@ -1,0 +1,13 @@
+##fileformat=VCFv4.2
+##reference=hg38
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr1	12345	rs123456	A	G	99	PASS	DP=50;AF=0.45
+chr1	67890	rs789012	C	T	85	PASS	DP=45;AF=0.38
+chr2	23456	rs234567	G	A	95	PASS	DP=60;AF=0.52
+chr2	78901	rs890123	T	C	75	LowQual	DP=20;AF=0.25
+chr3	34567	rs345678	A	T	100	PASS	DP=70;AF=0.48
+chr3	89012	rs901234	C	G	60	LowQual	DP=15;AF=0.30
+chrX	45678	rs456789	G	C	98	PASS	DP=55;AF=0.42
+chrX	90123	rs012345	T	A	88	PASS	DP=48;AF=0.40
