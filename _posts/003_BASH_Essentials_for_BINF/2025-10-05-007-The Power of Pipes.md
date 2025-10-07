@@ -8,7 +8,7 @@ description: Learn how Unix pipes and filters let you chain together simple comm
 
 series: BASH Essentials for Bioinformatics
 series_sing: true
-video_number: 007
+video_number: 7
 video_id: WbgC0m0fsQ8
 
 optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1759661560/003_BEB/coming_soon_psfezg.png
