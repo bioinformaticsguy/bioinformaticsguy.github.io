@@ -331,3 +331,4 @@ In the next post of our **HPC Essentials for Bioinformaticians** series, we'll e
 ```bash 
 singularity pull cadd-sv-1.1.2.sif docker://ocatona/cadd-sv:1.1.2
 ```
+*Have questions or encountered different SFTP errors? Drop a comment below, and let's troubleshoot together!*
