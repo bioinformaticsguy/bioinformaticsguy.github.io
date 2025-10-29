@@ -1,0 +1,139 @@
+---
+title: "Terminal"
+---
+
+# SFTP Commands
+## The Command
+
+
+```bash
+sftp -oPort=22 -oHostKeyAlgorithms=+ssh-rsa guest2@131.174.197.250
+
+```
+
+## 🧠 Why do we need -oHostKeyAlgorithms=+ssh-rsa?
+💡 Problem:
+Modern versions of OpenSSH (since v8.8) have disabled the ssh-rsa algorithm by default due to security concerns. So when a server only supports ssh-rsa (and not newer, safer algorithms), your SSH/SFTP client refuses to connect.
+You were seeing an error like:
+
+```code 
+Unable to negotiate with 131.174.197.250 port 22: no matching host key type found. Their offer: ssh-rsa,ssh-dss
+```
+
+## 🔐 What this means:
+The server only supports ssh-rsa or ssh-dss, both of which are considered old/insecure.
+
+Your SSH client refused to accept them for security reasons.
+
+## ✅ What does -oHostKeyAlgorithms=+ssh-rsa do?
+It tells your SSH/SFTP client:
+
+"It's okay to accept and use ssh-rsa for host verification."
+
+This lets you bypass the modern security restriction just for this connection, allowing it to proceed.
+
+
+## 🔒 Security Note:
+This is generally safe for trusted servers, especially in closed environments (like HPC systems).
+
+But don’t use this option on unknown/public servers unless necessary, because older algorithms like ssh-rsa are more vulnerable to certain attacks.
+
+## Downloading the Folder in SFTP
+```code
+get -r foldername
+```
+
+# To download files from BIH
+```python
+rsync bihlogin1:/data/cephfs-1/home/users/alhassa_m/work/run_nf/rare/dag.png dag.png
+```
+
+# Speedey Downloads
+```python
+aria2c -x16 -s16 https://ftp.ensembl.org/pub/release-114/variation/indexed_vep_cache/homo_sapiens_vep_114_GRCh38.tar.gz
+```
+
+
+# Mounting the external drive in Ubuntu Terminal
+```python
+sudo mount -t drvfs E: /mnt/usb
+```
+
+# Uploading VIA rsync
+
+```python
+rsync -avh --progress /mnt/usb/X208SC25055632-Z01-F001_multipath/X208SC25055632-Z01-F001_01/ hassan@headnode01.omics.uni-luebeck.de:/data/humangen_kircherlab/hassan/novogene/
+```
+
+Use this if transfer breaks.
+```python
+rsync -avh --partial --inplace --progress /mnt/usb/X208SC25055632-Z01-F001_multipath/X208SC25055632-Z01-F001_01/ hassan@headnode01.omics.uni-luebeck.de:/data/humangen_kircherlab/hassan/novogene/
+```
+
+# Checking the md5 check sums.
+
+```python
+(base) hassan@node24:/data/humangen_kircherlab/hassan/novogene/md5check$ grep '\.fq\.gz$' md5sums_all.txt | awk '{gsub(/^\.\//, "", $2); print $1 "\t" $2}' | sort > my_c_md5.txt
+(base) hassan@node24:/data/humangen_kircherlab/hassan/novogene/md5check$ grep '\.fq\.gz$' MD5.txt | awk '{print $1 "\t" $2}' > lab_c_md5.txt
+cmp -s lab_c_md5.txt my_c_md5.txt && echo "✅ All lines match!" || echo "❌ Differences found!"
+✅ All lines match!
+```
+
+
+# To check current running things in OMICS
+
+```bash
+squeue -u hassan -o "%.18i %.9P %.20j %.8u %.2t %.10M %.10L %.6D %.6C %.10m %R"
+```
+
+
+# Insatalling Demultiples 
+
+
+# in Omics
+
+```nash
+conda create -n t3a 
+conda activate t3a   
+conda install demultiplex
+conda install Levenshtein 
+```
+
+# in BIH it is needed to instal
+
+```bash
+
+install demultiples via pip 
+and then install 
+
+conda install setuptools
+```
+
+
+
+# Connecting to Biosinthia
+
+SFTP do not work in the headnode in the omics cluster. 
+Keys are located in the `~/.ssh/` directory.
+Pem file is needed to be used in the linux and ppk file is needed to be used in wondows.
+
+
+```code
+sftp -i /ssh-path-to-your-folder/private-key.pem kdhumuksh1@sftp2.bioscientia.de
+```
+
+
+# on_flash sync
+
+```code 
+sudo mount -t drvfs D: /mnt/d
+rsync -avh --inplace /mnt/c/Users/Ali/Documents/phd_Ali_Hassan/on_flash/ /mnt/d/
+```
+
+
+## Checking for the failed Jobs in the Omics Cluster
+
+```bash
+sacct -u $USER -S 2025-10-07 --format=JobID,JobName%100,State,Elapsed,Timelimit%20,ReqMem,MaxRSS,ReqCPUS,AllocCPUS,ExitCode | grep FAILED
+```
+
