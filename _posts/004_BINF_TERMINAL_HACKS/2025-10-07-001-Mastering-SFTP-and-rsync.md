@@ -324,3 +324,11 @@ In the next post of our **HPC Essentials for Bioinformaticians** series, we'll e
 7. **Conda Environments: Reproducible Bioinformatics Pipelines**
 
 *Have questions or encountered different SFTP errors? Drop a comment below, and let's troubleshoot together!*
+
+
+# Pulling docker immage with singularity as a sif file
+
+```bash 
+singularity pull cadd-sv-1.1.2.sif docker://ocatona/cadd-sv:1.1.2
+```
+*Have questions or encountered different SFTP errors? Drop a comment below, and let's troubleshoot together!*
