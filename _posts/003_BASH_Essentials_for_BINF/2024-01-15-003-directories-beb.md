@@ -60,8 +60,9 @@ For example:
 ~~~ {.bash}
 $:whoami
 ~~~
+
 ~~~ {.output}
-ali 
+user 
 ~~~
 
 ## Print Working Directory
@@ -90,10 +91,16 @@ $ ls
 ~~~
 ~~~ {.output}
 $:ls
-1by2.cif	Desktop		Library		Pipfile
-2ja4.cif	Documents	Movies		Public
-Applications	Downloads	Music		mambaforge
-Calibre Library	Google Drive	Pictures	micromamba
+GSM2221119_liverEnhancer_all-labels.tsv     reference.fasta.fai
+GSM2221119_liverEnhancer_all-labelsINV.tsv  sample_reads.fastq.gz
+GSM4237954_9MPRA_elements.fa.gz             sequences.fasta
+SM2221119_liverEnhancer_label.txt.gz        testing.txt
+design.fa                                   testing1.txt
+history.txt                                 testing2.txt
+labels.tsv                                  tiny_n_L001_R1_xxx.fastq.gz
+lengths.txt                                 tiny_n_L001_R2_xxx.fastq.gz
+read_2.fq.gz                                tsv_lengths.txt
+reference.fasta                             variants.vcf
 ~~~
 
 Enhance your file insights by employing **flags** or **arguments**. Let's delve into `ls -t` and `ls -tlh`. The -t flag organizes items based on their last edit time. Combining flags allows us to perform multiple actions simultaneously, such as sorting by time (-t), displaying all details (-l), and presenting file sizes in a human-readable format (-h).
@@ -103,26 +110,26 @@ Enhance your file insights by employing **flags** or **arguments**. Let's delve 
 ls -l
 ~~~
 ~~~ {.output}
-total 480
--rw-r--r--    1 ali  staff  120030 Jan  2 21:51 1by2.cif
--rw-r--r--    1 ali  staff  114816 Jan  2 21:56 2ja4.cif
-drwx------@   7 ali  staff     224 Oct 16 13:50 Applications
-drwx------@   5 ali  staff     160 Oct 27 02:19 Desktop
-drwx------@  15 ali  staff     480 Jan 22 23:16 Documents
-drwx------@  30 ali  staff     960 Jan 28 17:56 Downloads
-lrwx------    1 ali  staff      79 Jan 23 18:34 Google Drive
-drwx------@ 104 ali  staff    3328 Dec 24 12:15 Library
-drwx------   12 ali  staff     384 Jan 26 01:22 Movies
-drwx------+   5 ali  staff     160 Dec  9  2022 Music
-drwx------+  11 ali  staff     352 Sep 25 20:06 Pictures
--rw-r--r--    1 ali  staff     138 May 21  2023 Pipfile
-drwxr-xr-x+   4 ali  staff     128 Dec  6  2022 Public
-drwxr-xr-x   18 ali  staff     576 Nov 15 11:15 mambaforge
-drwxr-xr-x    5 ali  staff     160 Jan  4 23:42 micromamba
-drwxr-xr-x@  18 ali  staff     576 Jan  5 00:10 miniforge3
-drwxr-xr-x    3 ali  staff      96 Dec 27  2022 opt
-drwxr-xr-x    4 ali  staff     128 Dec 15  2022 src
-
+-rwxrwxrwx 1 root root   212126 Oct  6 17:04 GSM2221119_liverEnhancer_all-labels.tsv
+-rwxrwxrwx 1 root root   212126 Oct  6 17:04 GSM2221119_liverEnhancer_all-labelsINV.tsv
+-rwxrwxrwx 1 root root   192857 Oct  6 17:04 GSM4237954_9MPRA_elements.fa.gz
+-rwxrwxrwx 1 root root    45616 Oct  6 17:04 SM2221119_liverEnhancer_label.txt.gz
+-rwxrwxrwx 1 root root   619198 Oct  6 17:04 design.fa
+-rwxrwxrwx 1 root root    23419 Oct  6 17:04 history.txt
+-rwxrwxrwx 1 root root   212126 Oct  6 17:04 labels.tsv
+-rwxrwxrwx 1 root root      102 Oct  6 17:04 lengths.txt
+-rwxrwxrwx 1 root root 22750879 Oct  6 17:04 read_2.fq.gz
+-rwxrwxrwx 1 root root 48971366 Oct  6 17:04 reference.fasta
+-rwxrwxrwx 1 root root      471 Oct  6 17:04 reference.fasta.fai
+-rwxrwxrwx 1 root root      121 Oct  6 17:04 sample_reads.fastq.gz
+-rwxrwxrwx 1 root root      373 Oct  8 16:24 sequences.fasta
+-rwxrwxrwx 1 root root       20 Oct  6 17:04 testing.txt
+-rwxrwxrwx 1 root root       21 Oct  6 17:04 testing1.txt
+-rwxrwxrwx 1 root root       21 Oct  6 17:04 testing2.txt
+-rwxrwxrwx 1 root root    45009 Oct  6 17:04 tiny_n_L001_R1_xxx.fastq.gz
+-rwxrwxrwx 1 root root    47703 Oct  6 17:04 tiny_n_L001_R2_xxx.fastq.gz
+-rwxrwxrwx 1 root root      128 Oct  6 17:04 tsv_lengths.txt
+-rwxrwxrwx 1 root root      581 Oct  7 16:03 variants.vcf
 ~~~
 
 ~~~ {.bash}
@@ -130,71 +137,44 @@ ls -tlh
 ~~~
 
 ~~~ {.output}
-drwx------@  30 ali  staff   960B Jan 28 17:56 Downloads
-drwx------   12 ali  staff   384B Jan 26 01:22 Movies
-lrwx------    1 ali  staff    79B Jan 23 18:34 Google Drive
-drwx------@  15 ali  staff   480B Jan 22 23:16 Documents
-drwxr-xr-x@  18 ali  staff   576B Jan  5 00:10 miniforge3
-drwxr-xr-x    5 ali  staff   160B Jan  4 23:42 micromamba
--rw-r--r--    1 ali  staff   112K Jan  2 21:56 2ja4.cif
--rw-r--r--    1 ali  staff   117K Jan  2 21:51 1by2.cif
-drwx------@ 104 ali  staff   3.3K Dec 24 12:15 Library
-drwxr-xr-x   18 ali  staff   576B Nov 15 11:15 mambaforge
-drwx------@   5 ali  staff   160B Oct 27 02:19 Desktop
-drwx------@   7 ali  staff   224B Oct 16 13:50 Applications
-drwx------+  11 ali  staff   352B Sep 25 20:06 Pictures
--rw-r--r--    1 ali  staff   138B May 21  2023 Pipfile
-drwxr-xr-x    3 ali  staff    96B Dec 27  2022 opt
-drwxr-xr-x    4 ali  staff   128B Dec 15  2022 src
-drwx------+   5 ali  staff   160B Dec  9  2022 Music
-drwxr-xr-x+   4 ali  staff   128B Dec  6  2022 Public
-
+total 70M
+-rwxrwxrwx 1 root root  373 Oct  8 16:24 sequences.fasta
+-rwxrwxrwx 1 root root  581 Oct  7 16:03 variants.vcf
+-rwxrwxrwx 1 root root  128 Oct  6 17:04 tsv_lengths.txt
+-rwxrwxrwx 1 root root  47K Oct  6 17:04 tiny_n_L001_R2_xxx.fastq.gz
+-rwxrwxrwx 1 root root  44K Oct  6 17:04 tiny_n_L001_R1_xxx.fastq.gz
+-rwxrwxrwx 1 root root   21 Oct  6 17:04 testing2.txt
+-rwxrwxrwx 1 root root   21 Oct  6 17:04 testing1.txt
+-rwxrwxrwx 1 root root   20 Oct  6 17:04 testing.txt
+-rwxrwxrwx 1 root root  121 Oct  6 17:04 sample_reads.fastq.gz
+-rwxrwxrwx 1 root root  471 Oct  6 17:04 reference.fasta.fai
+-rwxrwxrwx 1 root root  47M Oct  6 17:04 reference.fasta
+-rwxrwxrwx 1 root root  22M Oct  6 17:04 read_2.fq.gz
+-rwxrwxrwx 1 root root  102 Oct  6 17:04 lengths.txt
+-rwxrwxrwx 1 root root 208K Oct  6 17:04 labels.tsv
+-rwxrwxrwx 1 root root  23K Oct  6 17:04 history.txt
+-rwxrwxrwx 1 root root 605K Oct  6 17:04 design.fa
+-rwxrwxrwx 1 root root  45K Oct  6 17:04 SM2221119_liverEnhancer_label.txt.gz
+-rwxrwxrwx 1 root root 189K Oct  6 17:04 GSM4237954_9MPRA_elements.fa.gz
+-rwxrwxrwx 1 root root 208K Oct  6 17:04 GSM2221119_liverEnhancer_all-labelsINV.tsv
+-rwxrwxrwx 1 root root 208K Oct  6 17:04 GSM2221119_liverEnhancer_all-labels.tsv
 ~~~
 
 We can also list contents of other directories by providing the path to that directory. 
 
 ~~~ {.bash}
-$ ls -tlh Movies
+$ ls -tlh other_files/
 ~~~
 
 ~~~ {.output}
-drwxrwxrwx  22 ali  staff   704B Jan 26 01:22 CacheClip
-drwxr-xr-x   7 ali  staff   224B Jan 26 01:21 Academic Guy
-drwxr-xr-x   4 ali  staff   128B Jan 25 21:00 Renders
-drwxr-xr-x   5 ali  staff   160B Dec 21 11:30 TV
-drwxr-xr-x   3 ali  staff    96B Oct 17 16:31 BioinformaticGuy
-drwxr-xr-x   3 ali  staff    96B Apr 14  2023 Handbreaked
-
+-rwxrwxrwx 1 root root  128 Oct 31 13:06 tsv_lengths.txt
+-rwxrwxrwx 1 root root  102 Oct 31 13:06 lengths.txt
+-rwxrwxrwx 1 root root  23K Oct 31 13:06 history.txt
+-rwxrwxrwx 1 root root 605K Oct 31 13:06 design.fa
+-rwxrwxrwx 1 root root  45K Oct 31 13:06 SM2221119_liverEnhancer_label.txt.gz
+-rwxrwxrwx 1 root root 189K Oct 31 13:06 GSM4237954_9MPRA_elements.fa.gz
 ~~~
 
-~~~ {.bash}
-$  ls -tlh tutorieal_folder/beb_data 
-~~~
-
-~~~ {.output}
--rw-r--r--  1 ali  staff    77K Oct 28 04:17 copy-chicken_03_R2.fastq
--rw-r--r--  1 ali  staff    77K Oct 28 04:17 copy-chicken_03_R1.fastq
--rw-r--r--  1 ali  staff    52K Oct 28 04:17 copy-chicken_02_R2.fastq
--rw-r--r--  1 ali  staff    52K Oct 28 04:17 copy-chicken_02_R1.fastq
--rw-r--r--  1 ali  staff    26K Oct 28 04:17 copy-chicken_01_R2.fastq
--rw-r--r--@ 1 ali  staff    26K Oct 28 04:17 copy-chicken_01_R1.fastq
--rw-r--r--  1 ali  staff   386B Oct 28 04:00 sorted_lengths.txt
--rw-r--r--  1 ali  staff   386B Oct 28 03:59 lengths.txt
--rw-rw-r--@ 1 ali  staff    26K Apr  1  2023 SRR534005_01_R1.fastq
--rw-rw-r--  1 ali  staff    26K Apr  1  2023 SRR534005_01_R2.fastq
--rw-rw-r--  1 ali  staff    52K Apr  1  2023 SRR534005_02_R1.fastq
--rw-rw-r--  1 ali  staff    52K Apr  1  2023 SRR534005_02_R2.fastq
--rw-rw-r--  1 ali  staff    77K Apr  1  2023 SRR534005_03_R1.fastq
--rw-rw-r--  1 ali  staff    77K Apr  1  2023 SRR534005_03_R2.fastq
--rw-rw-r--  1 ali  staff   1.5M Apr  1  2023 human_01_R1.fastq
--rw-rw-r--  1 ali  staff   1.4M Apr  1  2023 human_02_R1.fastq
--rw-rw-r--  1 ali  staff    77K Apr  1  2023 yeast_01_R1.fastq
--rw-rw-r--  1 ali  staff    77K Apr  1  2023 yeast_01_R2.fastq
--rw-rw-r--  1 ali  staff   152K Apr  1  2023 yeast_02_R1.fastq
--rw-rw-r--  1 ali  staff   152K Apr  1  2023 yeast_02_R2.fastq
--rw-rw-r--@ 1 ali  staff    26K Apr  1  2023 chicken.fastq
-
-~~~
 
 ## Change Directory
 Apart from inspecting files within directories, we have the capability to shift our current location to another directory, thereby moving away from our home directory. The command used for this operation is cd. To execute the cd command, an argument specifying the directory name is required.
@@ -203,26 +183,19 @@ To access the recently downloaded and saved directory named "DataForUnixCourse,"
 
 
 ~~~ {.bash}
-$ cd Desktop
-$ cd tutorieal_folder
-$ cd beb_data
+$ cd other_files/
 ~~~
 
-~~~ {.bash}
-ali@host beb_data % 
-$ 
-~~~
 
-These commands transitioned us from our home directory to the Desktop and then into the `tutorieal_folder` directory.
-However, as the cd command doesn't produce any output, our prompt remains empty or displays `$`. To determine our current 
-location, we can utilize the informative `pwd` command.
+
+However, as the cd command doesn't produce any output, our prompt remains empty or displays `$`. To determine our current location, we can utilize the informative `pwd` command.
 
 ~~~ {.bash}
 $ pwd
 ~~~
 
 ~~~ {.output}
-/Desktop/tutorieal_folder/beb_data
+/mnt/c/Users/Ali/Documents/bash_essentials_for_bioinformatics/data_for_bash_essentials/other_files
 ~~~
 
 And now we can type `ls` to see the contents
@@ -231,18 +204,11 @@ And now we can type `ls` to see the contents
 $ ls
 ~~~
 
-~~~ {.output}
-SRR534005_01_R1.fastq           SRR534005_03_R2.fastq                   
-SRR534005_01_R2.fastq           chicken.fastq               
-SRR534005_02_R1.fastq           copy-chicken_01_R1.fastq        
-SRR534005_02_R2.fastq           copy-chicken_01_R2.fastq        
-SRR534005_03_R1.fastq           copy-chicken_02_R1.fastq   
-copy-chicken_02_R2.fastq        lengths.txt      
-copy-chicken_03_R1.fastq        sorted_lengths.tx
-copy-chicken_03_R2.fastq        yeast_01_R1.fastq
-human_01_R1.fastq               yeast_01_R2.fastq
-human_02_R1.fastq               yeast_02_R1.fastq     
-yeast_02_R2.fastq
+
+
+~~~ {.bash}
+GSM4237954_9MPRA_elements.fa.gz       design.fa    lengths.txt
+SM2221119_liverEnhancer_label.txt.gz  history.txt  tsv_lengths.txt
 ~~~
 
 ## Relative Paths vs. Absolute Paths
@@ -252,13 +218,13 @@ A relative path is based on your current directory, while an absolute path is no
 Upon executing the recent `pwd`command, the output displayed something akin to the following:
 
 ~~~ {.output}
-/Users/ali/Desktop/tutorieal_folder/beb_data
+/mnt/c/Users/Ali/Documents/bash_essentials_for_bioinformatics/data_for_bash_essentials/other_files
 ~~~
 
 This is the full path to the beb_data directory on Ali's computer. 
 
 At the pinnacle of the hierarchy is a directory denoted as `/`, commonly known as the root directory. 
-Ali's home directory is precisely located at the full path `/Users/ali`. 
+Ali's home directory is precisely located at the full path `/mnt/c/Users/Ali`. 
 Within the home directory, the Desktop serves as a subdirectory, and our project folder is nested within the Desktop.
 
 Directory navigation can be accomplished using either full or relative paths.
@@ -267,7 +233,7 @@ Directory navigation can be accomplished using either full or relative paths.
 
 `.` The single period means **this directory**. This is a relative path to use when you want to copy files from somewhere else to your current directory
 
-`..` The double period means **one directory up in the hierarchy**. This is useful when you want to move up one directory by typing `cd ..`. You can use this in a combination, for example: `cd ../..` will go up two directories or `cd ../Pictures/` will move up to the Desktop and then into Pictures. 
+`..` The double period means **one directory up in the hierarchy**. This is useful when you want to move up one directory by typing `cd ..`. You can use this in a combination, for example: `cd ../..` will go up two directories or `cd ../Downloads/` will move up to the Desktop and then into Pictures. 
 
 
 ## Examples of Relative Paths
@@ -278,8 +244,7 @@ It is a relative path useful for copying files from elsewhere to your current di
 - `..`: The double period denotes moving one directory up in the hierarchy. 
 This is beneficial when you wish to ascend one directory level using the `cd ..` command. 
 
-It can be used in combinations such as `cd ../..` to go up two directories or `cd ../Pictures/` 
-to ascend to the Desktop and then navigate into the Pictures directory.
+It can be used in combinations such as `cd ../..` to go up two directories or `cd ../Downloads/` to ascend to the Desktop and then navigate into the Pictures directory.
 
 
 
@@ -287,9 +252,7 @@ to ascend to the Desktop and then navigate into the Pictures directory.
 
 Navigating to the home directory can be done by typing the full path `/Users/username`, but this involves a considerable amount of typing. 
 An alternative is to use the `~` symbol, which can replace `/c/Users/username` in full path descriptions. 
-However, for Unix users who find even the `~` too cumbersome, simply using the `cd` command followed by the return or 
-enter key accomplishes the same, swiftly taking you back to the home directory. 
-Therefore, any of these three commands will reliably guide you home, regardless of your current location in the file system:
+However, for Unix users who find even the `~` too cumbersome, simply using the `cd` command followed by the return or enter key accomplishes the same, swiftly taking you back to the home directory. Therefore, any of these three commands will reliably guide you home, regardless of your current location in the file system:
 
 
 ~~~ {.bash}

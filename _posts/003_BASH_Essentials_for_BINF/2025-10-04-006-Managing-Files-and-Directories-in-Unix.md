@@ -80,10 +80,11 @@ You can copy files to other locations while keeping or changing the filename:
 # Create a new directory for copies
 mkdir fastq_copies
 
-# Copy with the same filename
-cp yeast_01_R2.fastq.gz fastq_copies/copy-yeast_02_R2.fastq.gz
-
 # Copy with a new filename
+cp yeast_01_R2.fastq.gz fastq_copies/yeast_01_R2.fastq.gz.copy
+
+
+# Copy with the same filename
 cp yeast_02_R2.fastq.gz fastq_copies/
 
 # Verify the copies
@@ -94,7 +95,7 @@ You have noticed that even if you do not mention the name of the orignal name of
 
 
 **What happened here?**
-- `yeast_02_R2.fastq.gz` was copied and renamed to `copy-yeast_02_R2.fastq.gz`
+- `yeast_02_R2.fastq.gz` was copied and renamed to `yeast_01_R2.fastq.gz.copy`
 - `yeast_01_R2.fastq.gz` was copied to `fastq_copies/` with the same name
 
 ### When to Use `cp`
@@ -120,7 +121,7 @@ mv <original_filename> <new_filename_or_location>
 ### Moving Files Between Directories
 
 ```bash
-mv ctiny_n_L001_R1_xxx.fastq.gz.copy fastq_copies/
+mv tiny_n_L001_R1_xxx.fastq.gz.copy fastq_copies/
 cd fastq_copies
 ls
 ```
@@ -418,4 +419,6 @@ In **Lesson 07**, we'll explore:
 ✓ Use `-r` flag to remove directories and their contents  
 ✓ `>` overwrites files, `>>` appends to files  
 ✓ Always double-check commands before deleting files  
-✓ Use quotes with `echo` to avoid issues with special characters
+✓ Use quotes with `echo` to avoid issues with special characters.
+
+{% include next-prev.html %}
