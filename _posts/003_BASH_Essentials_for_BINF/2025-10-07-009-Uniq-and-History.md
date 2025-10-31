@@ -320,3 +320,6 @@ As you become more comfortable with the command line, periodically review your h
 ---
 
 *The beauty of Unix commands lies in their simplicity and composability. Master the basics like uniq and history, and you'll build a foundation for increasingly sophisticated data analysis workflows.*
+
+
+{% include next-prev.html %}

@@ -286,3 +286,5 @@ Now it's your turn! Try these hands-on exercises to reinforce what you've learne
 ### Share Your Solutions
 
 Found an elegant solution? Share your one-liners in the comments below! The bioinformatics community thrives on sharing clever command-line tricks.
+
+{% include next-prev.html %}
