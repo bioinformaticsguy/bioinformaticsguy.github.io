@@ -147,4 +147,6 @@ Stay tuned for **Lesson 05: Hands-On Data Exploration**!
 ✓ FastQ files store sequencing data with quality scores in a four-line format  
 ✓ TSV files provide a simple, tab-delimited structure for tabular data  
 ✓ Compressed files (`.gz`) save space while remaining readable by most tools  
-✓ Understanding file formats is fundamental to bioinformatics workflows
+✓ Understanding file formats is fundamental to bioinformatics workflows.
+
+{% include next-prev.html %}
