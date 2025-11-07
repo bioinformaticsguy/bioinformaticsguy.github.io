@@ -10,7 +10,7 @@ series_sing: true
 video_number: 1
 video_id: YAwJZLIoOxI
 
-optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1683210567/003_BEB/001/Colorful_Freelancer_YouTube_Thumbnail_1_yeg9xl.png
+optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762510173/003_BEB/001/Colorful_Freelancer_YouTube_Thumbnail_x2jndq.png
 
 
 category: BASH Essentials
@@ -26,7 +26,7 @@ author: alihassan
 paginate: true
 ---
 
-<!-- [![Alt text](https://res.cloudinary.com/bioinformaticsguy/image/upload/v1683210567/003_BEB/001/Colorful_Freelancer_YouTube_Thumbnail_1_yeg9xl.png)](https://www.youtube.com/c/BioinformaticsGuy) -->
+<!-- [![Alt text](https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762510173/003_BEB/001/Colorful_Freelancer_YouTube_Thumbnail_x2jndq.png)](https://www.youtube.com/c/BioinformaticsGuy) -->
 
 
 {% include youtube_embed.html %}
