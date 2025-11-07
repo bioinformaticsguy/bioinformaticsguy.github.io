@@ -1,5 +1,5 @@
 ---
-date: 2025-10-04 12:29:19
+date: 2025-11-07 12:29:19
 layout: post
 title: Understanding Complex Variants | Prctical Guide for Rare Disease Analysis
 subtitle: Best Practices for Evaluating Multi-Variant Haplotypes in Clinical Sequencing
