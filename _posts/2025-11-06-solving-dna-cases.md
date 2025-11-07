@@ -16,16 +16,10 @@ optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762
 
 category: Stand Alone Blog
 tags:
-  - BASH
-  - Essentials
-  - Bioinformatics
-  - Bash Scripting
-  - HPC
-  - Command Line Interface
-  - Bash Commands
-  - Mac
-  - Windows
-  - Linux
+  - Varients
+  - SNVs
+  - SVs
+  - WGS Data
 author: alihassan
 paginate: false
 two_columns_layout: false
