@@ -7,7 +7,7 @@ description: This is a rapitoure of important slurm commands
 
 
 series: Slurm Essentials for Bioinformatics
-series_sing: true
+series_sing: false
 video_number: 001
 video_id: WbgC0m0fsQ8
 
