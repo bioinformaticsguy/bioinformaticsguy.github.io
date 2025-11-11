@@ -14,7 +14,7 @@ video_id: WbgC0m0fsQ8
 optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762509853/BioinformaticsGuyGeneralFiles/Colorful_Freelancer_YouTube_Thumbnail_1_kgna0g.png
 
 
-category: Stand Alone Blog
+category: Solving Cases
 tags:
   - Varients
   - SNVs
