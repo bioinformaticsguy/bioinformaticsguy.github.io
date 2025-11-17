@@ -1,0 +1,369 @@
+---
+date: 2025-11-10 12:29:19
+layout: post
+title: The Hitchhiker's Guide to Designing a Short-Read WGS Pipeline
+subtitle: A Step-by-Step Roadmap from Raw Reads to Annotated Variants.
+description: A complete overview of the essential steps, tools, and considerations
+
+
+series_sing: false
+video_number: 001
+video_id: WbgC0m0fsQ8
+
+optimized_image: https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762509853/BioinformaticsGuyGeneralFiles/Colorful_Freelancer_YouTube_Thumbnail_1_kgna0g.png
+
+
+category: Hitchhiker's Guide
+tags:
+  - Bioinformatics
+  - Pipeline
+  - WGS
+  - Short Read
+  - SNV
+  - SV
+  - Tools
+author: alihassan
+paginate: false
+two_columns_layout: false
+---
+
+
+[![Alt text](https://res.cloudinary.com/bioinformaticsguy/image/upload/v1762509853/BioinformaticsGuyGeneralFiles/Colorful_Freelancer_YouTube_Thumbnail_1_kgna0g.png)](https://www.youtube.com/c/BioinformaticsGuy)
+
+
+
+## A Step-by-Step Roadmap from Raw Reads to Annotated Variants
+
+**Description:** A comprehensive guide to designing whole-genome sequencing analysis pipelines for short-read data. Learn the essential steps, understand why each matters, and discover the best tools for quality control, alignment, variant calling, and annotation in modern genomics workflows.
+
+---
+
+Designing a whole-genome sequencing (WGS) pipeline can feel overwhelming. You're faced with dozens of tools, conflicting recommendations, and the pressure to produce reliable results that might inform clinical decisions or drive your research forward. Where do you start? What steps are essential versus optional? Which tools should you trust?
+
+This guide provides a clear roadmap through the entire process, from raw sequencing reads to annotated variants ready for interpretation. Think of it as your hitchhiker's guide to the WGS analysis galaxy—a practical, opinionated walkthrough that cuts through the complexity.
+
+## The Big Picture: Understanding the Journey
+
+Before diving into specific steps, let's understand the overall flow. A WGS pipeline transforms raw sequencing data through several stages:
+
+**Raw Data → Quality Assessment → Preprocessing → Alignment → Refinement → Quality Metrics → Variant Detection → Filtering → Annotation → Report**
+
+Each stage builds on the previous one, and skipping steps or doing them in the wrong order can compromise your entire analysis. Let's walk through each stage systematically.
+
+
+## Here we list the stages
+1. Raw Read QC (fastp, FastQC, MultiQC)
+2. Adapter Trimming (fastp, Trimmomatic)
+3. Alignment (BWA-MEM2, samtools)
+4. Marking Duplicates (Picard, sambamba)
+5. Base Quality Recalibration (GATK)
+6. Per-Sample QC (mosdepth, verifyBamID2, peddy)
+7. SNV/Indel Calling (GATK, DeepVariant, FreeBayes)
+8. Joint Genotyping & Filtering (VQSR, hard filters)
+9. SV Calling (Manta, DELLY, LUMPY, GRIDSS, CNVkit)
+10. SV Merging (SURVIVOR)
+11. Annotation (VEP, snpEff, AnnotSV)
+12. Final QC & Reporting (bcftools stats, MultiQC)
+
+
+## Stage 1: Raw Read Quality Control
+
+**Purpose:** Before investing compute time in alignment and variant calling, you need to understand your starting material. Are your reads high quality? Is there adapter contamination? Are there unexpected biases that might affect downstream analysis?
+
+**Why This Matters:** Poor quality data produces poor quality variants. Identifying problems early saves time and prevents false discoveries. You might discover that a sample needs re-sequencing before you've wasted days of computation.
+
+**Tool Recommendations:**
+
+**FastP** has emerged as the modern choice—it's incredibly fast and combines quality assessment with adapter trimming in a single pass. It generates clean HTML reports showing quality distributions, adapter content, and base composition.
+
+**FastQC** remains the classic standard. While slower than fastp, it's been the gold standard for years and produces detailed, well-understood reports. Many bioinformaticians are comfortable interpreting its output.
+
+**MultiQC** isn't a QC tool itself, but it aggregates reports from FastQC, fastp, and other tools across all your samples into a single, navigable dashboard. For projects with dozens or hundreds of samples, MultiQC is essential for spotting patterns and outliers.
+
+**What You're Looking For:** Average quality scores above Q30, minimal adapter contamination (under 1-2%), consistent GC content matching your species, and no unusual patterns suggesting library preparation problems.
+
+## Stage 2: Adapter Trimming and Read Filtering (Optional but Recommended)
+
+**Purpose:** Modern sequencing produces reads that may extend beyond the DNA fragment being sequenced, capturing adapter sequences. These need removal. Additionally, very low-quality bases or entire reads might need filtering.
+
+**Why This Matters:** Adapter sequences don't exist in your reference genome—they'll cause alignment failures or incorrect mappings. Low-quality bases introduce noise into variant calling.
+
+**Tool Recommendations:**
+
+**FastP** again—it handles both QC and trimming, making it efficient for large projects. It automatically detects and removes adapters, trims low-quality ends, and filters reads below quality thresholds.
+
+**Trimmomatic** is the older workhorse. More configurable than fastp and well-documented, though significantly slower. If you need fine-grained control over trimming parameters, Trimmomatic remains valuable.
+
+**The Decision:** Many modern workflows skip explicit trimming if reads are high quality, letting aligners handle soft-clipping. However, for data with significant adapter content or quality issues, trimming improves alignment rates and reduces false positives.
+
+## Stage 3: Alignment to Reference Genome
+
+**Purpose:** This is where your short reads find their positions in the reference genome. Alignment transforms millions of unordered sequences into a coordinate system where you can ask biological questions.
+
+**Why This Matters:** Everything downstream depends on correct alignment. Misaligned reads create false variants. Unaligned reads represent lost information. Alignment is computationally expensive—typically the slowest step in the pipeline—so choosing an efficient aligner matters.
+
+**Tool Recommendations:**
+
+**BWA-MEM2** is the current speed champion—a drop-in replacement for BWA-MEM that's significantly faster while producing identical results. For most human genome projects, this is the default choice.
+
+**BWA-MEM** remains the gold standard for short reads (70bp-1Mbp). It's been extensively validated, produces high-quality alignments, and is trusted for clinical applications. If you're unsure, start here.
+
+After alignment, you need sorting and indexing. **Samtools** is the standard tool—reliable and well-integrated with everything else. **Sambamba** offers faster multi-threaded sorting if speed is critical, though samtools has caught up in recent versions.
+
+**What Happens:** Your aligner produces a SAM (Sequence Alignment Map) file showing where each read maps. This gets converted to compressed BAM format, sorted by genomic coordinate, and indexed for rapid random access. You'll carry this sorted, indexed BAM through the rest of the pipeline.
+
+## Stage 4: Marking Duplicates
+
+**Purpose:** PCR amplification during library preparation creates duplicate reads—multiple reads originating from the same original DNA molecule. These duplicates inflate coverage artificially and can bias variant calling, making variants appear more supported than they truly are.
+
+**Why This Matters:** Duplicate reads don't represent independent observations. Including them in variant calling creates false confidence in allele frequencies and can lead to calling artifacts as real variants.
+
+**Tool Recommendations:**
+
+**Picard MarkDuplicates** is the established standard, well-tested and producing comprehensive metrics about duplication rates. It doesn't remove duplicates—it marks them with a flag that variant callers can respect.
+
+**Sambamba markdup** offers faster performance with multi-threading. For large cohorts, this speed advantage is meaningful.
+
+**What You're Checking:** Duplication rates above 20-30% suggest library preparation issues. Very low duplication (under 5%) might indicate under-sequencing or problems with the marking algorithm itself.
+
+## Stage 5: Base Quality Score Recalibration (Optional but Recommended)
+
+**Purpose:** Sequencing machines assign quality scores to each base call, but these scores can be systematically biased—certain sequence contexts or positions in reads might have consistent quality errors not reflected in the raw scores.
+
+**Why This Matters:** Accurate quality scores are crucial for variant calling. Overconfident scores create false positives; underconfident scores miss real variants. Recalibration improves the reliability of downstream variant quality estimates.
+
+**Tool Recommendations:**
+
+**GATK BaseRecalibrator** is the standard approach, especially if you're using GATK for variant calling. It models systematic errors and adjusts quality scores accordingly.
+
+**The Caveat:** This requires a set of known variants (like dbSNP for humans). For non-model organisms without variant databases, this step isn't possible. For human data following GATK best practices, it's considered essential.
+
+## Stage 6: Per-Sample Quality Metrics
+
+**Purpose:** Before calling variants, verify that each sample meets quality standards. This catches problems like contamination, sex mismatches, unexpected relatedness, or coverage issues.
+
+**Why This Matters:** Proceeding with low-quality samples wastes computational resources and risks false discoveries. It's better to identify problems now and potentially re-sequence than to discover issues after weeks of analysis.
+
+**Tool Recommendations:**
+
+**Mosdepth** provides fast, accurate coverage analysis—mean coverage, median coverage, percentage of genome covered at various depths (10x, 20x, 30x). It's dramatically faster than older tools while using minimal memory.
+
+**Qualimap** offers comprehensive alignment quality metrics if you want deeper QC insights, though it's slower and more resource-intensive.
+
+**VerifyBamID2** or **Conpair** detect sample contamination by checking for unexpected allele patterns suggesting DNA from multiple individuals.
+
+**Peddy** is specifically designed for pedigree analysis—it infers biological sex, detects relatedness between samples, and checks for heterozygosity patterns that might indicate quality issues.
+
+**What You're Measuring:** Target at least 30x mean coverage for clinical WGS, higher if your application requires it. Check that inferred sex matches expected sex. Verify contamination is below 2-3%. Confirm that duplicate rates and heterozygosity fall within normal ranges.
+
+## Stage 7: SNV and Small Indel Calling
+
+**Purpose:** This is where you identify single nucleotide variants (SNVs) and small insertions/deletions (indels) that differ from the reference genome. This is often what people mean when they say "variant calling."
+
+**Why This Matters:** These variants—differences at the single-base level—include most disease-causing mutations, pharmacogenomic markers, and evolutionary changes. Getting this right is the core goal of WGS.
+
+**Tool Recommendations:**
+
+**GATK HaplotypeCaller in gVCF mode** followed by **GenotypeGVCFs** is the gold standard for cohort analysis. The gVCF (genomic VCF) approach scales elegantly—you call variants for each sample individually, producing gVCFs that include information about both variant and reference sites, then joint-genotype across your cohort. This approach improves sensitivity for rare variants and enables adding new samples later without re-calling everyone.
+
+**DeepVariant** uses deep learning to achieve very high accuracy, especially for single samples. It's particularly good at reducing false positives in difficult genomic regions. Consider combining DeepVariant with **GLnexus** for joint genotyping across cohorts.
+
+**FreeBayes** or **bcftools mpileup/call** offer lighter-weight alternatives. They're faster and simpler, though generally less accurate than GATK or DeepVariant. Useful for quick exploratory analyses or when computational resources are limited.
+
+**The Strategy:** For small projects (1-10 samples), any caller works well. For cohorts (10+ samples), the gVCF approach or DeepVariant+GLnexus scales better and improves variant quality through joint information.
+
+## Stage 8: Joint Genotyping and Cohort Filtering
+
+**Purpose:** When analyzing multiple samples together, joint genotyping leverages information across the cohort to improve variant calling accuracy. You can then filter variants based on quality metrics to separate true variants from artifacts.
+
+**Why This Matters:** Joint genotyping increases sensitivity for rare variants and improves genotype accuracy. A variant seen weakly in one sample gains confidence if it appears clearly in related samples. Filtering removes low-confidence calls that would otherwise clutter your analysis with false positives.
+
+**Tool Recommendations:**
+
+**GATK GenotypeGVCFs** combines gVCFs from individual samples into a cohort VCF.
+
+**GATK VariantRecalibrator (VQSR)** uses machine learning to score variants based on known true variants, producing a quality score for filtering. This works well for large cohorts but requires training sets.
+
+**Hard Filtering** with **bcftools** or **GATK VariantFiltration** applies explicit thresholds (quality score, depth, mapping quality, strand bias, etc.). This is more interpretable and works for any cohort size, though potentially less sensitive than VQSR.
+
+**What You're Doing:** Separating signal from noise. You're removing sequencing artifacts, mapping errors, and alignment ambiguities while retaining true biological variation.
+
+## Stage 9: Structural Variant Calling
+
+**Purpose:** SNVs and small indels aren't the whole story. Large deletions, duplications, inversions, and translocations (collectively, structural variants or SVs) play major roles in disease and evolution. These require different detection algorithms.
+
+**Why This Matters:** SVs can affect entire genes or regulatory regions, with major phenotypic impacts. Many disease-causing variants are SVs that SNV callers miss entirely. For comprehensive WGS, SV calling is essential.
+
+**Tool Recommendations:**
+
+The key principle: **use multiple complementary callers**. No single tool captures all SV types equally well. Different tools leverage different signals—paired-end read orientation, split reads, read depth, or local assembly.
+
+**Manta** is an excellent starting point—fast, accurate, good at detecting deletions, insertions, duplications, and inversions using paired-end and split-read signals.
+
+**DELLY** complements Manta with strong deletion and duplication detection. It's particularly good for smaller SVs.
+
+**LUMPY** (often via the **smoove** wrapper) provides another perspective, especially useful for cohort-level SV discovery.
+
+**GRIDSS** uses local assembly for high sensitivity, especially for complex rearrangements. More computationally intensive but catches events other tools miss.
+
+**CNV-specific tools** like **CNVkit** or **Canvas** detect copy number variants using read-depth signals. These catch duplications and deletions that paired-end methods might miss.
+
+**The Strategy:** Run at least two complementary approaches—typically a paired-end/split-read caller (Manta) plus a read-depth CNV tool (CNVkit). For research applications, three or more callers with merging improves sensitivity.
+
+## Stage 10: SV Merging and Genotyping
+
+**Purpose:** When running multiple SV callers, you get multiple call sets. Many calls are the same SV detected by different tools. You need to merge these into a consensus set and then genotype each SV across your cohort.
+
+**Why This Matters:** Merging increases confidence—SVs called by multiple tools are more likely real. Genotyping gives you allele frequencies and allows association testing or filtering based on population frequency.
+
+**Tool Recommendations:**
+
+**SURVIVOR** is the standard tool for merging SV calls from multiple callers. It clusters similar breakpoints across call sets and produces a merged VCF.
+
+**svtyper**, **Paragraph**, or other genotyping tools take the merged call set and genotype each SV across all samples.
+
+**What You're Creating:** A high-confidence SV call set where each variant has been detected by multiple methods or has strong supporting evidence, along with genotypes showing which samples carry each SV.
+
+## Stage 11: Annotation
+
+**Purpose:** Raw variants are just genomic coordinates and alternate alleles. Annotation adds biological context—which genes are affected, what protein changes occur, whether variants are known in databases, and their predicted functional impact.
+
+**Why This Matters:** Interpretation requires context. Is this variant in a disease gene? Does it cause a protein truncation? Is it common in populations or rare? Annotation transforms coordinate-based data into biologically interpretable information.
+
+**Tool Recommendations:**
+
+**Ensembl VEP** (Variant Effect Predictor) is the most comprehensive annotator—it predicts functional consequences, adds database identifiers, includes pathogenicity predictions, and integrates population frequencies. Highly configurable and regularly updated.
+
+**snpEff** offers a faster, lighter-weight alternative with good coverage of basic functional annotation. Easier to install and run for straightforward projects.
+
+**For SVs:** **AnnotSV** is specifically designed for structural variant annotation. Alternatively, use VEP with breakend support or custom scripts to overlap SVs with gene coordinates, repeat regions, gnomAD-SV frequencies, and disease databases.
+
+**vcfanno** or **bcftools annotate** add custom annotations from additional VCF or BED files—population frequencies, conservation scores, regulatory annotations, etc.
+
+**What You're Adding:** Gene names, transcript consequences (synonymous, missense, nonsense, frameshift), pathogenicity predictions (SIFT, PolyPhen, CADD), population frequencies (gnomAD), clinical significance (ClinVar), and more. The annotated VCF becomes your primary analysis file.
+
+## Stage 12: Quality Control Summary and Final Report
+
+**Purpose:** Aggregate all QC metrics, variant statistics, and pipeline outcomes into comprehensive reports that document your analysis and flag any issues.
+
+**Why This Matters:** Quality control isn't a single checkpoint—it's continuous verification throughout the pipeline. Final reports provide the evidence that your analysis was successful and help identify samples or variants requiring closer inspection.
+
+**Tool Recommendations:**
+
+**bcftools stats** generates detailed statistics about your VCF files—transition/transversion ratios, indel length distributions, variant counts per sample, allele frequency distributions, and more. Use **plot-vcfstats** to visualize these metrics.
+
+**MultiQC** aggregates metrics from across the pipeline—FastQC results, alignment statistics from samtools, duplication rates from Picard, coverage from mosdepth, and variant metrics from bcftools—into a single interactive HTML report.
+
+**Custom scripts** in R or Python can generate additional plots tailored to your project—coverage distributions across samples, principal component analysis of genetic variation, relatedness heatmaps, etc.
+
+**What You're Producing:** Documentation that your pipeline ran correctly, metrics showing sample quality, summary statistics on variant numbers and types, and red flags indicating any samples that might need exclusion or re-processing.
+
+## Essential QC Metrics to Track
+
+Throughout this pipeline, you should collect and monitor these key metrics for every sample:
+
+**Read-level:** Total reads, percent passing quality filters, adapter contamination rate, mean quality score
+
+**Alignment-level:** Percent reads mapped, mean coverage depth, median coverage, percent genome covered at 20x and 30x, percent duplicates
+
+**Sample-level:** Contamination estimate, inferred sex (and confirmation it matches expectations), heterozygosity rate, relatedness to other samples
+
+**Variant-level:** Number of SNVs called, number of indels called, transition/transversion ratio, number of SVs called, concordance with known variants (if available)
+
+These metrics help you identify problems at each stage and make informed decisions about sample inclusion.
+
+## Reproducibility: The Often-Forgotten Essential
+
+**Why This Matters:** Science requires reproducibility. Your future self, your collaborators, and reviewers need to understand exactly what you did. More practically, you'll need to re-run parts of the pipeline as tools improve or new samples arrive.
+
+**Best Practices:**
+
+Use workflow management systems like **Snakemake** or **Nextflow** to explicitly define dependencies between steps. These tools handle parallelization, track which steps need re-running when inputs change, and document your pipeline structure.
+
+Employ **conda environments** or **Docker/Singularity containers** for each tool, specifying exact versions. This prevents the "but it worked on my computer" problem.
+
+Keep a **config file** separate from your workflow code, listing file paths, parameters, sample IDs, and computational resources. This makes pipelines portable and parameters transparent.
+
+**Version control** your pipeline code with git, documenting changes and enabling rollback if needed.
+
+## Practical Considerations: Computational Resources
+
+**Alignment** is typically the most computationally demanding step—for human genomes at 30x coverage, expect several hours per sample with 8-16 cores. This is where parallelization matters most.
+
+**Variant calling** is also resource-intensive. GATK HaplotypeCaller might take hours per sample. DeepVariant requires GPU access for optimal speed but works on CPUs.
+
+**SV calling** varies dramatically by tool. Manta is relatively fast; GRIDSS is slow but thorough. Plan accordingly.
+
+**Storage** requirements are substantial. Raw FASTQs, aligned BAMs, intermediate files, and final VCFs can easily exceed 200GB per sample. Plan for long-term storage of at least BAMs and final VCFs.
+
+## Common Pitfalls to Avoid
+
+**Inconsistent reference genomes:** Ensure all tools use the same reference FASTA and version. Mismatches between b37/hg19/hg38 cause nightmare debugging sessions.
+
+**Skipping indexing:** Many tools require indexed BAMs (.bai files) or reference FASTAs (.fai, .dict). Generate all necessary indices once, upfront.
+
+**Ignoring sample swaps:** Verify sample identity early—compare your genotypes against previous data if available, or check that family relationships match expectations.
+
+**Naive VCF merging:** Don't just concatenate VCFs from different tools or samples. Use proper joint genotyping or dedicated merging tools.
+
+**Over-filtering:** Being too aggressive with quality filters removes true rare variants. Balance sensitivity and specificity based on your application.
+
+**Under-documenting:** Future you will not remember why you chose specific parameters. Document everything—tool versions, parameter choices, reasoning.
+
+## Choosing Your Tool Stack: A Recommended Starting Point
+
+If you're building your first pipeline and want reliable, well-supported tools, here's a solid foundation:
+
+**QC:** fastp + MultiQC
+
+**Alignment:** bwa-mem2 + samtools
+
+**Duplicates:** Picard MarkDuplicates
+
+**Coverage:** mosdepth
+
+**Contamination/Sex:** VerifyBamID2 + peddy
+
+**SNV calling:** GATK HaplotypeCaller (gVCF mode) → GenotypeGVCFs
+
+**SV calling:** Manta + CNVkit
+
+**Annotation:** Ensembl VEP (SNVs) + AnnotSV (SVs)
+
+**Reporting:** bcftools stats + MultiQC
+
+This stack is well-documented, widely used, and covers all essential bases. As you gain experience, you can experiment with alternatives or add complementary tools.
+
+## Looking Forward: Beyond the Basics
+
+Once your basic pipeline is running reliably, consider enhancements:
+
+**Long-read integration:** PacBio or Oxford Nanopore data complements short reads, especially for SVs and repetitive regions.
+
+**RNA-seq integration:** Adding transcriptome data helps prioritize variants in expressed genes.
+
+**Phasing:** Tools like WhatsHap or HapCUT2 can phase variants onto haplotypes, revealing compound heterozygosity and cis/trans relationships.
+
+**Machine learning filtering:** Beyond VQSR, consider custom models trained on your specific data characteristics.
+
+**Cloud deployment:** For very large cohorts, cloud platforms offer elastic scaling, though at increased cost and complexity.
+
+## The Bottom Line
+
+Designing a WGS pipeline is complex, but it follows a logical progression: assess quality → align → refine → verify quality → call variants → filter → annotate → report. Each step has well-established tools and best practices.
+
+Start with a minimal viable pipeline using standard tools. Get it working end-to-end on a small test dataset. Then iterate—add QC checks, incorporate additional callers, refine filtering. The goal is a robust, reproducible pipeline that produces reliable variants you can trust for biological interpretation.
+
+Remember: the best pipeline is one that actually runs to completion and produces interpretable results. Perfection is the enemy of done. Build something that works, document it thoroughly, and improve it incrementally based on real experience with your data.
+
+---
+
+*Ready to build your pipeline? Start with alignment—get a few samples from raw reads to sorted BAMs. Once that works reliably, add variant calling. Then quality control. Then SVs. Each addition is a milestone, and each milestone brings you closer to publication-ready genomic insights.*
+
+
+
+
+
+
+
+{% include next-prev.html %}
