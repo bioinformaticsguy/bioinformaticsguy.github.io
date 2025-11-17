@@ -46,3 +46,11 @@ This will tell you the quota in the current folder.
 Filesystem                            Size  Used Avail Use% Mounted on
 storageXXX.clustername.uni-name.ext:/DATA   15T   14T  1.6T  90% /data
 ```
+
+
+To cancel all the slurm jobs:
+
+
+```bash 
+scancel -u $USER
+```
