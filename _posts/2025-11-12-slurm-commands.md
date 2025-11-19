@@ -1,5 +1,5 @@
 ---
-date: 2025-11-10 12:29:19
+date: 2025-11-12 12:29:19
 layout: post
 title: SLURM Commands
 subtitle: Very important slurm command cheetsheet.
