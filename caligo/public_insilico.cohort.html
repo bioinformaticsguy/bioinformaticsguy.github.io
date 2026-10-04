@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CALIGO Cohort Report - public_insilico_demo</title>
 <style>
 * { box-sizing: border-box; }
@@ -210,7 +210,47 @@ tbody tr:hover td { background: #f8f9fa; }
 .cohort-sv-table td,.cohort-sv-priority-table td { overflow-wrap: anywhere; }
 code { border-radius: 3px; background: #eef2f5; padding: 1px 4px; font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .9em; }
 footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ecf0f1; color: #95a5a6; text-align: center; font-size: .8rem; }
-@media (max-width: 700px) { body { padding: 10px; } main { padding: 16px; } header { display: block; } .report-meta { margin-top: 6px; text-align: left; } .pie-wrap,.recurrence-overview { grid-template-columns: 1fr; } .recurrence-stat-grid { grid-template-columns: 1fr 1fr; } .result-count { width: 100%; margin-left: 0; } }
+@media (max-width: 700px) {
+body { padding: 0; background: white; font-size: 15px; }
+main { max-width: none; padding: 16px 14px; border-radius: 0; box-shadow: none; }
+header { display: block; padding-bottom: 12px; } h1 { font-size: 1.35rem; } h2 { margin-top: 20px; font-size: 1.1rem; }
+.report-meta { margin-top: 6px; text-align: left; }
+.tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; margin: 14px -14px 18px; padding: 0 14px; scrollbar-width: thin; }
+.tab-button { flex: 0 0 auto; min-height: 44px; padding: 10px 13px; } .tab-button.active { padding-top: 8px; }
+.snv-summary,.sv-priority-summary,.tier-summary,.legend-section,.recurrence-overview,.recurrent-gene-section,.candidate-filter-bar,.source-note,.qc-empty { padding: 11px; }
+.snv-summary,.sv-priority-summary { display: grid; gap: 7px; }
+.legend-grid,.pie-wrap,.recurrence-overview { grid-template-columns: 1fr; }
+.recurrence-stat-grid { grid-template-columns: 1fr 1fr; gap: 7px; } .recurrence-stat { min-height: 78px; padding: 9px; }
+.recurrence-stat strong { font-size: 1.25rem; } .recurrence-stat span { font-size: .66rem; }
+.candidate-filter-row { display: grid; grid-template-columns: 1fr; gap: 9px; }
+.candidate-filter-row > label,.candidate-filter-row > .filter-field,.multi-filter,.range-filter { min-width: 0; max-width: none; width: 100%; }
+.candidate-filter-row input[type="text"],.candidate-filter-row input[type="number"],.range-filter input[type="number"],.region-filter input[type="text"] { width: 100%; min-height: 40px; }
+.multi-filter-toggle { min-height: 40px; } .multi-filter-selection-panel,.multi-filter-menu { width: min(320px, calc(100vw - 28px)); max-width: none; }
+.filter-help-inline { margin-left: 0; max-width: none; text-align: left; }
+.table-controls,.table-page-controls { gap: 8px; } .table-controls { display: grid; grid-template-columns: 1fr; } .result-count { width: 100%; margin-left: 0; }
+.search-box { width: 100%; min-height: 42px; } .filter-btn { min-height: 38px; }
+.table-wrapper,.cohort-sv-table-wrapper,.cohort-sv-priority-wrapper { max-height: none; overflow: visible; margin: 0; border: 0; }
+.candidate-table,.cohort-sv-table,.cohort-sv-priority-table { display: block; width: 100%; min-width: 0; font-size: .84rem; }
+.candidate-table thead,.cohort-sv-table thead,.cohort-sv-priority-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.candidate-table tbody,.candidate-table tr,.candidate-table td,.cohort-sv-table tbody,.cohort-sv-table tr,.cohort-sv-table td,.cohort-sv-priority-table tbody,.cohort-sv-priority-table tr,.cohort-sv-priority-table td { display: block; width: 100%; }
+.candidate-table tr,.cohort-sv-table tr,.cohort-sv-priority-table tr { margin: 0 0 10px; border: 1px solid #dfe6e9; border-radius: 7px; background: #fff; overflow: hidden; }
+.candidate-table td,.cohort-sv-table td,.cohort-sv-priority-table td { display: grid; grid-template-columns: minmax(96px,42%) minmax(0,1fr); gap: 9px; padding: 8px 10px; border-bottom: 1px solid #edf1f3; overflow-wrap: anywhere; }
+.candidate-table td:last-child,.cohort-sv-table td:last-child,.cohort-sv-priority-table td:last-child { border-bottom: 0; }
+.candidate-table td::before,.cohort-sv-table td::before,.cohort-sv-priority-table td::before { content: attr(data-mobile-label); color: #60727d; font-size: .75rem; font-weight: 700; line-height: 1.35; text-transform: uppercase; letter-spacing: .02em; }
+.candidate-table:not(.recurrent-gene-table) tbody,.cohort-sv-table tbody,.cohort-sv-priority-table tbody { counter-reset: variant-card; }
+.candidate-table:not(.recurrent-gene-table) tr,.cohort-sv-table tr,.cohort-sv-priority-table tr { counter-increment: variant-card; }
+.candidate-table:not(.recurrent-gene-table) tr::before,.cohort-sv-table tr::before,.cohort-sv-priority-table tr::before { content: "Variant " counter(variant-card); display: block; padding: 8px 10px; background: #edf5f8; color: #24485c; font-size: .78rem; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
+.metadata-table { display: block; width: 100%; min-width: 0; font-size: .84rem; }
+.metadata-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.metadata-table tbody,.metadata-table tr,.metadata-table td { display: block; width: 100%; }
+.metadata-table tr { margin: 0 0 10px; border: 1px solid #dfe6e9; border-radius: 7px; background: #fff; overflow: hidden; }
+.metadata-table td { display: grid; grid-template-columns: minmax(96px,42%) minmax(0,1fr); gap: 9px; padding: 8px 10px; border-bottom: 1px solid #edf1f3; overflow-wrap: anywhere; }
+.metadata-table td:last-child { border-bottom: 0; }
+.metadata-table td::before { content: attr(data-mobile-label); color: #60727d; font-size: .75rem; font-weight: 700; line-height: 1.35; text-transform: uppercase; letter-spacing: .02em; }
+.sample-popover { width: calc(100vw - 20px); max-height: calc(100vh - 20px); }
+.sample-popover-header { padding: 10px; } .sample-popover-list { padding: 8px 10px 10px 27px; }
+.recurrent-gene-section-heading { align-items: flex-start; } .recurrent-gene-section-heading > span { flex: 0 0 auto; }
+}
 .candidate-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 14px 0; padding: 12px; background: #eef6ff; border: 1px solid #bfdbfe; border-radius: 8px; }
 .candidate-controls label { display: grid; gap: 4px; color: #334155; font-size: 12px; font-weight: 600; }
 .candidate-controls input { min-width: 105px; padding: 6px 7px; border: 1px solid #94a3b8; border-radius: 4px; font: inherit; font-weight: 400; }
@@ -251,7 +291,7 @@ window.finishReportLoading = function() {
 <main>
 <header>
 <div><h1>CALIGO Cohort Report</h1><div class="muted">Cohort-level review of small-variant candidates and structural-variant evidence</div></div>
-<div class="report-meta"><strong>public_insilico_demo</strong><br>Generated 2026-10-04 15:54:58</div>
+<div class="report-meta"><strong>public_insilico_demo</strong><br>Generated 2026-10-04 23:32:22</div>
 </header>
 <nav class='tabs' role='tablist' aria-label='Cohort report sections'>
 <button class='tab-button active' data-tab='snv' role='tab' aria-selected='true' aria-controls='snv'>SNV/indel</button>
@@ -635,7 +675,7 @@ INSILICO_003" aria-label="Heterozygous: 2 carriers. Click to view samples." oncl
     </div>
     <div class="table-wrapper" tabindex="0" role="region" aria-label="Recurrently mutated genes">
       <table class="candidate-table recurrent-gene-table unlistedGenes-table"><thead><tr><th class="sortable" onclick="sortRecurrentGenes(this, 0, 'text', 'unlistedGenes')">Gene</th><th class="sortable" onclick="sortRecurrentGenes(this, 1, 'text', 'unlistedGenes')">SNV/indel and SV counts</th><th class="sortable" onclick="sortRecurrentGenes(this, 2, 'number', 'unlistedGenes')">Distinct carriers</th><th class="sortable" onclick="sortRecurrentGenes(this, 3, 'text', 'unlistedGenes')">Genotype profile</th></tr></thead><tbody><tr><td colspan="4" class="muted">No genes outside the configured list met the focused recurrence criteria.</td></tr></tbody></table>
-    </div></section></div></section><section id='inputs' class='report-tab' role='tabpanel'><h2>Cohort Inputs</h2><table><thead><tr><th>Input</th><th>Path</th><th>Status</th></tr></thead><tbody><tr><td>Cohort root</td><td></td><td>Missing</td></tr><tr><td>Phase I root</td><td></td><td>Missing</td></tr><tr><td>Phase II root</td><td></td><td>Missing</td></tr><tr><td>GLnexus VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_snv_indel.vcf.gz</td><td>Found</td></tr><tr><td>SV evidence source</td><td>Jointly genotyped cohort VCF</td><td>Found</td></tr><tr><td>Jointly genotyped cohort SV VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_sv.vcf.gz</td><td>Found</td></tr><tr><td>Scored cohort SV priority table</td><td>results/public_insilico_reports/synthetic_inputs/cohort_sv_priority.tsv</td><td>Found</td></tr><tr><td>GGTyper results TSV</td><td></td><td>Missing</td></tr><tr><td>Candidate SV summary</td><td></td><td>Missing</td></tr><tr><td>Configured gene panel</td><td>results/public_insilico_reports/synthetic_inputs/demo_dsd_panel.csv</td><td>Found</td></tr></tbody></table><h2>Phase II Metadata Tables</h2><table><thead><tr><th>Table</th><th>Rows</th></tr></thead><tbody><tr><td>Configured samples TSV</td><td>3</td></tr><tr><td>GLnexus inputs TSV</td><td>0</td></tr><tr><td>GGTyper inputs TSV</td><td>0</td></tr><tr><td>Candidate SV summary TSV</td><td>0</td></tr><tr><td>GGTyper results TSV</td><td>0</td></tr></tbody></table></section>
+    </div></section></div></section><section id='inputs' class='report-tab' role='tabpanel'><h2>Report provenance</h2><p class='muted'>Only files and settings used by this report are shown. Optional upstream QC artifacts are not required for cohort reporting.</p><h3>Inputs and evidence sources</h3><table class="metadata-table"><thead><tr><th>Input</th><th>Path</th></tr></thead><tbody><tr><td>GLnexus VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_snv_indel.vcf.gz</td></tr><tr><td>SV evidence source</td><td>Jointly genotyped cohort VCF</td></tr><tr><td>Jointly genotyped cohort SV VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_sv.vcf.gz</td></tr><tr><td>Scored cohort SV priority table</td><td>results/public_insilico_reports/synthetic_inputs/cohort_sv_priority.tsv</td></tr><tr><td>Configured gene panel</td><td>results/public_insilico_reports/synthetic_inputs/demo_dsd_panel.csv</td></tr></tbody></table><h3>Optional Phase II metadata tables</h3><table class="metadata-table"><thead><tr><th>Table</th><th>Rows</th></tr></thead><tbody><tr><td>Configured samples TSV</td><td>3</td></tr></tbody></table></section>
 <footer>CALIGO cohort report.</footer>
 <script>
 const reportLoadingStatus = document.getElementById('reportLoadingStatus');
@@ -1226,6 +1266,16 @@ function filterCohortSv() {
   const count = document.getElementById('cohortSvResultCount');
   if (count) count.textContent = `SVs (${shown.toLocaleString()} shown)`;
 }
+function labelMobileTableCells() {
+  document.querySelectorAll('.candidate-table, .cohort-sv-table, .cohort-sv-priority-table, .metadata-table').forEach((table) => {
+    const headers = [...table.querySelectorAll('thead th')].map((header) => header.textContent.replace(/[↕↑↓]/g, '').trim());
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      [...row.children].forEach((cell, index) => cell.dataset.mobileLabel = headers[index] || 'Evidence');
+    });
+  });
+}
+labelMobileTableCells();
+new MutationObserver(labelMobileTableCells).observe(document.body, {childList:true, subtree:true});
 filterCohortSvPriority();
 </script>
 </main>
