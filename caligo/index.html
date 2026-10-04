@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>CALIGO Reports</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #183447;
+      background: linear-gradient(135deg, #eef7fb, #f8fbfd 54%, #edf7f1);
+    }
+    main { width: min(720px, 100%); }
+    .brand { color: #2471a3; font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: .35rem 0 .55rem; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.04em; }
+    .intro { margin: 0 0 2rem; color: #587080; font-size: 1.06rem; }
+    .reports { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    a.report {
+      display: block;
+      padding: 1.45rem;
+      border: 1px solid #cfe0e8;
+      border-radius: 14px;
+      color: inherit;
+      text-decoration: none;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 10px 25px rgba(34, 87, 115, .08);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    a.report:hover, a.report:focus-visible { transform: translateY(-3px); border-color: #3498db; box-shadow: 0 14px 30px rgba(34, 87, 115, .16); }
+    .report-type { display: block; color: #2471a3; font-size: .77rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .report h2 { margin: .5rem 0; font-size: 1.3rem; }
+    .report p { margin: 0; color: #607987; line-height: 1.5; }
+    .arrow { display: block; margin-top: 1.15rem; color: #2471a3; font-weight: 700; }
+    footer { margin-top: 1.35rem; color: #718793; font-size: .82rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">CALIGO project</div>
+    <h1>Report viewer</h1>
+    <p class="intro">Select the report you would like to review.</p>
+    <section class="reports" aria-label="Available reports">
+      <a class="report" href="public_insilico.cohort.html">
+        <span class="report-type">Cohort report</span>
+        <h2>Public in silico cohort</h2>
+        <p>Cohort-level review of small-variant candidates and structural-variant evidence.</p>
+        <span class="arrow">Open cohort report &#8594;</span>
+      </a>
+      <a class="report" href="INSILICO_001.prioritized.html">
+        <span class="report-type">Singleton report</span>
+        <h2>INSILICO_001</h2>
+        <p>Prioritized variant report for the individual sample.</p>
+        <span class="arrow">Open singleton report &#8594;</span>
+      </a>
+    </section>
+    <footer>Shared for CALIGO project presentations.</footer>
+  </main>
+</body>
+</html>

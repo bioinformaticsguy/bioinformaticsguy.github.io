@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CALIGO Report</title>
+<style>
+:root {
+  --tier1:#c0392b; --tier2:#e74c3c; --tier3:#e67e22; --tier4:#f39c12;
+  --tier5:#f1c40f; --tier6:#27ae60; --tier7:#2ecc71; --tier8:#3498db;
+  --tier-none:#95a5a6;
+}
+*{box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  line-height:1.5;color:#2c3e50;background:#f5f6fa;margin:0;padding:20px;font-size:14px;}
+.container{max-width:1800px;margin:0 auto;background:white;border-radius:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:25px;}
+header{border-bottom:2px solid #3498db;padding-bottom:15px;margin-bottom:20px;}
+h1{color:#2c3e50;margin:0;font-size:1.5em;}
+.meta{color:#7f8c8d;font-size:0.85em;margin-top:8px;line-height:1.8;}
+.meta strong{color:#34495e;}
+h2{color:#34495e;font-size:1.2em;margin:20px 0 10px 0;}
+
+/* Report tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid #dfe6e9;margin:18px 0 20px;}
+.tab-btn{appearance:none;border:1px solid #dfe6e9;border-bottom:none;background:#f8f9fa;
+  color:#34495e;padding:9px 16px;border-radius:6px 6px 0 0;cursor:pointer;
+  font-size:0.9em;font-weight:600;}
+.tab-btn:hover{background:#eef2f5;}
+.tab-btn.active{background:white;color:#2c3e50;border-top:3px solid #3498db;
+  padding-top:7px;position:relative;top:1px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.snv-summary{display:flex;flex-wrap:wrap;gap:8px 18px;background:#f8f9fa;
+  border:1px solid #e5e9ec;border-radius:6px;padding:12px 14px;margin-bottom:18px;
+  color:#34495e;font-size:0.9em;}
+.snv-summary strong{color:#2c3e50;}
+
+/* IGV report tab */
+.igv-frame-wrap{border:1px solid #e5e9ec;border-radius:6px;overflow:hidden;background:#fbfcfd;}
+.igv-frame{display:block;width:100%;height:760px;border:0;background:white;}
+.igv-open-link{display:inline-block;margin:0 0 14px;padding:7px 11px;border:1px solid #3498db;
+  border-radius:4px;color:#2471a3;text-decoration:none;font-weight:600;background:#eef6fc;cursor:pointer;}
+.igv-open-link:hover{background:#dff0fb;}
+.igv-open-link.secondary{border-color:#bdc3c7;color:#566573;background:#f8f9fa;margin-left:6px;}
+.igv-open-link.secondary:hover{background:#ecf0f1;}
+
+/* QC tab */
+.quality-assessment{border-radius:6px;padding:16px 18px;margin-bottom:20px;border:1px solid;}
+.quality-assessment.pass{background:#f1fbf5;border-color:#bfe8cf;color:#1f6b3a;}
+.quality-assessment.warning{background:#fff5f5;border-color:#f1c0c0;color:#922b21;}
+.qa-header{display:flex;align-items:center;gap:9px;font-size:1.05em;margin-bottom:8px;}
+.qa-indicator{width:12px;height:12px;border-radius:50%;display:inline-block;background:#27ae60;}
+.quality-assessment.warning .qa-indicator{background:#c0392b;}
+.quality-assessment p{margin:4px 0;color:inherit;}
+.quality-assessment ul{margin:8px 0 0 20px;padding:0;}
+.quality-assessment li{margin:4px 0;}
+.qc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px;}
+.qc-card{border:1px solid #e5e9ec;border-radius:6px;background:#fbfcfd;padding:14px;}
+.qc-label{font-size:0.78em;text-transform:uppercase;color:#7f8c8d;font-weight:700;letter-spacing:0.02em;}
+.qc-value{font-size:1.35em;color:#2c3e50;font-weight:700;margin-top:5px;word-break:break-word;}
+.qc-sub{font-size:0.85em;color:#7f8c8d;margin-top:3px;}
+.qc-source{font-size:0.84em;color:#7f8c8d;margin:-8px 0 18px;}
+.coverage-stats-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+.qc-table{width:100%;border-collapse:collapse;border:1px solid #e5e9ec;border-radius:6px;overflow:hidden;}
+.qc-table th{background:#34495e;color:white;text-align:left;padding:9px 10px;font-weight:600;}
+.qc-table td{padding:8px 10px;border-bottom:1px solid #ecf0f1;vertical-align:top;}
+.qc-table tr:last-child td{border-bottom:none;}
+.metadata-table{margin-bottom:18px;}
+.metadata-table td:last-child{word-break:break-word;}
+.qc-status{display:inline-block;padding:2px 7px;border-radius:3px;font-weight:600;font-size:0.82em;}
+.qc-status.pass{background:#27ae60;color:white;}
+.qc-status.info{background:#3498db;color:white;}
+.qc-status.warn{background:#f39c12;color:#333;}
+.coverage-panel,.sv-dist-panel{border:1px solid #e5e9ec;border-radius:6px;background:#fbfcfd;padding:14px;margin-bottom:18px;}
+.coverage-svg{display:block;width:100%;height:auto;max-height:320px;}
+.sv-dist-svg{display:block;width:100%;height:auto;max-height:240px;}
+.coverage-plot-bg{fill:#ffffff;stroke:#e5e9ec;}
+.sex-chr-band{fill:rgba(135,206,250,0.20);}
+.cov-grid{stroke:#edf1f4;stroke-width:1;}
+.cov-title{font-weight:700;fill:#34495e;font-size:13px;}
+.cov-axis-label{fill:#7f8c8d;font-size:11px;}
+.coverage-bar-row{display:grid;grid-template-columns:52px minmax(120px,1fr) 62px;gap:8px;align-items:center;margin:6px 0;}
+.coverage-chrom{font-weight:600;color:#34495e;font-size:0.85em;}
+.coverage-track{height:12px;background:#e9ecef;border-radius:3px;overflow:hidden;}
+.coverage-fill{height:100%;background:#3498db;border-radius:3px;}
+.coverage-fill.sex-chr{background:#c0392b;}
+.coverage-value{font-size:0.82em;color:#7f8c8d;text-align:right;}
+.qc-empty{color:#7f8c8d;background:#f8f9fa;border:1px dashed #dfe6e9;border-radius:6px;padding:14px;}
+
+/* Tier chips */
+.tier-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;
+  padding:15px;background:#f8f9fa;border-radius:6px;}
+.tier-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;
+  border-radius:4px;font-size:0.85em;font-weight:500;}
+.tier-chip .count{background:rgba(255,255,255,0.3);padding:1px 6px;border-radius:3px;}
+
+/* Legend */
+.legend-section{background:#f8f9fa;border-radius:6px;padding:15px;margin-bottom:20px;}
+.legend-title{font-weight:600;margin-bottom:10px;}
+.legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;}
+.legend-group h4{margin:0 0 8px 0;font-size:0.85em;color:#7f8c8d;text-transform:uppercase;}
+.legend-items{display:flex;flex-wrap:wrap;gap:6px;}
+.legend-item{display:inline-flex;align-items:center;gap:4px;font-size:0.8em;}
+.legend-color{width:12px;height:12px;border-radius:2px;border:1px solid rgba(0,0,0,0.2);}
+
+/* Tier criteria collapsible */
+.tier-criteria{background:#f8f9fa;border-radius:6px;margin-bottom:20px;border:1px solid #e9ecef;}
+.tier-criteria-header{padding:12px 15px;cursor:pointer;display:flex;
+  justify-content:space-between;align-items:center;font-weight:600;color:#34495e;}
+.tier-criteria-header:hover{background:#e9ecef;border-radius:6px;}
+.tier-criteria-toggle{font-size:0.8em;color:#7f8c8d;transition:transform 0.2s;}
+.tier-criteria.open .tier-criteria-toggle{transform:rotate(180deg);}
+.tier-criteria-content{display:none;padding:0 15px 15px 15px;}
+.tier-criteria.open .tier-criteria-content{display:block;}
+.criteria-table{width:100%;border-collapse:collapse;font-size:0.88em;margin-top:10px;}
+.criteria-table td{padding:5px 8px;border-bottom:1px solid #ecf0f1;vertical-align:middle;}
+
+/* Table controls */
+.table-controls{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+.table-filter-label{display:flex;align-items:center;gap:5px;color:#52616b;font-size:.82em;font-weight:600;white-space:nowrap;}
+.table-filter-label select,.table-filter-label input{padding:6px 7px;border:1px solid #ccd6dd;border-radius:5px;background:white;color:#263746;}
+.table-filter-label input{width:72px;}
+.active-filters{min-height:20px;margin:-4px 0 10px;color:#62727f;font-size:.8em;}
+.search-box{padding:8px 12px;border:1px solid #ddd;border-radius:4px;font-size:0.9em;width:250px;}
+.search-box:focus{outline:none;border-color:#3498db;}
+.filter-group{display:flex;gap:5px;flex-wrap:wrap;}
+.filter-btn{padding:5px 10px;border:1px solid #ddd;border-radius:4px;
+  background:white;cursor:pointer;font-size:0.8em;}
+.filter-btn:hover{background:#f8f9fa;}
+.filter-btn.active{background:#3498db;color:white;border-color:#3498db;}
+.result-count{color:#7f8c8d;font-size:0.85em;margin-left:auto;}
+
+/* Table */
+.sv-table-hint{margin:-2px 0 8px;color:#566573;font-size:0.83em;}
+.sv-table-wrapper{max-height:70vh;overflow:auto;border:1px solid #ddd;border-radius:6px;
+  scrollbar-gutter:stable both-edges;box-shadow:inset 0 -10px 12px -14px #34495e;}
+.sv-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:0.85em;}
+.sv-table th{background:#34495e;color:white;padding:10px 8px;text-align:left;
+  font-weight:500;white-space:nowrap;position:sticky;top:0;z-index:1;}
+.sv-table th.sortable{cursor:pointer;user-select:none;}
+.sv-table th.sortable::after{content:" \2195";font-size:0.75em;color:#d5dbdb;margin-left:4px;}
+.sv-table th.sort-asc::after{content:" \2191";color:#ecf0f1;}
+.sv-table th.sort-desc::after{content:" \2193";color:#ecf0f1;}
+.sv-table th[title]{border-bottom:1px dashed rgba(255,255,255,0.4);}
+.sv-table th[title]:not(.sortable){cursor:help;}
+.sv-table td{padding:7px 8px;border-bottom:1px solid #ecf0f1;vertical-align:middle;}
+.sv-table tr:hover{background:#f8f9fa;}
+.sv-number{text-align:right;font-variant-numeric:tabular-nums;}
+.sv-gene-list{overflow-wrap:anywhere;}
+.sv-gene-more{display:inline;margin-left:5px;}
+.sv-gene-more summary{display:inline;cursor:pointer;color:#2471a3;font-size:0.9em;}
+.sv-gene-more span{display:block;margin-top:4px;overflow-wrap:anywhere;}
+.gene-tag{display:inline-block;margin:1px;padding:2px 6px;border-radius:3px;font-size:0.82em;font-weight:650;}
+.gene-tag.overlap{background:#fadbd8;color:#922b21;}
+.gene-tag.very-close{background:#f5b7b1;color:#922b21;}
+.gene-tag.close{background:#fdebd0;color:#9c640c;}
+.gene-tag.far{background:#fcf3cf;color:#9a7d0a;}
+
+/* Badges */
+.badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:0.8em;font-weight:500;}
+.tier-badge{min-width:24px;text-align:center;}
+.inh-denovo{background:#e74c3c;color:white;}
+.inh-recessive{background:#9b59b6;color:white;}
+.inh-maternal{background:#3498db;color:white;}
+.inh-other{background:#95a5a6;color:white;}
+.cadd-high{background:#c0392b;color:white;}
+.cadd-moderate{background:#e67e22;color:white;}
+.cadd-low{background:#bdc3c7;color:#333;}
+.gnomad-rare{background:#27ae60;color:white;}
+.gnomad-common{background:#e74c3c;color:white;}
+.gnomad-missing{background:#95a5a6;color:white;}
+.clinvar-path{background:#c0392b;color:white;}
+.clinvar-likely{background:#e74c3c;color:white;}
+.clinvar-vus{background:#f39c12;color:#333;}
+.clinvar-benign{background:#27ae60;color:white;}
+.ctx-lof{background:#922b21;color:white;}
+.ctx-coding{background:#c0392b;color:white;}
+.ctx-exonic{background:#c0392b;color:white;}
+.ctx-intronic{background:#f39c12;color:#333;}
+.ctx-intergenic{background:#bdc3c7;color:#333;}
+.ctx-splice{background:#8e44ad;color:white;}
+.ctx-utr{background:#16a085;color:white;}
+.ctx-noncoding_exon{background:#117864;color:white;}
+.ctx-regulatory{background:#2c7fb8;color:white;}
+.ctx-updownstream{background:#7f8c8d;color:white;}
+.ctx-other{background:#566573;color:white;}
+.goi-yes{background:#8e44ad;color:white;}
+.prox-overlap{background:#c0392b;color:white;}
+.prox-very_close{background:#e74c3c;color:white;}
+.prox-close{background:#e67e22;color:white;}
+.prox-far{background:#f39c12;color:#333;}
+.prox-none{background:#ecf0f1;color:#7f8c8d;}
+.svtype-DEL{background:#fadbd8;color:#922b21;}
+.svtype-DUP{background:#d4e6f1;color:#1a5276;}
+.svtype-INV{background:#e8daef;color:#6c3483;}
+.svtype-INS{background:#d5f5e3;color:#1e8449;}
+.evidence-yes{background:#16a085;color:white;}
+.evidence-no{background:#ecf0f1;color:#7f8c8d;}
+.type-snv{background:#2980b9;color:white;}
+.type-indel{background:#7f8c8d;color:white;}
+.mono{font-family:'SF Mono',Monaco,Consolas,monospace;font-size:0.85em;}
+.genome-link{color:#2471a3;text-decoration:none;border-bottom:1px dotted #2471a3;}
+.genome-link:hover{color:#1b4f72;border-bottom-style:solid;}
+.var-trunc{cursor:help;border-bottom:1px dashed #95a5a6;}
+.no-data{color:#bdc3c7;}
+footer{margin-top:30px;padding-top:15px;border-top:1px solid #ecf0f1;
+  text-align:center;color:#95a5a6;font-size:0.8em;}
+@media (max-width: 900px) {
+  .igv-frame{height:620px;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>CALIGO Report</h1>
+  <div class="meta">
+    <strong>Sample:</strong> INSILICO_001 &nbsp;|&nbsp;
+    <strong>Generated:</strong> 2026-10-04 15:54:58
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Report sections">
+  <button class="tab-btn active" id="tabBtnQc" type="button" role="tab"
+          aria-selected="true" aria-controls="qcPanel" onclick="switchTab('qc')">QC</button>
+  <button class="tab-btn" id="tabBtnSnv" type="button" role="tab"
+          aria-selected="false" aria-controls="snvPanel" onclick="switchTab('snv')">SNV</button>
+  <button class="tab-btn" id="tabBtnSv" type="button" role="tab"
+          aria-selected="false" aria-controls="svPanel" onclick="switchTab('sv')">SV</button>
+
+  <button class="tab-btn" id="tabBtnMeta" type="button" role="tab"
+          aria-selected="false" aria-controls="metaPanel" onclick="switchTab('meta')">Metadata</button>
+</div>
+
+<section id="qcPanel" class="tab-panel active" role="tabpanel" aria-labelledby="tabBtnQc">
+
+<section class="quality-assessment warning">
+  <div class="qa-header">
+    <span class="qa-indicator"></span>
+    <strong>Overall Status: WARNING</strong>
+  </div>
+  <ul><li>Mean coverage is unavailable.</li>
+<li>Chromosomal sex assessment reported: Inconclusive.</li></ul>
+</section>
+
+
+<h2>QC Summary</h2>
+<div class="qc-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Mean coverage</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Mosdepth total row; min ., max .</div>
+  </div>
+  <div class="qc-card">
+    <div class="qc-label">Aligned bases</div>
+    <div class="qc-value">0.00 Gb</div>
+    <div class="qc-sub">Chr1-22, X, and Y from mosdepth summary</div>
+  </div>
+
+</div>
+
+
+<h2>Sequencing Quality</h2>
+<div class="qc-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Total reads</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Total bases</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">GC content</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Q20</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Q30</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Duplication rate</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Adapter content</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Raw sequencing metric</div>
+  </div>
+
+</div>
+<div class="qc-empty">Sequencing quality metrics were not found in MultiQC general stats.</div>
+
+
+
+<h2>Coverage Analysis</h2>
+<div class="qc-grid coverage-stats-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Mean coverage</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Average depth across the callable genome</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Median coverage</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Median depth reported by mosdepth/MultiQC</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Genome &gt;=10x</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Fraction of genome covered at least 10x</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Genome &gt;=20x</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Fraction of genome covered at least 20x</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Genome &gt;=30x</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Fraction of genome covered at least 30x</div>
+  </div>
+
+</div>
+<div class="coverage-panel">
+
+    <svg class="coverage-svg" viewBox="0 0 980 260" role="img" aria-label="Per-chromosome coverage">
+      <rect x="46" y="20" width="916" height="198" class="coverage-plot-bg"/>
+      <rect x="885.7" y="20" width="76.3" height="198" class="sex-chr-band"/>
+      <line x1="46" y1="218.0" x2="962" y2="218.0" class="cov-grid"/><text x="38" y="222.0" text-anchor="end" class="cov-axis-label">0</text><line x1="46" y1="168.5" x2="962" y2="168.5" class="cov-grid"/><text x="38" y="172.5" text-anchor="end" class="cov-axis-label">0</text><line x1="46" y1="119.0" x2="962" y2="119.0" class="cov-grid"/><text x="38" y="123.0" text-anchor="end" class="cov-axis-label">0</text><line x1="46" y1="69.5" x2="962" y2="69.5" class="cov-grid"/><text x="38" y="73.5" text-anchor="end" class="cov-axis-label">1</text><line x1="46" y1="20.0" x2="962" y2="20.0" class="cov-grid"/><text x="38" y="24.0" text-anchor="end" class="cov-axis-label">1</text>
+      <polyline points="46.0,218.0 85.8,218.0 125.7,218.0 165.5,218.0 205.3,218.0 245.1,218.0 285.0,218.0 324.8,218.0 364.6,218.0 404.4,218.0 444.3,218.0 484.1,218.0 523.9,218.0 563.7,218.0 603.6,218.0 643.4,218.0 683.2,218.0 723.0,218.0 762.9,218.0 802.7,218.0 842.5,218.0 882.3,218.0 922.2,218.0 962.0,218.0" fill="none" stroke="#3498db" stroke-width="2.5"/>
+      <circle cx="46.0" cy="218.0" r="4.5" fill="#3498db"><title>chr1: 0.0x</title></circle><circle cx="85.8" cy="218.0" r="4.5" fill="#3498db"><title>chr2: 0.0x</title></circle><circle cx="125.7" cy="218.0" r="4.5" fill="#3498db"><title>chr3: 0.0x</title></circle><circle cx="165.5" cy="218.0" r="4.5" fill="#3498db"><title>chr4: 0.0x</title></circle><circle cx="205.3" cy="218.0" r="4.5" fill="#3498db"><title>chr5: 0.0x</title></circle><circle cx="245.1" cy="218.0" r="4.5" fill="#3498db"><title>chr6: 0.0x</title></circle><circle cx="285.0" cy="218.0" r="4.5" fill="#3498db"><title>chr7: 0.0x</title></circle><circle cx="324.8" cy="218.0" r="4.5" fill="#3498db"><title>chr8: 0.0x</title></circle><circle cx="364.6" cy="218.0" r="4.5" fill="#3498db"><title>chr9: 0.0x</title></circle><circle cx="404.4" cy="218.0" r="4.5" fill="#3498db"><title>chr10: 0.0x</title></circle><circle cx="444.3" cy="218.0" r="4.5" fill="#3498db"><title>chr11: 0.0x</title></circle><circle cx="484.1" cy="218.0" r="4.5" fill="#3498db"><title>chr12: 0.0x</title></circle><circle cx="523.9" cy="218.0" r="4.5" fill="#3498db"><title>chr13: 0.0x</title></circle><circle cx="563.7" cy="218.0" r="4.5" fill="#3498db"><title>chr14: 0.0x</title></circle><circle cx="603.6" cy="218.0" r="4.5" fill="#3498db"><title>chr15: 0.0x</title></circle><circle cx="643.4" cy="218.0" r="4.5" fill="#3498db"><title>chr16: 0.0x</title></circle><circle cx="683.2" cy="218.0" r="4.5" fill="#3498db"><title>chr17: 0.0x</title></circle><circle cx="723.0" cy="218.0" r="4.5" fill="#3498db"><title>chr18: 0.0x</title></circle><circle cx="762.9" cy="218.0" r="4.5" fill="#3498db"><title>chr19: 0.0x</title></circle><circle cx="802.7" cy="218.0" r="4.5" fill="#3498db"><title>chr20: 0.0x</title></circle><circle cx="842.5" cy="218.0" r="4.5" fill="#3498db"><title>chr21: 0.0x</title></circle><circle cx="882.3" cy="218.0" r="4.5" fill="#3498db"><title>chr22: 0.0x</title></circle><circle cx="922.2" cy="218.0" r="4.5" fill="#c0392b"><title>chrX: 0.0x</title></circle><circle cx="962.0" cy="218.0" r="4.5" fill="#c0392b"><title>chrY: 0.0x</title></circle>
+      <text x="46.0" y="246" text-anchor="middle" class="cov-axis-label">1</text><text x="85.8" y="246" text-anchor="middle" class="cov-axis-label">2</text><text x="125.7" y="246" text-anchor="middle" class="cov-axis-label">3</text><text x="165.5" y="246" text-anchor="middle" class="cov-axis-label">4</text><text x="205.3" y="246" text-anchor="middle" class="cov-axis-label">5</text><text x="245.1" y="246" text-anchor="middle" class="cov-axis-label">6</text><text x="285.0" y="246" text-anchor="middle" class="cov-axis-label">7</text><text x="324.8" y="246" text-anchor="middle" class="cov-axis-label">8</text><text x="364.6" y="246" text-anchor="middle" class="cov-axis-label">9</text><text x="404.4" y="246" text-anchor="middle" class="cov-axis-label">10</text><text x="444.3" y="246" text-anchor="middle" class="cov-axis-label">11</text><text x="484.1" y="246" text-anchor="middle" class="cov-axis-label">12</text><text x="523.9" y="246" text-anchor="middle" class="cov-axis-label">13</text><text x="563.7" y="246" text-anchor="middle" class="cov-axis-label">14</text><text x="603.6" y="246" text-anchor="middle" class="cov-axis-label">15</text><text x="643.4" y="246" text-anchor="middle" class="cov-axis-label">16</text><text x="683.2" y="246" text-anchor="middle" class="cov-axis-label">17</text><text x="723.0" y="246" text-anchor="middle" class="cov-axis-label">18</text><text x="762.9" y="246" text-anchor="middle" class="cov-axis-label">19</text><text x="802.7" y="246" text-anchor="middle" class="cov-axis-label">20</text><text x="842.5" y="246" text-anchor="middle" class="cov-axis-label">21</text><text x="882.3" y="246" text-anchor="middle" class="cov-axis-label">22</text><text x="922.2" y="246" text-anchor="middle" class="cov-axis-label">X</text><text x="962.0" y="246" text-anchor="middle" class="cov-axis-label">Y</text>
+      <text x="46" y="14" class="cov-title">Mean coverage by chromosome</text>
+      <text x="962" y="14" text-anchor="end" class="cov-axis-label">chrX/chrY highlighted</text>
+    </svg>
+    
+</div>
+
+
+
+<h2>Chromosomal Sex Assessment</h2>
+<div class="qc-grid sex-assessment-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Predicted sex</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">.</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">chrX coverage</div>
+    <div class="qc-value">0.00x</div>
+    <div class="qc-sub">Mean coverage from mosdepth</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">chrY coverage</div>
+    <div class="qc-value">0.00x</div>
+    <div class="qc-sub">Mean coverage from mosdepth</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">chrX/autosome ratio</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Autosome mean: 0.00x</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">chrY/autosome ratio</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Autosome mean: 0.00x</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Assessment status</div>
+    <div class="qc-value"><span class="qc-status warn">Inconclusive</span></div>
+    <div class="qc-sub">Predicted sex was not resolved by the available sex-chromosome evidence.</div>
+  </div>
+
+</div>
+
+
+
+<h2>Small Variant Statistics</h2>
+<div class="qc-grid small-variant-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Total SNVs</div>
+    <div class="qc-value">2</div>
+    <div class="qc-sub">Single-nucleotide records in the VCF</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Total Indels</div>
+    <div class="qc-value">1</div>
+    <div class="qc-sub">Insertion/deletion records in the VCF</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">PASS SNVs</div>
+    <div class="qc-value">2</div>
+    <div class="qc-sub">SNV records with FILTER=PASS</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">PASS Indels</div>
+    <div class="qc-value">1</div>
+    <div class="qc-sub">Indel records with FILTER=PASS</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Ti/Tv ratio</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Transitions divided by transversions</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">Het/Hom ratio</div>
+    <div class="qc-value">.</div>
+    <div class="qc-sub">Proband heterozygous calls divided by homozygous-alt calls</div>
+  </div>
+
+</div>
+
+
+
+<h2>Structural Variant Statistics</h2>
+<div class="qc-grid sv-stats-grid">
+
+  <div class="qc-card">
+    <div class="qc-label">Total SVs</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">All structural variant records</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">PASS SVs</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Structural variants with FILTER=PASS</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">DEL count</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Deletion records</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">DUP count</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Duplication records</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">INV count</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Inversion records</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">INS count</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Insertion records</div>
+  </div>
+
+  <div class="qc-card">
+    <div class="qc-label">BND count</div>
+    <div class="qc-value">0</div>
+    <div class="qc-sub">Breakend records</div>
+  </div>
+
+</div>
+<div class="sv-dist-panel">
+<div class="qc-empty">No structural variant type distribution available.</div>
+</div>
+<div class="qc-empty">Structural variant VCF was not found in manifest QC artifacts.</div>
+
+</section>
+
+<section id="snvPanel" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnSnv">
+<h2>SNV Summary</h2>
+
+<div class="snv-summary">
+  <span><strong>Mode:</strong> Singleton</span>
+  <span><strong>Total SNVs in file:</strong> 3</span>
+  <span><strong>After gnomAD filter (AF &le;0.001):</strong> 3</span>
+  <span><strong>Tiered variants:</strong> 3</span>
+  <span><strong>CADD thresholds:</strong> high &ge;25.0, moderate &ge;20.0, low &lt;20.0</span>
+  <span><strong>gnomAD filter:</strong> AF &le;0.001</span>
+</div>
+
+
+<h2>Tier Summary</h2>
+<div class="tier-summary">
+<span class="tier-chip t1" style="background:#c0392b;color:white">Tier 1 <span class="count">2</span></span>
+<span class="tier-chip t2" style="background:#e74c3c;color:white">Tier 2 <span class="count">0</span></span>
+<span class="tier-chip t3" style="background:#e67e22;color:white">Tier 3 <span class="count">1</span></span>
+<span class="tier-chip t4" style="background:#f39c12;color:#333">Tier 4 <span class="count">0</span></span>
+</div>
+
+<div class="legend-section">
+  <div class="legend-title">Legend</div>
+  <div class="legend-grid">
+    <div class="legend-group">
+      <h4>Inheritance</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>De novo</span>
+        <span class="legend-item"><span class="legend-color" style="background:#9b59b6"></span>Recessive</span>
+        <span class="legend-item"><span class="legend-color" style="background:#3498db"></span>Maternal chrX</span>
+        <span class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Other</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>CADD PHRED</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>High &ge;25.0</span>
+        <span class="legend-item"><span class="legend-color" style="background:#e67e22"></span>Moderate &ge;20.0</span>
+        <span class="legend-item"><span class="legend-color" style="background:#bdc3c7"></span>Low &lt;20.0</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>gnomAD AF</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#27ae60"></span>Rare &le;0.001</span>
+        <span class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Common</span>
+        <span class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Not available</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>ClinVar</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>Pathogenic</span>
+        <span class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Likely path.</span>
+        <span class="legend-item"><span class="legend-color" style="background:#f39c12"></span>VUS</span>
+        <span class="legend-item"><span class="legend-color" style="background:#27ae60"></span>Benign</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>VEP Consequence</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#8e44ad"></span>Splice</span>
+        <span class="legend-item"><span class="legend-color" style="background:#922b21"></span>LoF</span>
+        <span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>Coding</span>
+        <span class="legend-item"><span class="legend-color" style="background:#16a085"></span>UTR</span>
+        <span class="legend-item"><span class="legend-color" style="background:#f39c12"></span>Intronic</span>
+        <span class="legend-item"><span class="legend-color" style="background:#117864"></span>ncRNA exon</span>
+        <span class="legend-item"><span class="legend-color" style="background:#2c7fb8"></span>Regulatory</span>
+        <span class="legend-item"><span class="legend-color" style="background:#7f8c8d"></span>Up/downstream</span>
+        <span class="legend-item"><span class="legend-color" style="background:#bdc3c7"></span>Intergenic</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>Type</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#2980b9"></span>SNV</span>
+        <span class="legend-item"><span class="legend-color" style="background:#7f8c8d"></span>Indel</span>
+      </div>
+    </div>
+    <div class="legend-group">
+      <h4>Synthetic DSD demonstration panel Proximity</h4>
+      <div class="legend-items">
+        <span class="legend-item"><span class="legend-color" style="background:#8e44ad"></span>Overlap</span>
+        <span class="legend-item"><span class="legend-color" style="background:#2471a3"></span>Very Close &lt;10 kb</span>
+        <span class="legend-item"><span class="legend-color" style="background:#27ae60"></span>Close &lt;100 kb</span>
+        <span class="legend-item"><span class="legend-color" style="background:#95a5a6"></span>Far 100 kb&#8209;1 Mb</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tier-criteria" id="tierCriteria">
+  <div class="tier-criteria-header" onclick="toggleCriteria()">
+    <span>Tier Criteria (Singleton mode)</span>
+    <span class="tier-criteria-toggle">&#9660;</span>
+  </div>
+  <div class="tier-criteria-content">
+    <table class="criteria-table">
+      <tbody><tr><td><span class="badge tier-badge" style="background:#c0392b;color:white;min-width:24px;text-align:center;">1</span></td><td style="font-size:0.85em;padding:6px 8px;">ClinVar Pathogenic + any Synthetic DSD demonstration panel involvement &nbsp;|&nbsp; Synthetic DSD demonstration panel overlap + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#e74c3c;color:white;min-width:24px;text-align:center;">2</span></td><td style="font-size:0.85em;padding:6px 8px;">Synthetic DSD demonstration panel overlap + moderate CADD &nbsp;|&nbsp; Synthetic DSD demonstration panel very close (&lt;10 kb) + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#e67e22;color:white;min-width:24px;text-align:center;">3</span></td><td style="font-size:0.85em;padding:6px 8px;">Synthetic DSD demonstration panel very close/close + moderate CADD &nbsp;|&nbsp; Synthetic DSD demonstration panel far + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#f39c12;color:#333;min-width:24px;text-align:center;">4</span></td><td style="font-size:0.85em;padding:6px 8px;">ClinVar Pathogenic (no Synthetic DSD demonstration panel) &nbsp;|&nbsp; Non-Synthetic DSD demonstration panel + exonic/intronic + high/moderate CADD</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<h2>Variants (<span id="shownCount">0</span> shown)</h2>
+<div class="table-controls">
+  <input class="search-box" type="text" id="searchBox"
+         placeholder="Search gene, position, ClinVar&hellip;" oninput="applyFilters()">
+  <div class="filter-group">
+    <button class="filter-btn active" data-tier="0" onclick="filterTier(0,this)">All</button>
+<button class="filter-btn" data-tier="1" onclick="filterTier(1,this)">Tier 1 (2)</button>
+<button class="filter-btn" data-tier="3" onclick="filterTier(3,this)">Tier 3 (1)</button>
+  </div>
+  <label class="table-filter-label">Type <select id="snvTypeFilter" onchange="applyFilters()"><option value="">All</option><option value="SNV">SNV</option><option value="INDEL">Indel</option></select></label>
+  <label class="table-filter-label">CADD ≥ <input id="snvCaddMin" type="number" min="0" step="1" placeholder="any" oninput="applyFilters()"></label>
+  <label class="table-filter-label">gnomAD ≤ <input id="snvGnomadMax" type="number" min="0" step="any" placeholder="any" oninput="applyFilters()"></label>
+  <button class="filter-btn" type="button" onclick="resetSnvFilters()">Reset filters</button>
+  <span class="result-count" id="resultCount"></span>
+</div>
+<div class="active-filters" id="snvActiveFilters">Filters: none</div>
+
+<div class="sv-table-wrapper">
+<table class="sv-table" id="variantTable">
+<thead>
+<tr>
+  <th class="sortable" onclick="sortTable('tier')">Tier</th>
+  <th class="sortable" onclick="sortTable('chrom_pos')">Location</th>
+  <th class="sortable" onclick="sortTable('vtype')">Type</th>
+  <th>Variant</th>
+  <th class="sortable" onclick="sortTable('inh')">Inheritance</th>
+  <th class="sortable" onclick="sortTable('gene')">Gene</th>
+  <th class="sortable" onclick="sortTable('consequence_category')" title="VEP-only consequence category. Hover over a badge to see the exact VEP consequence, impact, and transcript-selection details.">Consequence &#9432;</th>
+  <th class="sortable" onclick="sortTable('vep_feature')">Transcript</th>
+  <th class="sortable" onclick="sortTable('gene')">Synthetic DSD demonstration panel</th>
+  <th class="sortable" onclick="sortTable('prox')" title="Synthetic DSD demonstration panel proximity: distance from variant to the nearest panel-gene body. Overlap = inside a panel gene; Very Close = &lt;10 kb; Close = &lt;100 kb; Far = 100 kb&#8209;1 Mb">Synthetic DSD demonstration panel Proximity &#9432;</th>
+  <th>ClinVar</th>
+  <th class="sortable" onclick="sortTable('gnomad')">gnomAD AF</th>
+  <th class="sortable" onclick="sortTable('cadd_p')">CADD PHRED</th>
+  
+  <th class="sortable" onclick="sortTable('gt_proband')" title="INSILICO_001">GT Proband</th>
+</tr>
+</thead>
+<tbody id="variantTableBody"></tbody>
+</table>
+</div>
+</section>
+
+<section id="svPanel" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnSv">
+<h2>Structural Variants</h2>
+<div class="snv-summary"><span><strong>Prioritized SVs:</strong> 1</span><span><strong>Mode:</strong> Singleton</span><span><strong>CADD-SV scored:</strong> 1/1</span><span>Tiered from inheritance, Synthetic DSD demonstration panel proximity, CADD-SV, ClinVar, and gnomAD-SV evidence. Biallelic-region candidates require in-trans, same-type DEL/DUP calls with substantial reciprocal overlap.</span></div><h2>Tier Summary</h2><div class="tier-summary"><span class="tier-chip t1" style="background:#c0392b;color:white">Tier 1 <span class="count">1</span></span>
+<span class="tier-chip t2" style="background:#e74c3c;color:white">Tier 2 <span class="count">0</span></span>
+<span class="tier-chip t3" style="background:#e67e22;color:white">Tier 3 <span class="count">0</span></span>
+<span class="tier-chip t4" style="background:#f39c12;color:#333">Tier 4 <span class="count">0</span></span></div><div class="legend-section"><div class="legend-title">SV evidence legend</div><div class="legend-grid"><div class="legend-group"><h4>CADD-SV PHRED</h4><div class="legend-items"><span class="legend-item"><span class="legend-color cadd-high"></span>High ≥ 10</span><span class="legend-item"><span class="legend-color cadd-moderate"></span>Moderate ≥ 5</span><span class="legend-item"><span class="legend-color cadd-low"></span>Low &lt; 5</span></div></div><div class="legend-group"><h4>gnomAD-SV AF</h4><div class="legend-items"><span class="legend-item"><span class="legend-color gnomad-rare"></span>Rare ≤ 0.001</span><span class="legend-item"><span class="legend-color gnomad-common"></span>Common</span><span class="legend-item"><span class="legend-color gnomad-missing"></span>Not available</span></div></div><div class="legend-group"><h4>Synthetic DSD demonstration panel proximity</h4><div class="legend-items"><span class="legend-item"><span class="legend-color prox-overlap"></span>Overlap</span><span class="legend-item"><span class="legend-color prox-very_close"></span>Very close &lt;10 kb</span><span class="legend-item"><span class="legend-color prox-close"></span>Close &lt;100 kb</span><span class="legend-item"><span class="legend-color prox-far"></span>Far 100 kb–1 Mb</span></div></div><div class="legend-group"><h4>SV type</h4><div class="legend-items"><span class="legend-item"><span class="legend-color svtype-DEL"></span>Deletion</span><span class="legend-item"><span class="legend-color svtype-DUP"></span>Duplication</span><span class="legend-item"><span class="legend-color svtype-INV"></span>Inversion</span><span class="legend-item"><span class="legend-color svtype-INS"></span>Insertion</span></div></div></div></div><div class="tier-criteria" id="svTierCriteria"><div class="tier-criteria-header" onclick="toggleSvCriteria()"><span>SV Tier Criteria (Singleton mode)</span><span class="tier-criteria-toggle">&#9660;</span></div><div class="tier-criteria-content"><table class="criteria-table"><tbody><tr><td><span class="badge tier-badge" style="background:#c0392b;color:white;min-width:24px;text-align:center;">1</span></td><td style="font-size:0.85em;padding:6px 8px;">ClinVar Pathogenic + any Synthetic DSD demonstration panel involvement &nbsp;|&nbsp; Synthetic DSD demonstration panel overlap + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#e74c3c;color:white;min-width:24px;text-align:center;">2</span></td><td style="font-size:0.85em;padding:6px 8px;">Synthetic DSD demonstration panel overlap + moderate CADD &nbsp;|&nbsp; Synthetic DSD demonstration panel very close (&lt;10 kb) + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#e67e22;color:white;min-width:24px;text-align:center;">3</span></td><td style="font-size:0.85em;padding:6px 8px;">Synthetic DSD demonstration panel very close/close + moderate CADD &nbsp;|&nbsp; Synthetic DSD demonstration panel far + high CADD</td></tr>
+<tr><td><span class="badge tier-badge" style="background:#f39c12;color:#333;min-width:24px;text-align:center;">4</span></td><td style="font-size:0.85em;padding:6px 8px;">ClinVar Pathogenic (no Synthetic DSD demonstration panel) &nbsp;|&nbsp; Non-Synthetic DSD demonstration panel + exonic/intronic + high/moderate CADD</td></tr></tbody></table></div></div><h2>Prioritized Structural Variants</h2><div class="table-controls"><input class="search-box" id="svSearchBox" type="search" placeholder="Search gene, position, ClinVar…" oninput="applySvFilters()"><div class="filter-group"><button class="filter-btn sv-filter-btn active" type="button" onclick="svFilterTier(0, this)">All</button><button class="filter-btn sv-filter-btn" type="button" onclick="svFilterTier(1, this)">Tier 1 (1)</button></div><label class="table-filter-label">Type <select id="svTypeFilter" onchange="applySvFilters()"><option value="">All</option><option value="DUP">DUP</option></select></label><label class="table-filter-label">Context <select id="svContextFilter" onchange="applySvFilters()"><option value="">All</option><option value="exonic">Exonic</option></select></label><button class="filter-btn" type="button" onclick="resetSvFilters()">Reset filters</button><span class="result-count" id="svResultCount">Variants (1 shown)</span></div><div class="active-filters" id="svActiveFilters">Filters: none</div><p class="sv-table-hint">CADD-SV PHRED is beside Tier. Scroll inside the table for additional evidence columns.</p><div class="sv-table-wrapper" tabindex="0" role="region" aria-label="Prioritized structural variants table"><table class="sv-table"><thead><tr><th class="sortable" onclick="svSort(this, 0, 'number')">Tier</th><th class="sortable" onclick="svSort(this, 1, 'number')">CADD-SV PHRED</th><th class="sortable" onclick="svSort(this, 2, 'text')">Location</th><th class="sortable" onclick="svSort(this, 3, 'text')">Type</th><th class="sortable" onclick="svSort(this, 4, 'number')">Length</th><th class="sortable" onclick="svSort(this, 5, 'text')">Zygosity</th><th class="sortable" onclick="svSort(this, 6, 'text')">Proband GT</th><th class="sortable" onclick="svSort(this, 7, 'text')">Synthetic DSD demonstration panel proximity</th><th class="sortable" onclick="svSort(this, 8, 'text')">Synthetic DSD demonstration panel</th><th class="sortable" onclick="svSort(this, 9, 'text')">Other genes</th><th class="sortable" onclick="svSort(this, 10, 'text')">Context</th><th class="sortable" onclick="svSort(this, 11, 'number')">gnomAD-SV AF</th><th class="sortable" onclick="svSort(this, 12, 'text')">ClinVar pathogenic</th></tr></thead><tbody><tr class="sv-priority-row" data-tier="1" data-type="DUP" data-context="exonic" data-search="chr9 101500 104200 dup 1 2701 overlap nr5a1 nr5a1 exonic 17.8 scored 0.0002 false singleton 0/1 . . het"><td data-sort="1"><span class="badge tier-badge" style="background:#c0392b;color:white;">1</span></td><td class="sv-number" data-sort="17.8"><span class="badge cadd-low">17.8</span></td><td data-sort="chr9:101500-104200"><span class="mono">chr9:101500-104200</span></td><td data-sort="DUP"><span class="badge svtype-DUP">DUP</span></td><td data-sort="2701">2701</td><td data-sort="Het">Het</td><td data-sort="0/1"><span class="mono">0/1</span></td><td data-sort="Overlap"><span class="badge prox-overlap">Overlap</span></td><td data-sort="NR5A1"><span class="gene-tag overlap">NR5A1</span></td><td data-sort=""><span class="no-data">.</span></td><td data-sort="exonic"><span class="badge ctx-exonic">exonic</span></td><td data-sort="0.0002"><span class="badge gnomad-rare">0.0002</span></td><td data-sort="False"><span class="badge evidence-no">No</span></td></tr></tbody></table></div>
+</section>
+
+
+
+<section id="metaPanel" class="tab-panel" role="tabpanel" aria-labelledby="tabBtnMeta">
+
+<h2>Run Metadata</h2>
+<table class="qc-table metadata-table">
+  <thead><tr><th>Field</th><th>Value</th></tr></thead>
+  <tbody><tr><td>generated_at</td><td class="mono">2026-10-04 15:54:58</td></tr>
+<tr><td>mode</td><td class="mono">Singleton</td></tr>
+<tr><td>sample</td><td class="mono">INSILICO_001</td></tr></tbody>
+</table>
+
+<h2>Software Inventory</h2>
+<table class="qc-table metadata-table">
+  <thead><tr><th>Tool</th><th>Version / declaration</th><th>Installed via</th><th>Used for</th></tr></thead>
+  <tbody><tr><td>CALIGO</td><td class="mono">aed6fcc</td><td>Git repository</td><td>Pipeline code and report generation</td></tr>
+<tr><td>Python</td><td class="mono">3.12.3</td><td>workflow/envs/python_export.yaml</td><td>Report, export, and helper scripts</td></tr>
+<tr><td>Snakemake</td><td class="mono">Not available in report environment</td><td>User/cluster Snakemake environment; install.sh can create snakemake env</td><td>Workflow execution</td></tr>
+<tr><td>bcftools</td><td class="mono">bcftools=1.23 (declared; runs in annotation.yaml)</td><td>workflow/envs/annotation.yaml and workflow/envs/cadd_annotation.yaml</td><td>VCF annotation and manipulation</td></tr>
+<tr><td>htslib/tabix/bgzip</td><td class="mono">tabix (htslib) 1.19</td><td>workflow/envs/annotation.yaml and workflow/envs/python_export.yaml</td><td>VCF/BED compression and indexing</td></tr>
+<tr><td>pandas</td><td class="mono">pandas (declared; runs in python_export.yaml)</td><td>workflow/envs/python_export.yaml</td><td>Tabular export/report support</td></tr>
+<tr><td>openpyxl</td><td class="mono">openpyxl (declared; runs in python_export.yaml)</td><td>workflow/envs/python_export.yaml</td><td>Optional Excel export</td></tr>
+<tr><td>pysam</td><td class="mono">pysam (declared; runs in igv_report.yaml)</td><td>workflow/envs/igv_report.yaml</td><td>Top-variant VCF compression/indexing for IGV report</td></tr>
+<tr><td>igv-reports</td><td class="mono">igv-reports=1.16.0 (declared; runs in igv_report.yaml)</td><td>workflow/envs/igv_report.yaml</td><td>Embedded IGV report generation</td></tr>
+<tr><td>Ensembl VEP</td><td class="mono">ensembl-vep=115 (declared; runs in vep.yaml)</td><td>workflow/envs/vep.yaml; cache: not configured</td><td>Transcript consequence annotation</td></tr>
+<tr><td>CADD-scripts</td><td class="mono">v1.7 resources configured by CALIGO</td><td>install.sh / config cadd_scripts_dir</td><td>CADD scoring fallback and CADD data resources</td></tr></tbody>
+</table>
+
+<h2>Manifest Input Files</h2>
+<table class="qc-table metadata-table">
+  <thead><tr><th>Key</th><th>Status</th><th>Size</th><th>Path</th></tr></thead>
+  <tbody><tr><td colspan="4" class="no-data">No files recorded.</td></tr></tbody>
+</table>
+
+<h2>Generated Files</h2>
+<table class="qc-table metadata-table">
+  <thead><tr><th>Key</th><th>Status</th><th>Size</th><th>Path</th></tr></thead>
+  <tbody><tr><td colspan="4" class="no-data">No files recorded.</td></tr></tbody>
+</table>
+
+<h2>Run Resources</h2>
+<table class="qc-table metadata-table">
+  <thead><tr><th>Resource</th><th>Value</th></tr></thead>
+  <tbody><tr><td colspan="2" class="no-data">No metadata recorded.</td></tr></tbody>
+</table>
+
+</section>
+
+<footer>
+  CALIGO &bull; Report generated 2026-10-04 15:54:58
+</footer>
+</div>
+
+<script>
+const VARIANTS = [{"tier": 1, "chrom": "chr9", "pos": 101234, "id": "DEMO_NRF5A1", "ref": "G", "alt": "A", "vtype": "SNV", "inh": "De_novo", "inh_cls": "denovo", "gene": "NR5A1", "exon": ".", "cds": ".", "consequence_category": "coding", "vep_cons": "missense_variant", "vep_impact": ".", "vep_feature": ".", "vep_hgvsc": ".", "vep_hgvsp": ".", "vep_mane": ".", "vep_mane_plus": ".", "vep_selected_by": ".", "goi": false, "goi_dist": ".", "goi_nearest": ".", "prox": "none", "clnsig": "Likely_pathogenic", "clndn": ".", "clnsig_cls": "likely", "gnomad": "0.00002", "gnomad_cls": "rare", "cadd_r": ".", "cadd_p": "29.1", "cadd_cls": "high", "af": ".", "ac": ".", "gt_proband": "0/1", "gt_mother": ".", "gt_father": "."}, {"tier": 1, "chrom": "chrY", "pos": 2786850, "id": "DEMO_SRY", "ref": "C", "alt": "T", "vtype": "SNV", "inh": "Other", "inh_cls": "other", "gene": "SRY", "exon": ".", "cds": ".", "consequence_category": "splice", "vep_cons": "splice_donor_variant", "vep_impact": ".", "vep_feature": ".", "vep_hgvsc": ".", "vep_hgvsp": ".", "vep_mane": ".", "vep_mane_plus": ".", "vep_selected_by": ".", "goi": false, "goi_dist": ".", "goi_nearest": ".", "prox": "none", "clnsig": "Pathogenic", "clndn": ".", "clnsig_cls": "path", "gnomad": "0", "gnomad_cls": "rare", "cadd_r": ".", "cadd_p": "26.4", "cadd_cls": "high", "af": ".", "ac": ".", "gt_proband": "0/1", "gt_mother": ".", "gt_father": "."}, {"tier": 3, "chrom": "chr12", "pos": 534286, "id": "DEMO_INDEL", "ref": "AT", "alt": "A", "vtype": "Indel", "inh": "Other", "inh_cls": "other", "gene": "DEMO_OTHER", "exon": ".", "cds": ".", "consequence_category": "lof", "vep_cons": "frameshift_variant", "vep_impact": ".", "vep_feature": ".", "vep_hgvsc": ".", "vep_hgvsp": ".", "vep_mane": ".", "vep_mane_plus": ".", "vep_selected_by": ".", "goi": false, "goi_dist": ".", "goi_nearest": ".", "prox": "none", "clnsig": "Uncertain_significance", "clndn": ".", "clnsig_cls": "vus", "gnomad": "0.0005", "gnomad_cls": "rare", "cadd_r": ".", "cadd_p": "21.2", "cadd_cls": "moderate", "af": ".", "ac": ".", "gt_proband": "0/1", "gt_mother": ".", "gt_father": "."}];
+const IS_SINGLETON = true;
+const HAS_MOTHER = false;
+const HAS_FATHER = false;
+const HAS_COHORT_CONTEXT = false;
+const UCSC_DB = "hg38";
+const GENE_PANEL_LABEL = "Synthetic DSD demonstration panel";
+const TIER_COLORS = {
+  1:"#c0392b",2:"#e74c3c",3:"#e67e22",4:"#f39c12",
+  5:"#f1c40f",6:"#27ae60",7:"#2ecc71",8:"#3498db"
+};
+const TIER_TEXT_DARK = new Set([4,5]);
+
+let currentSort = {col:'tier', asc:true};
+let currentTier = 0;
+let displayData  = [...VARIANTS];
+
+function switchTab(tab) {
+  ['qc','snv','sv','igv','meta'].forEach(name => {
+    const active = tab === name;
+    const panel = document.getElementById(`${name}Panel`);
+    const btn = document.getElementById(`tabBtn${name.charAt(0).toUpperCase() + name.slice(1)}`);
+    if(panel) panel.classList.toggle('active', active);
+    if(btn) {
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+    }
+  });
+}
+
+function embeddedIgvHtml() {
+  const el = document.getElementById('embeddedIgvReport');
+  if(!el) return '';
+  try {
+    return JSON.parse(el.textContent);
+  } catch(err) {
+    console.error('Could not parse embedded IGV report HTML', err);
+    return '';
+  }
+}
+
+function loadIgvReport() {
+  const frame = document.getElementById('igvFrame');
+  if(!frame || frame.dataset.loaded === 'true') return;
+  const html = embeddedIgvHtml();
+  if(!html) return;
+  frame.srcdoc = html;
+  frame.dataset.loaded = 'true';
+}
+
+function unloadIgvReport() {
+  const frame = document.getElementById('igvFrame');
+  if(!frame) return;
+  frame.removeAttribute('srcdoc');
+  frame.src = 'about:blank';
+  delete frame.dataset.loaded;
+}
+
+function tierBadge(t) {
+  const col = TIER_COLORS[t] || '#95a5a6';
+  const tc  = TIER_TEXT_DARK.has(t) ? '#333' : 'white';
+  return `<span class="badge tier-badge" style="background:${col};color:${tc}">${t}</span>`;
+}
+
+function typeBadge(vtype) {
+  const cls = vtype === 'SNV' ? 'type-snv' : 'type-indel';
+  return `<span class="badge ${cls}">${vtype}</span>`;
+}
+
+function inhBadge(inh, cls) {
+  if(!inh || inh==='.' || inh==='Unknown') return '<span class="no-data">.</span>';
+  return `<span class="badge inh-${cls}">${inh.replace(/_/g,' ')}</span>`;
+}
+
+function caddBadge(val, cls) {
+  if(!val || val==='.') return '<span class="no-data">.</span>';
+  return `<span class="badge cadd-${cls}">${parseFloat(val).toFixed(1)}</span>`;
+}
+
+function gnomadBadge(val, cls) {
+  if(!val || val==='.' || cls==='missing') return '<span class="badge gnomad-missing">N/A</span>';
+  const af = parseFloat(val);
+  if(Number.isNaN(af)) return '<span class="badge gnomad-missing">N/A</span>';
+  const disp = af < 0.0001 ? af.toExponential(2) : af.toFixed(4);
+  return `<span class="badge gnomad-${cls}">${disp}</span>`;
+}
+
+function clinvarBadge(sig, cls, clndn) {
+  if(!sig || sig==='.' || !cls) return '<span class="no-data">.</span>';
+  const labels = {path:'Pathogenic',likely:'Likely path.',vus:'VUS',benign:'Benign'};
+  const tip = clndn && clndn !== '.' ? clndn : sig;
+  return `<span class="badge clinvar-${cls}" title="${tip}">${labels[cls]||sig}</span>`;
+}
+
+function escapeHtml(val) {
+  return String(val).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[ch]));
+}
+
+function consequenceCell(v) {
+  const category = v.consequence_category;
+  if(!category) return '<span class="no-data">.</span>';
+  const labels = {
+    splice:'Splice',
+    lof:'LoF',
+    coding:'Coding',
+    utr:'UTR',
+    intronic:'Intronic',
+    noncoding_exon:'ncRNA exon',
+    regulatory:'Regulatory',
+    updownstream:'Up/downstream',
+    intergenic:'Intergenic',
+    other:'Other'
+  };
+  const detail = [
+    v.vep_cons && v.vep_cons !== '.' ? `VEP: ${v.vep_cons.replace(/_/g,' ')}` : '',
+    v.vep_impact && v.vep_impact !== '.' ? `Impact: ${v.vep_impact}` : '',
+    v.vep_selected_by && v.vep_selected_by !== '.' ? `Selected by: ${v.vep_selected_by.replace(/_/g,' ')}` : ''
+  ].filter(Boolean).join(' | ');
+  return `<span class="badge ctx-${category}" title="${escapeHtml(detail)}">${labels[category]||category}</span>`;
+}
+
+function transcriptCell(v) {
+  if(!v.vep_feature || v.vep_feature==='.') return '<span class="no-data">.</span>';
+  const details = [
+    v.vep_selected_by && v.vep_selected_by !== '.' ? `Selected by: ${v.vep_selected_by.replace(/_/g,' ')}` : '',
+    v.vep_hgvsc && v.vep_hgvsc !== '.' ? `HGVSc: ${v.vep_hgvsc}` : '',
+    v.vep_hgvsp && v.vep_hgvsp !== '.' ? `HGVSp: ${v.vep_hgvsp}` : '',
+    v.vep_mane && v.vep_mane !== '.' ? `MANE Select: ${v.vep_mane}` : '',
+    v.vep_mane_plus && v.vep_mane_plus !== '.' ? `MANE Plus Clinical: ${v.vep_mane_plus}` : ''
+  ].filter(Boolean).join(' | ');
+  return `<span class="mono" title="${escapeHtml(details)}">${v.vep_feature}</span>`;
+}
+
+function proxBadge(prox) {
+  const map = {
+    overlap:    ['Overlap',    '#8e44ad', 'white'],
+    very_close: ['Very Close', '#2471a3', 'white'],
+    close:      ['Close',      '#27ae60', 'white'],
+    far:        ['Far',        '#95a5a6', '#333'],
+  };
+  const entry = map[prox];
+  if(!entry) return '<span class="no-data">.</span>';
+  return `<span class="badge prox-${prox}" style="background:${entry[1]};color:${entry[2]}">${entry[0]}</span>`;
+}
+
+function goiGeneCell(goi, gene, nearest) {
+  if(goi) {
+    const g = (gene && gene !== '.') ? gene : '?';
+    return `<span class="badge goi-yes">${g}</span>`;
+  }
+  if(nearest && nearest !== '.') {
+    return `<span class="badge" style="background:#7f8c8d;color:white;" title="Nearest ${escapeHtml(GENE_PANEL_LABEL)} gene">${nearest} ↗</span>`;
+  }
+  return '<span class="no-data">.</span>';
+}
+
+function loc(v) {
+  const start = Math.max(1, Number(v.pos) - 20);
+  const end = Number(v.pos) + Math.max(String(v.ref || '').length, String(v.alt || '').length, 1) + 20;
+  const position = `${v.chrom}:${start}-${end}`;
+  const href = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${encodeURIComponent(UCSC_DB)}&position=${encodeURIComponent(position)}`;
+  const label = `${v.chrom}:${v.pos.toLocaleString()}`;
+  return `<a class="mono genome-link" href="${href}" target="_blank" rel="noopener noreferrer" title="Open ${position} in UCSC Genome Browser (${UCSC_DB})">${label}</a>`;
+}
+
+function variantCell(v) {
+  const full = v.ref + '>' + v.alt;
+  if(full.length <= 20) {
+    return `<span class="mono">${v.ref}&gt;${v.alt}</span>`;
+  }
+  const trunc = full.substring(0, 10) + '&hellip;';
+  return `<span class="mono var-trunc" title="${full}">${trunc}</span>`;
+}
+
+function gtCell(gt) {
+  if(!gt || gt==='.') return '<span class="no-data">.</span>';
+  return `<span class="mono">${gt}</span>`;
+}
+
+function cohortCountCell(val) {
+  if(val === undefined || val === null || val === '.') return '<span class="no-data">.</span>';
+  return `<span class="mono">${Number(val).toLocaleString()}</span>`;
+}
+
+function cohortAfCell(val) {
+  if(val === undefined || val === null || val === '.') return '<span class="no-data">.</span>';
+  const num = Number(val);
+  if(Number.isNaN(num)) return '<span class="no-data">.</span>';
+  return `<span class="mono">${num.toFixed(3)}</span>`;
+}
+
+function renderRow(v) {
+  let gtCells = `<td>${gtCell(v.gt_proband)}</td>`;
+  if(HAS_MOTHER) gtCells += `<td>${gtCell(v.gt_mother)}</td>`;
+  if(HAS_FATHER) gtCells += `<td>${gtCell(v.gt_father)}</td>`;
+  const cohortCells = HAS_COHORT_CONTEXT
+    ? `<td>${cohortCountCell(v.cohort_count)}</td><td>${cohortAfCell(v.cohort_af)}</td>`
+    : '';
+  return `<tr data-tier="${v.tier}" data-search="${
+    [v.gene, v.chrom, v.pos, v.clnsig, v.clndn, v.inh, v.vtype, v.prox, v.consequence_category,
+     v.vep_cons, v.vep_hgvsc, v.vep_hgvsp, v.vep_feature, v.cohort_count, v.cohort_af].join(' ').toLowerCase()
+  }">
+    <td>${tierBadge(v.tier)}</td>
+    <td>${loc(v)}</td>
+    <td>${typeBadge(v.vtype)}</td>
+    <td>${variantCell(v)}</td>
+    <td>${inhBadge(v.inh, v.inh_cls)}</td>
+    <td><strong>${v.gene==='.'?'<span class="no-data">.</span>':v.gene}</strong></td>
+    <td>${consequenceCell(v)}</td>
+    <td>${transcriptCell(v)}</td>
+    <td>${goiGeneCell(v.goi, v.gene, v.goi_nearest)}</td>
+    <td>${proxBadge(v.prox)}</td>
+    <td>${clinvarBadge(v.clnsig, v.clnsig_cls, v.clndn)}</td>
+    <td>${gnomadBadge(v.gnomad, v.gnomad_cls)}</td>
+    <td>${caddBadge(v.cadd_p, v.cadd_cls)}</td>
+    ${cohortCells}
+    ${gtCells}
+  </tr>`;
+}
+
+function applySort() {
+  const col = currentSort.col;
+  const asc = currentSort.asc ? 1 : -1;
+  displayData.sort((a,b) => {
+    let va, vb;
+    if     (col==='tier')      { va=a.tier;  vb=b.tier; }
+    else if(col==='chrom_pos') {
+      va = a.chrom.replace('chr','').padStart(3,'0')+String(a.pos).padStart(12,'0');
+      vb = b.chrom.replace('chr','').padStart(3,'0')+String(b.pos).padStart(12,'0');
+    }
+    else if(col==='vtype')     { va=a.vtype;  vb=b.vtype; }
+    else if(col==='inh')       { va=a.inh;    vb=b.inh;   }
+    else if(col==='gene')      { va=a.gene;   vb=b.gene;  }
+    else if(col==='gnomad') {
+      va = a.gnomad==='.' ? -1 : parseFloat(a.gnomad)||0;
+      vb = b.gnomad==='.' ? -1 : parseFloat(b.gnomad)||0;
+    }
+    else if(col==='cadd_p') {
+      va = a.cadd_p==='.' ? -1 : parseFloat(a.cadd_p)||0;
+      vb = b.cadd_p==='.' ? -1 : parseFloat(b.cadd_p)||0;
+    }
+    else if(col==='cohort_count') {
+      va = a.cohort_count==='.' ? -1 : Number(a.cohort_count)||0;
+      vb = b.cohort_count==='.' ? -1 : Number(b.cohort_count)||0;
+    }
+    else if(col==='cohort_af') {
+      va = a.cohort_af==='.' ? -1 : Number(a.cohort_af)||0;
+      vb = b.cohort_af==='.' ? -1 : Number(b.cohort_af)||0;
+    }
+    else { va=a[col]; vb=b[col]; }
+    if(va<vb) return -asc;
+    if(va>vb) return  asc;
+    return 0;
+  });
+}
+
+function applyFilters() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const type = document.getElementById('snvTypeFilter')?.value || '';
+  const caddMin = Number.parseFloat(document.getElementById('snvCaddMin')?.value);
+  const gnomadMax = Number.parseFloat(document.getElementById('snvGnomadMax')?.value);
+  let rows = [...VARIANTS];
+  if(currentTier > 0) rows = rows.filter(v => v.tier===currentTier);
+  if(type) rows = rows.filter(v => String(v.vtype || '').toUpperCase() === type);
+  if(Number.isFinite(caddMin)) rows = rows.filter(v => Number.parseFloat(v.cadd_p) >= caddMin);
+  if(Number.isFinite(gnomadMax)) rows = rows.filter(v => Number.parseFloat(v.gnomad) <= gnomadMax);
+  if(search)          rows = rows.filter(v =>
+    [v.gene,v.chrom,String(v.pos),v.clnsig,v.clndn,v.inh,v.vtype,v.consequence_category,
+     v.vep_cons,v.vep_hgvsc,v.vep_hgvsp,v.vep_feature,v.cohort_count,v.cohort_af]
+    .join(' ').toLowerCase().includes(search));
+  displayData = rows;
+  applySort();
+  renderTable();
+  const labels = [];
+  if (currentTier) labels.push(`Tier ${currentTier}`);
+  if (type) labels.push(type);
+  if (Number.isFinite(caddMin)) labels.push(`CADD ≥ ${caddMin}`);
+  if (Number.isFinite(gnomadMax)) labels.push(`gnomAD ≤ ${gnomadMax}`);
+  const active = document.getElementById('snvActiveFilters');
+  if (active) active.textContent = `Filters: ${labels.length ? labels.join(' · ') : 'none'}`;
+}
+
+function resetSnvFilters() {
+  currentTier = 0;
+  ['searchBox', 'snvTypeFilter', 'snvCaddMin', 'snvGnomadMax'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.value = '';
+  });
+  document.querySelectorAll('#snvPanel .filter-btn').forEach((button) => button.classList.toggle('active', button.textContent === 'All'));
+  applyFilters();
+}
+
+function renderTable() {
+  document.getElementById('variantTableBody').innerHTML = displayData.map(renderRow).join('');
+  document.getElementById('shownCount').textContent = displayData.length.toLocaleString();
+  document.getElementById('resultCount').textContent =
+    `${displayData.length.toLocaleString()} of ${VARIANTS.length.toLocaleString()} tiered variants`;
+}
+
+function sortTable(col) {
+  if(currentSort.col===col) currentSort.asc = !currentSort.asc;
+  else { currentSort.col=col; currentSort.asc=true; }
+  document.querySelectorAll('.sv-table th.sortable').forEach(th =>
+    th.classList.remove('sort-asc','sort-desc'));
+  event.target.classList.add(currentSort.asc?'sort-asc':'sort-desc');
+  applySort();
+  renderTable();
+}
+
+function filterTier(tier, btn) {
+  currentTier = tier;
+  document.querySelectorAll('#snvPanel .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function toggleCriteria() {
+  document.getElementById('tierCriteria').classList.toggle('open');
+}
+
+let currentSvTier = 0;
+let currentSvSort = {index: -1, ascending: true};
+
+function svSort(header, index, kind) {
+  const table = header.closest('table');
+  const body = table?.tBodies[0];
+  if (!body) return;
+  const ascending = currentSvSort.index === index ? !currentSvSort.ascending : true;
+  currentSvSort = {index, ascending};
+  const valueFor = (row) => row.cells[index]?.dataset.sort ?? '';
+  [...body.rows].sort((left, right) => {
+    const leftValue = valueFor(left);
+    const rightValue = valueFor(right);
+    if (kind === 'number') {
+      const leftNumber = Number.parseFloat(leftValue);
+      const rightNumber = Number.parseFloat(rightValue);
+      const leftMissing = Number.isNaN(leftNumber);
+      const rightMissing = Number.isNaN(rightNumber);
+      if (leftMissing || rightMissing) {
+        if (leftMissing && rightMissing) return 0;
+        return leftMissing ? 1 : -1;
+      }
+      return ascending ? leftNumber - rightNumber : rightNumber - leftNumber;
+    }
+    const comparison = leftValue.localeCompare(rightValue, undefined, {numeric: true, sensitivity: 'base'});
+    return ascending ? comparison : -comparison;
+  }).forEach((row) => body.appendChild(row));
+  table.querySelectorAll('th.sortable').forEach((cell) => cell.classList.remove('sort-asc', 'sort-desc'));
+  header.classList.add(ascending ? 'sort-asc' : 'sort-desc');
+}
+
+function applySvFilters() {
+  const search = (document.getElementById('svSearchBox')?.value || '').trim().toLowerCase();
+  const type = document.getElementById('svTypeFilter')?.value || '';
+  const context = document.getElementById('svContextFilter')?.value || '';
+  let shown = 0;
+  document.querySelectorAll('.sv-priority-row').forEach(row => {
+    const visible = (currentSvTier === 0 || Number(row.dataset.tier) === currentSvTier)
+      && (!search || row.dataset.search.includes(search))
+      && (!type || row.dataset.type === type)
+      && (!context || row.dataset.context === context);
+    row.hidden = !visible;
+    if(visible) shown += 1;
+  });
+  const count = document.getElementById('svResultCount');
+  if(count) count.textContent = `Variants (${shown.toLocaleString()} shown)`;
+  const labels = [];
+  if (currentSvTier) labels.push(`Tier ${currentSvTier}`);
+  if (type) labels.push(type);
+  if (context) labels.push(context);
+  const active = document.getElementById('svActiveFilters');
+  if (active) active.textContent = `Filters: ${labels.length ? labels.join(' · ') : 'none'}`;
+}
+
+function resetSvFilters() {
+  currentSvTier = 0;
+  ['svSearchBox', 'svTypeFilter', 'svContextFilter'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.value = '';
+  });
+  document.querySelectorAll('.sv-filter-btn').forEach((button) => button.classList.toggle('active', button.textContent === 'All'));
+  applySvFilters();
+}
+
+function svFilterTier(tier, btn) {
+  currentSvTier = tier;
+  document.querySelectorAll('.sv-filter-btn').forEach(button => button.classList.remove('active'));
+  btn.classList.add('active');
+  applySvFilters();
+}
+
+function toggleSvCriteria() {
+  document.getElementById('svTierCriteria').classList.toggle('open');
+}
+
+applyFilters();
+</script>
+</body>
+</html>

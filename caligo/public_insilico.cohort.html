@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>CALIGO Cohort Report - public_insilico_demo</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 20px; font: 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif; color: #2c3e50; background: #f5f6fa; }
+.report-loading { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(245,246,250,.96); color: #34495e; transition: opacity .18s ease; }
+.report-loading.is-ready { opacity: 0; pointer-events: none; }
+.report-loading-card { width: min(380px, 100%); padding: 22px; border: 1px solid #d7e2e8; border-radius: 9px; background: white; box-shadow: 0 10px 25px rgba(44,62,80,.14); }
+.report-loading-title { margin: 0; color: #2c3e50; font-size: 1rem; font-weight: 700; }
+.report-loading-status { min-height: 1.5em; margin: 4px 0 14px; color: #667985; font-size: .82rem; }
+.report-loading-track { height: 8px; overflow: hidden; border-radius: 99px; background: #e6eef2; }
+.report-loading-bar { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#2471a3,#4ba3d3); transform: scaleX(.12); transform-origin: left; animation: report-loading-progress 9s cubic-bezier(.2,.7,.25,1) forwards; }
+.report-loading.is-ready .report-loading-bar { animation: none; transform: scaleX(1); }
+.report-loading-note { margin: 11px 0 0; color: #7a8b95; font-size: .73rem; }
+@keyframes report-loading-progress { 0% { transform: scaleX(.12); } 55% { transform: scaleX(.66); } 100% { transform: scaleX(.88); } }
+main { max-width: 1800px; margin: 0 auto; padding: 25px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.10); }
+header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; padding-bottom: 16px; border-bottom: 2px solid #3498db; }
+h1 { margin: 0; color: #2c3e50; font-size: 1.65rem; }
+.report-meta { color: #7f8c8d; font-size: .88rem; text-align: right; }
+h2 { margin: 26px 0 12px; color: #34495e; font-size: 1.2rem; }
+h3 { color: #34495e; }
+.muted { color: #7f8c8d; }
+.snv-summary { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 18px 0; padding: 12px 14px; color: #34495e; font-size: .9em; background: #f8f9fa; border: 1px solid #e5e9ec; border-radius: 6px; }
+.snv-summary strong { color: #2c3e50; }
+.plot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 12px 0 18px; }
+.plot-card { border: 1px solid #e5e9ec; border-radius: 7px; background: #fbfcfd; padding: 15px; }
+.plot-card h3 { margin: 0 0 12px; font-size: 1rem; }
+.pie-wrap { display: grid; grid-template-columns: 145px 1fr; gap: 16px; align-items: center; }
+.pie { width: 140px; height: 140px; border: 1px solid #e5e9ec; border-radius: 50%; }
+.legend-row { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; align-items: center; margin: 7px 0; font-size: .86rem; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+.legend-section { margin: 12px 0 18px; padding: 15px; border: 1px solid #e5e9ec; border-radius: 7px; background: #f8f9fa; }
+.legend-title { margin-bottom: 10px; font-weight: 700; }
+.legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr)); gap: 14px; }
+.legend-group h4 { margin: 0 0 8px; color: #7f8c8d; font-size: .78rem; letter-spacing: .02em; text-transform: uppercase; }
+.legend-items,.filter-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.legend-item { display: inline-flex; gap: 4px; align-items: center; font-size: .82rem; }
+.legend-color { width: 12px; height: 12px; border: 1px solid rgba(0,0,0,.2); border-radius: 2px; }
+.bar-row { display: grid; grid-template-columns: minmax(115px, 160px) 1fr minmax(68px, auto); gap: 10px; align-items: center; margin: 9px 0; }
+.bar-label,.bar-value { font-size: .84rem; }
+.bar-label { overflow-wrap: anywhere; }
+.bar-track { height: 12px; overflow: hidden; border-radius: 3px; background: #e9ecef; }
+.bar-fill { height: 100%; border-radius: 3px; background: #3498db; }
+.bar-value { text-align: right; color: #566573; font-variant-numeric: tabular-nums; }
+.info { display: inline-grid; width: 16px; height: 16px; place-items: center; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-size: 11px; font-weight: 700; cursor: help; }
+.badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+.clinvar-path { background: #c0392b; color: white; }
+.clinvar-likely { background: #e74c3c; color: white; }
+.clinvar-vus { background: #f39c12; color: #333; }
+.clinvar-benign { background: #27ae60; color: white; }
+.ctx-lof { background: #922b21; color: white; }
+.ctx-coding { background: #c0392b; color: white; }
+.ctx-intronic { background: #f39c12; color: #333; }
+.ctx-intergenic { background: #bdc3c7; color: #333; }
+.ctx-splice { background: #8e44ad; color: white; }
+.ctx-utr { background: #16a085; color: white; }
+.ctx-noncoding_exon { background: #117864; color: white; }
+.ctx-regulatory { background: #2c7fb8; color: white; }
+.ctx-updownstream { background: #7f8c8d; color: white; }
+.ctx-other { background: #566573; color: white; }
+.type-snv { background: #2980b9; color: white; }
+.type-indel { background: #7f8c8d; color: white; }
+.no-data { color: #bdc3c7; }
+.tier-summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; padding: 12px; border-radius: 7px; background: #f8f9fa; }
+.tier-chip { display: inline-flex; align-items: center; gap: 7px; padding: 4px 9px; border-radius: 4px; color: white; font-size: .84rem; font-weight: 600; }
+.tier-chip strong { padding: 1px 6px; border-radius: 3px; background: rgba(255,255,255,.28); }
+.tier-chip.tier-1 { background: #c0392b; } .tier-chip.tier-2 { background: #e74c3c; } .tier-chip.tier-3 { background: #e67e22; } .tier-chip.tier-4 { background: #f39c12; color: #333; }
+.sv-priority-summary { display: flex; flex-wrap: wrap; gap: 9px 16px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #e5e9ec; border-radius: 7px; background: #fbfcfd; color: #566573; }
+.sv-priority-summary span:last-child { flex-basis: 100%; }
+.recurrence-overview { display: grid; grid-template-columns: minmax(260px, 1.15fr) minmax(380px, 1.85fr); gap: 18px; margin: 0 0 12px; padding: 20px; border: 1px solid #cfe4ef; border-radius: 10px; background: linear-gradient(125deg, #f0f9ff, #f8fbfd 58%, #f5faf7); }
+.recurrence-overview h3 { margin: 4px 0 8px; font-size: 1.12rem; }
+.recurrence-overview p { margin: 0; color: #566573; }
+.eyebrow { display: block; color: #2471a3; font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.recurrence-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(145px, 1fr)); gap: 9px; }
+.recurrence-stat { min-height: 88px; padding: 11px 13px; border: 1px solid #dce8ed; border-radius: 7px; background: rgba(255,255,255,.82); }
+.recurrence-stat span { display: block; color: #607d8b; font-size: .73rem; font-weight: 700; letter-spacing: .025em; text-transform: uppercase; }
+.recurrence-stat strong { display: block; margin: 2px 0; color: #1f3b4d; font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+.recurrence-stat small { color: #71818b; font-size: .78rem; }
+.recurrence-stat-snv { border-left: 4px solid #2980b9; }
+.recurrence-stat-sv { border-left: 4px solid #8e44ad; }
+.recurrence-rules { display: flex; flex-wrap: wrap; gap: 5px 10px; margin: 0 0 18px; padding: 10px 13px; border-left: 4px solid #f39c12; border-radius: 4px; background: #fdf8ed; color: #6c5a28; font-size: .85rem; }
+.recurrence-rules span { color: #7a6840; }
+.recurrent-gene-sections { display: grid; gap: 16px; }
+.recurrent-gene-section { padding: 16px; border: 1px solid #e0e7eb; border-radius: 9px; background: #fff; }
+.recurrent-gene-section-listed { border-top: 4px solid #2471a3; }
+.recurrent-gene-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.recurrent-gene-section-heading h3 { margin: 2px 0 0; font-size: 1.08rem; }
+.recurrent-gene-section-heading > span { padding: 3px 8px; border-radius: 999px; background: #edf3f6; color: #526b78; font-size: .8rem; font-weight: 700; }
+.recurrent-gene-section .table-controls { margin: 0 0 10px; }
+.rec-evidence { display: inline-block; margin: 1px 4px 1px 0; padding: 3px 7px; border-radius: 999px; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+.rec-evidence-snv { background: #dceefa; color: #17668e; }
+.rec-evidence-sv { background: #eee3f7; color: #6c3483; }
+.carrier-count { display: inline-block; border: 0; padding: 4px 8px; border-radius: 999px; background: #edf3f6; color: #1f5f7a; font-family: inherit; font-size: .78rem; font-weight: 700; white-space: nowrap; cursor: pointer; }
+.carrier-count:hover,.carrier-count:focus { background: #d7eaf3; outline: 2px solid #2471a3; outline-offset: 1px; }
+.recurrent-evidence-profile { display: grid; gap: 5px; min-width: 120px; }
+.genotype-profile { display: grid; gap: 3px; }
+.genotype-spectrum { display: flex; min-width: 120px; min-height: 22px; overflow: hidden; border: 1px solid #d8e1e6; border-radius: 4px; background: #eef2f3; }
+.spectrum-segment { display: grid; min-width: 26px; place-items: center; border: 0; padding: 2px 5px; text-align: center; font-family: inherit; font-size: .7rem; line-height: 1; cursor: pointer; }
+.spectrum-segment:hover,.spectrum-segment:focus { filter: brightness(.94); outline: 2px solid #1d4ed8; outline-offset: -2px; }
+.spectrum-segment strong { font-size: .78rem; }
+.spectrum-hom-alt { background: #c0392b; color: white; }
+.spectrum-het { background: #e67e22; color: #2c3e50; }
+.genotype-no-snv { display: grid; gap: 2px; padding: 7px 9px; border-left: 3px solid #b7c3cc; border-radius: 4px; background: #f4f7f8; color: #4e5d68; font-size: .76rem; line-height: 1.3; }
+.genotype-no-snv span { color: #718096; font-size: .7rem; }
+.sv-support { display: flex; align-items: center; gap: 7px; width: fit-content; max-width: 100%; border: 1px solid #e3bf54; padding: 6px 8px; border-radius: 5px; background: #fff8dd; color: #76580b; font-family: inherit; text-align: left; cursor: pointer; }
+.sv-support:hover,.sv-support:focus { background: #fff1bc; outline: 2px solid #d69e2e; outline-offset: 1px; }
+.sv-support-warning { flex: 0 0 auto; color: #b7791f; font-size: .95rem; line-height: 1; }
+.sv-support strong,.sv-support small { display: block; }
+.sv-support strong { font-size: .74rem; }
+.sv-support small { margin-top: 1px; color: #8a6d1c; font-size: .68rem; font-weight: 500; }
+.sample-popover { position: fixed; z-index: 1000; display: flex; flex-direction: column; width: min(410px, calc(100vw - 28px)); max-height: min(420px, calc(100vh - 28px)); overflow: hidden; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #1f2937; box-shadow: 0 12px 30px rgba(15,23,42,.25); }
+.sample-popover[hidden] { display: none; }
+.sample-popover-header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 11px 13px 8px; border-bottom: 1px solid #e5e7eb; }
+.sample-popover-header strong { font-size: .9rem; }
+.sample-popover-close { border: 0; background: transparent; color: #475569; font-size: 1.2rem; line-height: 1; cursor: pointer; }
+.sample-popover-note { flex: 0 0 auto; margin: 0; padding: 8px 13px 0; color: #64748b; font-size: .78rem; line-height: 1.35; }
+.sample-popover-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; margin: 0; padding: 8px 13px 12px 30px; scroll-padding-top: 8px; font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .78rem; line-height: 1.55; }
+.variant-details-trigger { max-width: 240px; padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #285b78; font: inherit; font-size: .76rem; text-align: left; cursor: pointer; }
+.variant-details-trigger:hover,.variant-details-trigger:focus { border-color: #2471a3; background: #eaf4f8; outline: 2px solid #b9dcf3; outline-offset: 1px; }
+.variant-popover-value { display: block; max-height: 310px; overflow: auto; margin: 10px 13px 13px; padding: 9px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .76rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.other-gene-count,.gene-list-count { display: inline-flex; align-items: baseline; gap: 4px; border: 1px solid #cbd5e1; padding: 3px 7px; border-radius: 999px; background: #f8fafc; color: #38566b; font-family: inherit; cursor: pointer; white-space: nowrap; }
+.other-gene-count:hover,.other-gene-count:focus,.gene-list-count:hover,.gene-list-count:focus { border-color: #2471a3; background: #eaf4f8; outline: 2px solid #b9dcf3; outline-offset: 1px; }
+.other-gene-count strong,.gene-list-count strong { font-size: .78rem; }
+.other-gene-count span { font-size: .7rem; font-weight: 600; }
+.recurrent-gene-symbol { color: #1f3b4d; font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .93rem; }
+.recurrent-gene-table td:nth-child(3) { font-weight: 700; font-variant-numeric: tabular-nums; }
+.tier-badge { min-width: 1.8em; text-align: center; }
+.svtype-DEL { background: #c0392b; color: white; } .svtype-DUP { background: #8e44ad; color: white; } .svtype-INV { background: #2980b9; color: white; } .svtype-INS { background: #16a085; color: white; }
+.cadd-high { background: #c0392b; color: white; } .cadd-moderate { background: #e67e22; color: white; } .cadd-low { background: #bdc3c7; color: #333; }
+.gnomad-rare { background: #27ae60; color: white; } .gnomad-common { background: #e74c3c; color: white; } .gnomad-missing,.evidence-no { background: #ecf0f1; color: #566573; }
+.prox-overlap { background: #c0392b; color: white; } .prox-very-close { background: #e74c3c; color: white; } .prox-close { background: #e67e22; color: white; } .prox-far { background: #f39c12; color: #333; } .prox-none { background: #ecf0f1; color: #7f8c8d; }
+.ctx-exonic { background: #c0392b; color: white; } .ctx-intronic { background: #f39c12; color: #333; } .ctx-intergenic { background: #bdc3c7; color: #333; } .ctx-none { background: #ecf0f1; color: #7f8c8d; }
+.gene-tag { display: inline-block; margin: 1px; padding: 1px 5px; border-radius: 3px; font-size: .78rem; font-weight: 600; }
+.gene-tag.overlap { background: #fadbd8; color: #922b21; } .gene-tag.very-close { background: #f5b7b1; color: #922b21; } .gene-tag.close { background: #fdebd0; color: #9c640c; } .gene-tag.far { background: #fcf3cf; color: #9a7d0a; }
+.gene-more { display: inline-block; margin: 1px; } .gene-more summary { cursor: pointer; color: #1d4ed8; font-size: .78rem; } .gene-more[open] { display: block; padding: 4px 0; }
+.mono { font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .92em; white-space: nowrap; }
+.tabs { display: flex; gap: 4px; margin: 20px 0; border-bottom: 1px solid #dfe6e9; }
+.tab-button { position: relative; top: 1px; border: 1px solid #dfe6e9; border-bottom: 0; border-radius: 6px 6px 0 0; background: #f8f9fa; padding: 9px 16px; color: #34495e; font-weight: 700; cursor: pointer; }
+.tab-button:hover { background: #eef2f5; }
+.tab-button.active { border-top: 3px solid #3498db; padding-top: 7px; background: white; color: #2c3e50; }
+.report-tab { display: none; }
+.report-tab.active { display: block; }
+.tier-criteria { margin: 12px 0 18px; overflow: hidden; border: 1px solid #e5e9ec; border-radius: 7px; background: #f8f9fa; }
+.tier-criteria summary { padding: 12px 15px; color: #34495e; font-weight: 700; cursor: pointer; }
+.criteria-content { padding: 0 15px 12px; }
+.criteria-content p { margin-top: 0; }
+.criteria-list { margin: 8px 0 0 20px; padding: 0; }
+.criteria-list li { margin: 5px 0; }
+.source-note,.qc-empty { margin: 0 0 12px; padding: 12px 14px; border: 1px solid #e5e9ec; border-radius: 7px; background: #f8f9fa; color: #566573; }
+.sv-fallback-warning { margin: 0 0 10px; padding: 7px 10px; border: 1px solid #f2d38a; border-left: 4px solid #e0a52b; border-radius: 5px; background: #fff8df; color: #6c5720; font-size: .78rem; line-height: 1.35; }
+.sv-fallback-warning strong { color: #70510d; }
+.table-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0; }
+.table-page-controls { display: flex; align-items: center; justify-content: flex-end; gap: 9px; margin: 8px 0 0; color: #64748b; font-size: .78rem; }
+.table-page-controls .filter-btn:disabled { border-color: #e2e8f0; background: #f8fafc; color: #a0aec0; cursor: default; }
+.candidate-filter-bar { margin: 12px 0 8px; padding: 10px 12px 11px; border: 1px solid #dce8ed; border-radius: 7px; background: #f8fbfd; }
+.candidate-filter-row { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 14px; }
+.candidate-filter-row + .candidate-filter-row { margin-top: 10px; }
+.candidate-filter-row > label,.candidate-filter-row > .filter-field { display: grid; gap: 3px; color: #526b78; font-size: .76rem; font-weight: 700; }
+.candidate-filter-row input[type="text"],.candidate-filter-row input[type="number"] { min-width: 110px; padding: 6px 7px; border: 1px solid #cbd5df; border-radius: 4px; background: white; color: #2c3e50; font: inherit; font-weight: 400; }
+.multi-filter { position: relative; min-width: 150px; max-width: 235px; }
+.multi-filter-toggle { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 32px; padding: 6px 8px; border: 1px solid #cbd5df; border-radius: 4px; background: white; color: #2c3e50; font: inherit; font-weight: 400; text-align: left; cursor: pointer; }
+.multi-filter-toggle:hover,.multi-filter-toggle[aria-expanded="true"] { border-color: #3498db; }
+.multi-filter-selection-summary { display: flex; align-items: center; justify-content: space-between; gap: 6px; height: 25px; margin-top: 4px; padding: 0 2px; color: #657983; font-size: .7rem; font-weight: 500; }
+.multi-filter-manage { padding: 1px 5px; border: 1px solid #cbd5df; border-radius: 3px; background: white; color: #2c6d91; font: inherit; font-size: .68rem; font-weight: 600; cursor: pointer; }
+.multi-filter-manage:hover:not(:disabled) { border-color: #3498db; color: #1d4e6b; }
+.multi-filter-manage:disabled { opacity: .55; cursor: default; }
+.multi-filter-selection-panel { position: absolute; z-index: 21; top: calc(100% + 3px); left: 0; width: min(320px, 85vw); padding: 8px; border: 1px solid #b9cbd7; border-radius: 5px; background: white; box-shadow: 0 5px 15px rgba(44,62,80,.18); }
+.multi-filter-selection-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; color: #405766; font-size: .76rem; }
+.multi-filter-selection-heading button { width: 20px; height: 20px; padding: 0; border: 0; border-radius: 3px; background: #eef3f6; color: #526b78; font: inherit; font-size: 1rem; line-height: 18px; cursor: pointer; }
+.multi-filter-selection-heading button:hover { background: #dce8ed; color: #1f4257; }
+.multi-filter-chips { display: flex; flex-wrap: wrap; gap: 4px; max-height: 220px; overflow: auto; padding-right: 2px; }
+.multi-filter-chip { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 4px 2px 5px; border: 1px solid #d5dfe5; border-radius: 10px; background: white; color: #405766; font-size: .7rem; font-weight: 500; }
+.multi-filter-chip > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.multi-filter-chip-remove { width: 15px; height: 15px; padding: 0; border: 0; border-radius: 50%; background: #e8eef2; color: #526b78; font: inherit; line-height: 13px; cursor: pointer; }
+.multi-filter-chip-remove:hover { background: #d5e3eb; color: #1f4257; }
+.multi-filter-marker { display: inline-block; flex: 0 0 7px; width: 7px; height: 7px; border-radius: 50%; }
+.multi-filter-menu { position: absolute; z-index: 20; top: calc(100% + 3px); left: 0; width: min(300px, 80vw); padding: 7px; border: 1px solid #b9cbd7; border-radius: 5px; background: white; box-shadow: 0 5px 15px rgba(44,62,80,.18); }
+.multi-filter-search { box-sizing: border-box; width: 100%; margin-bottom: 6px; padding: 6px 7px; border: 1px solid #cbd5df; border-radius: 4px; font: inherit; font-weight: 400; }
+.multi-filter-options { max-height: 190px; overflow: auto; }
+.multi-filter-option { position: relative; display: flex; align-items: center; gap: 6px; min-height: 22px; padding: 2px 4px; color: #405766; font-size: .75rem; font-weight: 400; cursor: pointer; }
+.multi-filter-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.multi-filter-option.selected { background: #dff0fa; color: #1f516d; font-weight: 600; }
+.multi-filter-option:hover { background: #f0f7fb; }
+.range-filter { min-width: 150px; }
+.range-filter input[type="number"] { width: 150px; min-width: 0; }
+.region-filter input[type="text"] { width: 205px; }
+.filter-help-inline { max-width: 370px; margin-left: auto; color: #587384; font-size: .75rem; font-weight: 500; line-height: 1.35; text-align: right; }
+.filter-help-inline code { color: #38566b; font-size: .72rem; }
+.candidate-result-control { justify-content: flex-end; margin-top: 0; }
+.search-box { width: min(330px, 100%); padding: 8px 11px; border: 1px solid #d5dce2; border-radius: 5px; font: inherit; }
+.search-box:focus { outline: 2px solid #b9dcf3; border-color: #3498db; }
+.filter-btn { padding: 6px 10px; border: 1px solid #d5dce2; border-radius: 4px; background: white; color: #34495e; font: inherit; font-size: .82rem; cursor: pointer; }
+.filter-btn.active,.filter-btn:hover { border-color: #3498db; background: #3498db; color: white; }
+.result-count { margin-left: auto; color: #7f8c8d; font-size: .84rem; }
+.table-wrapper,.cohort-sv-table-wrapper,.cohort-sv-priority-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #dfe6e9; border-radius: 7px; background: white; }
+table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+th,td { padding: 8px 10px; border-bottom: 1px solid #ecf0f1; text-align: left; vertical-align: top; }
+th { background: #34495e; color: white; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+tbody tr:hover td { background: #f8f9fa; }
+.candidate-table th,.cohort-sv-table th,.cohort-sv-priority-table th { position: sticky; top: 0; z-index: 1; }
+.candidate-table th.sortable,.cohort-sv-table th.sortable,.cohort-sv-priority-table th.sortable { cursor: pointer; user-select: none; }
+.candidate-table th.sortable::after,.cohort-sv-table th.sortable::after,.cohort-sv-priority-table th.sortable::after { content: " \2195"; color: #d5dbdb; font-size: .75em; }
+.candidate-table th.sort-asc::after,.cohort-sv-table th.sort-asc::after,.cohort-sv-priority-table th.sort-asc::after { content: " \2191"; color: white; }
+.candidate-table th.sort-desc::after,.cohort-sv-table th.sort-desc::after,.cohort-sv-priority-table th.sort-desc::after { content: " \2193"; color: white; }
+.cohort-sv-table,.cohort-sv-priority-table { width: max-content; min-width: 100%; border: 0; }
+.cohort-sv-table td,.cohort-sv-priority-table td { overflow-wrap: anywhere; }
+code { border-radius: 3px; background: #eef2f5; padding: 1px 4px; font-family: 'SF Mono',Monaco,Consolas,monospace; font-size: .9em; }
+footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #ecf0f1; color: #95a5a6; text-align: center; font-size: .8rem; }
+@media (max-width: 700px) { body { padding: 10px; } main { padding: 16px; } header { display: block; } .report-meta { margin-top: 6px; text-align: left; } .pie-wrap,.recurrence-overview { grid-template-columns: 1fr; } .recurrence-stat-grid { grid-template-columns: 1fr 1fr; } .result-count { width: 100%; margin-left: 0; } }
+.candidate-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 14px 0; padding: 12px; background: #eef6ff; border: 1px solid #bfdbfe; border-radius: 8px; }
+.candidate-controls label { display: grid; gap: 4px; color: #334155; font-size: 12px; font-weight: 600; }
+.candidate-controls input { min-width: 105px; padding: 6px 7px; border: 1px solid #94a3b8; border-radius: 4px; font: inherit; font-weight: 400; }
+.candidate-controls .checkbox-label { display: flex; align-items: center; gap: 5px; min-height: 31px; }
+.candidate-controls .checkbox-label input { min-width: auto; }
+.candidate-controls button { padding: 7px 10px; border: 1px solid #2563eb; border-radius: 4px; background: white; color: #1d4ed8; font-weight: 600; cursor: pointer; }
+.candidate-count { color: #475569; font-size: 13px; font-weight: 600; }
+.candidate-table-wrap { overflow: auto; max-height: 680px; border: 1px solid #d9e2ec; border-radius: 6px; }
+.candidate-table-wrap table { border: 0; }
+.candidate-table-wrap thead { position: sticky; top: 0; z-index: 1; }
+.candidate-row[hidden] { display: none; }
+.carrier-calls summary { cursor: pointer; color: #1d4ed8; min-width: 230px; }
+.carrier-calls table { margin-top: 8px; min-width: 380px; font-size: 12px; }
+.carrier-calls th, .carrier-calls td { padding: 5px 7px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="report-loading" id="reportLoading" role="status" aria-live="polite">
+  <div class="report-loading-card">
+    <p class="report-loading-title">Loading cohort report</p>
+    <p class="report-loading-status" id="reportLoadingStatus">Reading report tables…</p>
+    <div class="report-loading-track" role="progressbar" aria-label="Cohort report loading" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Loading report tables"><span class="report-loading-bar" id="reportLoadingBar"></span></div>
+    <p class="report-loading-note">Large cohorts can take a moment to render in the browser.</p>
+  </div>
+</div>
+<script>
+window.finishReportLoading = function() {
+  const overlay = document.getElementById('reportLoading');
+  if (!overlay) return;
+  const status = document.getElementById('reportLoadingStatus');
+  const track = overlay.querySelector('[role="progressbar"]');
+  if (status) status.textContent = 'Report ready';
+  if (track) track.setAttribute('aria-valuetext', 'Report ready');
+  overlay.classList.add('is-ready');
+  window.setTimeout(() => overlay.remove(), 220);
+};
+</script>
+<main>
+<header>
+<div><h1>CALIGO Cohort Report</h1><div class="muted">Cohort-level review of small-variant candidates and structural-variant evidence</div></div>
+<div class="report-meta"><strong>public_insilico_demo</strong><br>Generated 2026-10-04 15:54:58</div>
+</header>
+<nav class='tabs' role='tablist' aria-label='Cohort report sections'>
+<button class='tab-button active' data-tab='snv' role='tab' aria-selected='true' aria-controls='snv'>SNV/indel</button>
+<button class='tab-button' data-tab='sv' role='tab' aria-selected='false' aria-controls='sv'>Structural variants</button>
+<button class='tab-button' data-tab='genes' role='tab' aria-selected='false' aria-controls='genes'>Recurrent genes</button>
+<button class='tab-button' data-tab='inputs' role='tab' aria-selected='false' aria-controls='inputs'>Inputs</button>
+</nav><section id='snv' class='report-tab active' role='tabpanel'><div class="snv-summary">
+<span><strong>Mode:</strong> Cohort</span>
+<span><strong>Total SNVs/indels in cohort VCF:</strong> 3</span>
+<span><strong>Samples used for SNV carrier counts:</strong> 3</span>
+<span><strong>After gnomAD filter (AF &le;0.001):</strong> 3</span>
+<span><strong>Prioritized cohort candidates:</strong> 2</span>
+<span><strong>CADD thresholds:</strong> high &ge;25, moderate &ge;20, low &lt;20</span>
+<span><strong>gnomAD filter:</strong> AF &le;0.001</span>
+</div><h2>Shared SNVs/indels (&gt;= 2 carriers)</h2>
+    <div class="legend-section">
+      <div class="legend-title">Prioritization Legend</div>
+      <div class="legend-grid">
+        <div class="legend-group">
+          <h4>Filters Applied First</h4>
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-color" style="background:#27ae60"></span>gnomAD AF &le; 0.001</span>
+            <span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>CADD PHRED &ge; 25</span>
+          </div>
+        </div>
+        <div class="legend-group">
+          <h4>Ranking After Filtering</h4>
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-color" style="background:#2563eb"></span>More samples first</span>
+            <span class="legend-item"><span class="legend-color" style="background:#8e44ad"></span>ClinVar/VEP severity</span>
+            <span class="legend-item"><span class="legend-color" style="background:#e67e22"></span>Higher CADD</span>
+          </div>
+        </div>
+        
+        <div class="legend-group">
+          <h4>VEP Consequence</h4>
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-color" style="background:#8e44ad"></span>Splice</span><span class="legend-item"><span class="legend-color" style="background:#922b21"></span>LoF</span><span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>Coding</span><span class="legend-item"><span class="legend-color" style="background:#16a085"></span>UTR</span><span class="legend-item"><span class="legend-color" style="background:#f39c12"></span>Intronic</span><span class="legend-item"><span class="legend-color" style="background:#117864"></span>ncRNA exon</span><span class="legend-item"><span class="legend-color" style="background:#2c7fb8"></span>Regulatory</span><span class="legend-item"><span class="legend-color" style="background:#7f8c8d"></span>Up/downstream</span><span class="legend-item"><span class="legend-color" style="background:#bdc3c7"></span>Intergenic</span><span class="legend-item"><span class="legend-color" style="background:#566573"></span>Other</span>
+          </div>
+        </div>
+        
+        <div class="legend-group">
+          <h4>ClinVar</h4>
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-color" style="background:#c0392b"></span>Pathogenic</span><span class="legend-item"><span class="legend-color" style="background:#e74c3c"></span>Likely path.</span><span class="legend-item"><span class="legend-color" style="background:#f39c12"></span>VUS</span><span class="legend-item"><span class="legend-color" style="background:#27ae60"></span>Benign</span>
+          </div>
+        </div>
+        
+        <div class="legend-group">
+          <h4>Type</h4>
+          <div class="legend-items">
+            <span class="legend-item"><span class="legend-color" style="background:#2980b9"></span>SNV</span><span class="legend-item"><span class="legend-color" style="background:#7f8c8d"></span>Indel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <details class="tier-criteria" open>
+      <summary>How shared cohort candidates are selected and ordered</summary>
+      <div class="criteria-content">
+        <p><strong>These are recurrent cohort candidates, not individual diagnostic SNV tiers.</strong>
+        It identifies rare, high-CADD variants observed in multiple members of this cohort; it does not use phenotype,
+        pedigree, inheritance, or a gene panel.</p>
+        <ol class="criteria-list">
+          <li><strong>Eligibility:</strong> a non-reference genotype in at least 2 samples.</li>
+          <li><strong>Technical filter:</strong> VCF FILTER is <code>PASS</code> or <code>.</code>.</li>
+          <li><strong>Population rarity:</strong> gnomAD AF is present and &le; 0.001.</li>
+          <li><strong>Predicted impact:</strong> CADD PHRED is &ge; 25.</li>
+          <li><strong>Ordering:</strong> more carriers first, then pathogenic/likely-pathogenic ClinVar and/or LoF VEP evidence,
+          then higher CADD PHRED, then genomic coordinate to break any remaining tie.</li>
+        </ol>
+      </div>
+    </details>
+    <div class="candidate-filter-bar" aria-label="SNV and indel candidate filters">
+      <div class="candidate-filter-row">
+        <div class="filter-field"><span>Chromosome</span><div class="multi-filter" id="candidateChromFilter" data-filter-label="chromosomes" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All chromosomes</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected chromosomes</strong><button type="button" aria-label="Close selected chromosomes" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter chromosomes" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="chr9 chr9"><input type="checkbox" value="chr9" data-option-label="chr9" data-color="" onchange="updateMultiFilter(this); filterCohortCandidates()"><span>chr9</span></label><label class="multi-filter-option" data-filter-option data-search="chry chry"><input type="checkbox" value="chrY" data-option-label="chrY" data-color="" onchange="updateMultiFilter(this); filterCohortCandidates()"><span>chrY</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>Type</span><div class="multi-filter" id="candidateTypeFilter" data-filter-label="types" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All types</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected types</strong><button type="button" aria-label="Close selected types" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter types" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="snv snv"><input type="checkbox" value="SNV" data-option-label="SNV" data-color="#2980b9" onchange="updateMultiFilter(this); filterCohortCandidates()"><span class="multi-filter-marker" style="background:#2980b9"></span><span>SNV</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>GOI gene</span><div class="multi-filter" id="candidateGeneFilter" data-filter-label="GOI genes" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All GOI genes</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected GOI genes</strong><button type="button" aria-label="Close selected GOI genes" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter GOI genes" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="nr5a1 nr5a1"><input type="checkbox" value="NR5A1" data-option-label="NR5A1" data-color="" onchange="updateMultiFilter(this); filterCohortCandidates()"><span>NR5A1</span></label><label class="multi-filter-option" data-filter-option data-search="sry sry"><input type="checkbox" value="SRY" data-option-label="SRY" data-color="" onchange="updateMultiFilter(this); filterCohortCandidates()"><span>SRY</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>Other gene</span><div class="multi-filter" id="candidateOtherGeneFilter" data-filter-label="other genes" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All other genes</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected other genes</strong><button type="button" aria-label="Close selected other genes" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter other genes" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>Consequence</span><div class="multi-filter" id="candidateConsequenceFilter" data-filter-label="consequences" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All consequences</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected consequences</strong><button type="button" aria-label="Close selected consequences" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter consequences" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="splice splice"><input type="checkbox" value="splice" data-option-label="Splice" data-color="#8e44ad" onchange="updateMultiFilter(this); filterCohortCandidates()"><span class="multi-filter-marker" style="background:#8e44ad"></span><span>Splice</span></label><label class="multi-filter-option" data-filter-option data-search="coding coding"><input type="checkbox" value="coding" data-option-label="Coding" data-color="#c0392b" onchange="updateMultiFilter(this); filterCohortCandidates()"><span class="multi-filter-marker" style="background:#c0392b"></span><span>Coding</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>ClinVar</span><div class="multi-filter" id="candidateClinvarFilter" data-filter-label="ClinVar values" data-on-change="snv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All ClinVar values</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected ClinVar values</strong><button type="button" aria-label="Close selected ClinVar values" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter ClinVar values" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="path pathogenic"><input type="checkbox" value="path" data-option-label="Pathogenic" data-color="#c0392b" onchange="updateMultiFilter(this); filterCohortCandidates()"><span class="multi-filter-marker" style="background:#c0392b"></span><span>Pathogenic</span></label><label class="multi-filter-option" data-filter-option data-search="likely likely path."><input type="checkbox" value="likely" data-option-label="Likely path." data-color="#e74c3c" onchange="updateMultiFilter(this); filterCohortCandidates()"><span class="multi-filter-marker" style="background:#e74c3c"></span><span>Likely path.</span></label></div>
+      </div>
+    </div></div>
+      </div>
+      <div class="candidate-filter-row candidate-filter-ranges">
+        <label class="range-filter" title="Allowed range: 26.4–29.1"><span>CADD min</span><input id="candidateCaddMin" type="number" min="26.4" max="29.1" step="0.1" value="26.4" oninput="filterCohortCandidates()" title="Allowed range: 26.4–29.1"></label>
+        <label class="range-filter" title="Allowed range: 0–2e-05"><span>gnomAD AF max</span><input id="candidateAfMax" type="number" min="0" max="2e-05" step="1e-06" value="2e-05" oninput="filterCohortCandidates()" title="Allowed range: 0–2e-05"></label>
+        <label class="range-filter" title="Allowed range: 2–2"><span>Carriers min</span><input id="candidateCarrierMin" type="number" min="2" max="2" step="1" value="2" oninput="filterCohortCandidates()" title="Allowed range: 2–2"></label>
+        <label class="region-filter">Region <input id="candidateRegionFilter" type="text" placeholder="chr7:55,100-56,000" title="UCSC-style region: chromosome:start-end, or chromosome:position" oninput="filterCohortCandidates()"></label>
+        <button type="button" class="filter-btn" onclick="resetCohortCandidateFilters()">Reset</button>
+        <span class="filter-help-inline"><strong>Filter help:</strong> type in a picker to narrow values and select multiple entries. Region: <code>chr7:55,100-56,000</code>.</span>
+      </div>
+    </div>
+    <div class="table-controls candidate-result-control">
+      <span class="result-count" id="candidateResultCount">Candidates (2 shown)</span>
+    </div>
+    <div class="table-wrapper" tabindex="0" role="region" aria-label="Shared small-variant candidates">
+      <table class="candidate-table"><thead><tr><th class="sortable" onclick="sortCohortCandidates(this, 0, 'text')">Variant</th><th class="sortable" onclick="sortCohortCandidates(this, 1, 'text')">Type</th><th class="sortable" onclick="sortCohortCandidates(this, 2, 'text')">GOI genes</th><th class="sortable" onclick="sortCohortCandidates(this, 3, 'text')">Other genes</th><th class="sortable" onclick="sortCohortCandidates(this, 4, 'number')">CADD</th><th class="sortable" onclick="sortCohortCandidates(this, 5, 'number')">gnomAD AF</th><th class="sortable" onclick="sortCohortCandidates(this, 6, 'text')">Consequence</th><th class="sortable" onclick="sortCohortCandidates(this, 7, 'text')">ClinVar</th><th class="sortable" onclick="sortCohortCandidates(this, 8, 'number')">Carriers</th></tr></thead><tbody><tr class="candidate-row" data-goi-genes="|SRY|" data-other-genes="||" data-type="SNV" data-cadd="26.4" data-af="0" data-consequence="splice" data-clinvar="path" data-carriers="2" data-chrom="chrY" data-start="2786850" data-end="2786850"><td data-sort="chrY:2786850:C&gt;T">chrY:2786850:C&gt;T</td><td data-sort="SNV"><span class="badge type-snv" title="SNV">SNV</span></td><td data-sort="SRY">SRY</td><td data-sort=".">.</td><td data-sort="26.4">26.4</td><td data-sort="0.0">0</td><td data-sort="splice_donor_variant"><span class="badge ctx-splice" title="splice donor variant">Splice</span></td><td data-sort="Pathogenic"><span class="badge clinvar-path" title="Pathogenic">Pathogenic</span></td><td data-sort="2"><button type="button" class="carrier-count sample-popover-trigger" data-popover-title="SNV/indel carriers (2)" data-popover-samples="INSILICO_001
+INSILICO_003" onclick="openSamplePopover(event, this)">2 carriers</button></td></tr><tr class="candidate-row" data-goi-genes="|NR5A1|" data-other-genes="||" data-type="SNV" data-cadd="29.1" data-af="2e-05" data-consequence="coding" data-clinvar="likely" data-carriers="2" data-chrom="chr9" data-start="101234" data-end="101234"><td data-sort="chr9:101234:G&gt;A">chr9:101234:G&gt;A</td><td data-sort="SNV"><span class="badge type-snv" title="SNV">SNV</span></td><td data-sort="NR5A1">NR5A1</td><td data-sort=".">.</td><td data-sort="29.1">29.1</td><td data-sort="2e-05">2e-05</td><td data-sort="missense_variant"><span class="badge ctx-coding" title="missense variant">Coding</span></td><td data-sort="Likely_pathogenic"><span class="badge clinvar-likely" title="Likely_pathogenic">Likely path.</span></td><td data-sort="2"><button type="button" class="carrier-count sample-popover-trigger" data-popover-title="SNV/indel carriers (2)" data-popover-samples="INSILICO_001
+INSILICO_002" onclick="openSamplePopover(event, this)">2 carriers</button></td></tr></tbody></table>
+    </div></section><section id='sv' class='report-tab' role='tabpanel'><h2>Annotated, prioritized cohort SVs</h2>
+    <div class="sv-priority-summary">
+      <span><strong>Prioritized cohort SVs:</strong> 1</span>
+      <span><strong>CADD-SV scored:</strong> 1/1</span>
+      <span>Evidence tiers use CADD-SV, ClinVar, gnomAD-SV, GOI-gene proximity, and gene context. They do not infer inheritance from the multi-sample VCF.</span>
+    </div>
+    <h3>Cohort evidence tiers</h3><div class="tier-summary"><span class="tier-chip tier-1">Tier 1<strong>1</strong></span></div>
+    <div class="legend-section"><div class="legend-title">SV evidence legend</div><div class="legend-grid">
+      <div class="legend-group"><h4>CADD-SV PHRED</h4><div class="legend-items"><span class="legend-item"><span class="legend-color cadd-high"></span>High &ge; 10</span><span class="legend-item"><span class="legend-color cadd-moderate"></span>Moderate &ge; 5</span><span class="legend-item"><span class="legend-color cadd-low"></span>Low &lt; 5</span></div></div>
+      <div class="legend-group"><h4>gnomAD-SV AF</h4><div class="legend-items"><span class="legend-item"><span class="legend-color gnomad-rare"></span>Rare &le; 0.001</span><span class="legend-item"><span class="legend-color gnomad-common"></span>Common</span><span class="legend-item"><span class="legend-color gnomad-missing"></span>Not available</span></div></div>
+      <div class="legend-group"><h4>GOI proximity</h4><div class="legend-items"><span class="legend-item"><span class="legend-color prox-overlap"></span>Overlap</span><span class="legend-item"><span class="legend-color prox-very-close"></span>Very close &lt;10 kb</span><span class="legend-item"><span class="legend-color prox-close"></span>Close &lt;100 kb</span><span class="legend-item"><span class="legend-color prox-far"></span>Far 100 kb–1 Mb</span></div></div>
+    </div></div>
+    <details class="tier-criteria"><summary>How cohort SV evidence tiers are assigned</summary><div class="criteria-content"><ol class="criteria-list">
+      <li><strong>Tier 1:</strong> rare pathogenic ClinVar SV with GOI-gene involvement, or a rare high-CADD-SV call overlapping/very close to a GOI gene.</li>
+      <li><strong>Tier 2:</strong> rare moderate-CADD-SV calls overlapping/very close to GOI genes, or rare high-CADD-SV calls close/far from GOI genes.</li>
+      <li><strong>Tier 3:</strong> rare moderate-CADD-SV calls close/far from GOI genes, or rare lower-score calls with GOI involvement.</li>
+      <li><strong>Tier 4:</strong> rare non-GOI pathogenic ClinVar or high/moderate-CADD-SV exonic/intronic calls.</li>
+    </ol></div></details>
+    <div class="candidate-filter-bar" aria-label="Structural-variant candidate filters">
+      <div class="candidate-filter-row">
+        <div class="filter-field"><span>Chromosome</span><div class="multi-filter" id="cohortSvChromFilter" data-filter-label="chromosomes" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All chromosomes</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected chromosomes</strong><button type="button" aria-label="Close selected chromosomes" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter chromosomes" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="chr9 chr9"><input type="checkbox" value="chr9" data-option-label="chr9" data-color="" onchange="updateMultiFilter(this); filterCohortSvPriority()"><span>chr9</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>Type</span><div class="multi-filter" id="cohortSvTypeFilter" data-filter-label="types" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All types</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected types</strong><button type="button" aria-label="Close selected types" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter types" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="dup dup"><input type="checkbox" value="DUP" data-option-label="DUP" data-color="#8e44ad" onchange="updateMultiFilter(this); filterCohortSvPriority()"><span class="multi-filter-marker" style="background:#8e44ad"></span><span>DUP</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>GOI gene</span><div class="multi-filter" id="cohortSvGeneFilter" data-filter-label="GOI genes" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All GOI genes</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected GOI genes</strong><button type="button" aria-label="Close selected GOI genes" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter GOI genes" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="nr5a1 nr5a1"><input type="checkbox" value="NR5A1" data-option-label="NR5A1" data-color="" onchange="updateMultiFilter(this); filterCohortSvPriority()"><span>NR5A1</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>GOI proximity</span><div class="multi-filter" id="cohortSvProximityFilter" data-filter-label="proximity values" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All proximity values</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected proximity values</strong><button type="button" aria-label="Close selected proximity values" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter proximity values" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="overlap overlap"><input type="checkbox" value="Overlap" data-option-label="Overlap" data-color="#c0392b" onchange="updateMultiFilter(this); filterCohortSvPriority()"><span class="multi-filter-marker" style="background:#c0392b"></span><span>Overlap</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>Context</span><div class="multi-filter" id="cohortSvContextFilter" data-filter-label="contexts" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All contexts</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected contexts</strong><button type="button" aria-label="Close selected contexts" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter contexts" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"><label class="multi-filter-option" data-filter-option data-search="exonic exonic"><input type="checkbox" value="exonic" data-option-label="exonic" data-color="#c0392b" onchange="updateMultiFilter(this); filterCohortSvPriority()"><span class="multi-filter-marker" style="background:#c0392b"></span><span>exonic</span></label></div>
+      </div>
+    </div></div>
+        <div class="filter-field"><span>ClinVar</span><div class="multi-filter" id="cohortSvClinvarFilter" data-filter-label="ClinVar values" data-on-change="sv">
+      <button type="button" class="multi-filter-toggle" aria-expanded="false" onclick="toggleMultiFilter(event, this)">
+        <span data-filter-summary>All ClinVar values</span><span aria-hidden="true">⌄</span>
+      </button>
+      <div class="multi-filter-selection-summary" data-filter-selection-summary>
+        <span data-filter-selection-count>No selections</span>
+        <button type="button" class="multi-filter-manage" data-filter-manage disabled aria-expanded="false" onclick="toggleMultiFilterSelectionPanel(event, this)">Manage</button>
+      </div>
+      <div class="multi-filter-selection-panel" data-filter-selection-panel hidden onclick="event.stopPropagation()">
+        <div class="multi-filter-selection-heading"><strong>Selected ClinVar values</strong><button type="button" aria-label="Close selected ClinVar values" onclick="closeMultiFilterSelectionPanel(this)">×</button></div>
+        <div class="multi-filter-chips" data-filter-chips></div>
+      </div>
+      <div class="multi-filter-menu" data-filter-menu hidden onclick="event.stopPropagation()">
+        <input type="search" class="multi-filter-search" placeholder="Type to filter…" aria-label="Filter ClinVar values" oninput="searchMultiFilter(this)">
+        <div class="multi-filter-options"></div>
+      </div>
+    </div></div>
+      </div>
+      <div class="candidate-filter-row candidate-filter-ranges">
+        <label class="range-filter" title="Allowed range: 17.8–17.8"><span>CADD-SV min</span><input id="cohortSvCaddMin" type="number" min="17.8" max="17.8" step="0.1" value="17.8" oninput="filterCohortSvPriority()" title="Allowed range: 17.8–17.8"></label>
+        <label class="range-filter" title="Allowed range: 0–0.0002"><span>gnomAD-SV AF max</span><input id="cohortSvAfMax" type="number" min="0" max="0.0002" step="1e-06" value="0.0002" oninput="filterCohortSvPriority()" title="Allowed range: 0–0.0002"></label>
+        <label class="range-filter" title="Allowed range: 2–2"><span>Carriers min</span><input id="cohortSvCarrierMin" type="number" min="2" max="2" step="1" value="2" oninput="filterCohortSvPriority()" title="Allowed range: 2–2"></label>
+        <label class="region-filter">Region <input id="cohortSvRegionFilter" type="text" placeholder="chr7:55,100-56,000" title="UCSC-style region: chromosome:start-end, or chromosome:position" oninput="filterCohortSvPriority()"></label>
+        <button type="button" class="filter-btn" onclick="resetCohortSvPriorityFilters()">Reset</button>
+        <span class="filter-help-inline"><strong>Filter help:</strong> type in a picker to narrow values and select multiple entries. Region: <code>chr7:55,100-56,000</code> selects overlapping SVs.</span>
+      </div>
+    </div>
+    <div class="table-controls">
+      <div class="filter-group"><button class="filter-btn cohort-sv-priority-filter active" type="button" onclick="setCohortSvPriorityTier(0, this)">All</button><button class="filter-btn cohort-sv-priority-filter" type="button" onclick="setCohortSvPriorityTier(1, this)">Tier 1 (1)</button></div>
+      <span class="result-count" id="cohortSvPriorityResultCount">Variants (1 shown)</span>
+    </div>
+    <p class="muted">Click a carrier count to view supporting samples and their joint-VCF genotypes.</p>
+    <div class="cohort-sv-priority-wrapper" tabindex="0" role="region" aria-label="Prioritized cohort structural variants">
+      <table class="cohort-sv-priority-table"><thead><tr><th class="sortable" onclick="sortCohortSvPriority(this, 0, 'number')">Tier</th><th class="sortable" onclick="sortCohortSvPriority(this, 1, 'text')">Location</th><th class="sortable" onclick="sortCohortSvPriority(this, 2, 'text')">Type</th><th class="sortable" onclick="sortCohortSvPriority(this, 3, 'number')">Length</th><th class="sortable" onclick="sortCohortSvPriority(this, 4, 'text')">GOI genes</th><th class="sortable" onclick="sortCohortSvPriority(this, 5, 'text')">GOI proximity</th><th class="sortable" onclick="sortCohortSvPriority(this, 6, 'number')">Other genes</th><th class="sortable" onclick="sortCohortSvPriority(this, 7, 'number')">CADD-SV PHRED</th><th class="sortable" onclick="sortCohortSvPriority(this, 8, 'number')">gnomAD-SV AF</th><th class="sortable" onclick="sortCohortSvPriority(this, 9, 'text')">Context</th><th class="sortable" onclick="sortCohortSvPriority(this, 10, 'text')">ClinVar</th><th class="sortable" onclick="sortCohortSvPriority(this, 11, 'number')">Carriers</th></tr></thead><tbody><tr class="cohort-sv-priority-row" data-tier="1" data-genes="|NR5A1|" data-type="DUP" data-proximity="Overlap" data-context="exonic" data-clinvar="" data-cadd="17.8" data-af="0.0002" data-carriers="2" data-chrom="chr9" data-start="101500" data-end="104200"><td data-sort="1"><span class="badge tier-badge" style="background:#c0392b;color:white;">1</span></td><td data-sort="chr9:101500-104200"><span class="mono">chr9:101500-104200</span></td><td data-sort="DUP"><span class="badge svtype-DUP">DUP</span></td><td data-sort="2701.0">2.7 kb</td><td data-sort="NR5A1"><span class="gene-tag overlap">NR5A1</span></td><td data-sort="1"><span class="badge prox-overlap">Overlap</span></td><td data-sort="0"><span class="no-data">.</span></td><td data-sort="17.8"><span class="badge cadd-high">17.8</span></td><td data-sort="0.0002"><span class="badge gnomad-rare">0.0002</span></td><td data-sort="exonic"><span class="badge ctx-exonic">Exonic</span></td><td data-sort="."><span class="badge no-data" title="">.</span></td><td data-sort="2"><button type="button" class="carrier-count sample-popover-trigger" data-popover-title="SV carrier samples (2)" data-popover-samples="INSILICO_001 (0/1)
+INSILICO_002 (0/1)" onclick="openSamplePopover(event, this)" data-popover-note="Genotype call is shown after each sample ID when available.">2 carriers</button></td></tr></tbody></table>
+    </div>
+    <div class="table-page-controls" id="cohortSvPriorityPages" hidden>
+      <button type="button" class="filter-btn" id="cohortSvPriorityPrevious" onclick="changeCohortSvPriorityPage(-1)">Previous</button>
+      <span id="cohortSvPriorityPageStatus"></span>
+      <button type="button" class="filter-btn" id="cohortSvPriorityNext" onclick="changeCohortSvPriorityPage(1)">Next</button>
+    </div>
+    <script id="cohortSvPriorityRows" type="application/json">[{"html":"\u003ctr class=\"cohort-sv-priority-row\" data-tier=\"1\" data-genes=\"|NR5A1|\" data-type=\"DUP\" data-proximity=\"Overlap\" data-context=\"exonic\" data-clinvar=\"\" data-cadd=\"17.8\" data-af=\"0.0002\" data-carriers=\"2\" data-chrom=\"chr9\" data-start=\"101500\" data-end=\"104200\">\u003ctd data-sort=\"1\">\u003cspan class=\"badge tier-badge\" style=\"background:#c0392b;color:white;\">1\u003c/span>\u003c/td>\u003ctd data-sort=\"chr9:101500-104200\">\u003cspan class=\"mono\">chr9:101500-104200\u003c/span>\u003c/td>\u003ctd data-sort=\"DUP\">\u003cspan class=\"badge svtype-DUP\">DUP\u003c/span>\u003c/td>\u003ctd data-sort=\"2701.0\">2.7 kb\u003c/td>\u003ctd data-sort=\"NR5A1\">\u003cspan class=\"gene-tag overlap\">NR5A1\u003c/span>\u003c/td>\u003ctd data-sort=\"1\">\u003cspan class=\"badge prox-overlap\">Overlap\u003c/span>\u003c/td>\u003ctd data-sort=\"0\">\u003cspan class=\"no-data\">.\u003c/span>\u003c/td>\u003ctd data-sort=\"17.8\">\u003cspan class=\"badge cadd-high\">17.8\u003c/span>\u003c/td>\u003ctd data-sort=\"0.0002\">\u003cspan class=\"badge gnomad-rare\">0.0002\u003c/span>\u003c/td>\u003ctd data-sort=\"exonic\">\u003cspan class=\"badge ctx-exonic\">Exonic\u003c/span>\u003c/td>\u003ctd data-sort=\".\">\u003cspan class=\"badge no-data\" title=\"\">.\u003c/span>\u003c/td>\u003ctd data-sort=\"2\">\u003cbutton type=\"button\" class=\"carrier-count sample-popover-trigger\" data-popover-title=\"SV carrier samples (2)\" data-popover-samples=\"INSILICO_001 (0/1)\nINSILICO_002 (0/1)\" onclick=\"openSamplePopover(event, this)\" data-popover-note=\"Genotype call is shown after each sample ID when available.\">2 carriers\u003c/button>\u003c/td>\u003c/tr>","tier":1,"genes":["NR5A1"],"type":"DUP","proximity":"Overlap","context":"exonic","clinvar":"","cadd":17.8,"af":0.0002,"carriers":2,"chrom":"9","start":101500,"end":104200,"sort":[1,"chr9:101500-104200","DUP",2701.0,"NR5A1",1,0,17.8,0.0002,"exonic",".",2]}]</script>
+    <script id="cohortSvOtherGeneIndex" type="application/json">{}</script><h2>Phase II SV candidates</h2><div class="qc-empty">No Phase II SV candidate rows were supplied. The joint SV table below is therefore an evidence browser, not a biological ranking.</div>
+    <details class="tier-criteria">
+      <summary>Complete jointly genotyped SV callset (1 records; external VCF)</summary>
+      <div class="criteria-content">
+        <p>The complete callset is deliberately not embedded in this HTML report. Its per-event,
+        cohort-wide genotype evidence is retained in the indexed joint VCF, while the table above
+        contains CALIGO's annotated and prioritized SVs for clinical review.</p>
+        <p><strong>Joint SV VCF:</strong> <code>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_sv.vcf.gz</code></p>
+      </div>
+    </details></section><section id='genes' class='report-tab' role='tabpanel'><h2>Recurrent candidate genes</h2>
+    <div class="recurrence-overview">
+      <div class="recurrence-overview-copy">
+        <span class="eyebrow">Curated recurrence view</span>
+        <h3>Small variants first; focused SV evidence second</h3>
+        <p>Genes are retained only when their curated calls are present in at least 2 distinct cohort members. SNV/indel candidates use the same rare, high-CADD set as the SNV tab and sort ahead of SV-only genes.</p>
+      </div>
+      <div class="recurrence-stat-grid">
+        <div class="recurrence-stat recurrence-stat-snv"><span>SNV/indel candidates</span><strong>2</strong><small>2 recurrent genes</small></div>
+        <div class="recurrence-stat recurrence-stat-sv"><span>Eligible SV events</span><strong>1</strong><small>1 recurrent gene</small></div>
+        <div class="recurrence-stat"><span>Configured-list genes</span><strong>2</strong><small>within this focused view</small></div>
+        <div class="recurrence-stat"><span>Other genes</span><strong>0</strong><small>within this focused view</small></div>
+      </div>
+    </div>
+    <div class="recurrence-rules">
+      <strong>SV inclusion:</strong> PASS, exonic, tier 1–8, carried by 2–20 samples, at most 1,000,000 bp, and no more than 25 directly overlapping genes. Nearby genes, broad multi-gene events, and cohort-wide calls are excluded from this gene-level summary.
+      <span><strong>Excluded SVs:</strong> none.</span>
+    </div><div class='recurrent-gene-sections'><section class='recurrent-gene-section recurrent-gene-section-listed'><div class='recurrent-gene-section-heading'><div><span class='eyebrow'>Configured gene list</span><h3>Panel genes</h3></div><span>2 genes</span></div>
+    <div class="table-controls">
+      <input class="search-box" id="listedGenesSearchBox" type="search" placeholder="Search gene or sample ID…" oninput="filterRecurrentGenes('listedGenes')">
+      <span class="result-count" id="listedGenesResultCount">Genes (2 shown)</span>
+    </div>
+    <div class="table-wrapper" tabindex="0" role="region" aria-label="Recurrently mutated genes">
+      <table class="candidate-table recurrent-gene-table listedGenes-table"><thead><tr><th class="sortable" onclick="sortRecurrentGenes(this, 0, 'text', 'listedGenes')">Gene</th><th class="sortable" onclick="sortRecurrentGenes(this, 1, 'text', 'listedGenes')">SNV/indel and SV counts</th><th class="sortable" onclick="sortRecurrentGenes(this, 2, 'number', 'listedGenes')">Distinct carriers</th><th class="sortable" onclick="sortRecurrentGenes(this, 3, 'text', 'listedGenes')">Genotype profile</th></tr></thead><tbody><tr class="recurrent-gene-row listedGenes-row" data-search="nr5a1 insilico_001, insilico_002"><td data-sort="NR5A1"><strong class="recurrent-gene-symbol">NR5A1</strong></td><td data-sort="1001"><span class="rec-evidence rec-evidence-snv">SNV/indel 1</span><span class="rec-evidence rec-evidence-sv">SV 1</span></td><td data-sort="2">2</td><td data-sort="1000001"><div class="recurrent-evidence-profile"><div class="genotype-profile"><div class="genotype-spectrum" aria-label="SNV/indel alternate-carrier genotype profile"><button type="button" class="spectrum-segment spectrum-het sample-popover-trigger" style="flex-grow:2" data-popover-title="Heterozygous SNV/indel carriers" data-popover-samples="INSILICO_001
+INSILICO_002" aria-label="Heterozygous: 2 carriers. Click to view samples." onclick="openSamplePopover(event, this)"><strong>2</strong></button></div></div><button type="button" class="sv-support sample-popover-trigger" data-popover-title="Structural-variant support (2 carriers)" data-popover-note="Singleton reciprocal-overlap evidence; SV genotypes are unavailable." data-popover-samples="INSILICO_001 (0/1)
+INSILICO_002 (0/1)" aria-label="Structural-variant genotype unavailable; 2 supporting samples. Click to view samples." onclick="openSamplePopover(event, this)"><span class="sv-support-warning" aria-hidden="true">⚠</span><span><strong>SV genotype unavailable</strong><small>2 singleton-call supports · click for samples</small></span></button></div></td></tr><tr class="recurrent-gene-row listedGenes-row" data-search="sry insilico_001, insilico_003"><td data-sort="SRY"><strong class="recurrent-gene-symbol">SRY</strong></td><td data-sort="1000"><span class="rec-evidence rec-evidence-snv">SNV/indel 1</span><span class="rec-evidence rec-evidence-sv">SV 0</span></td><td data-sort="2">2</td><td data-sort="1000000"><div class="genotype-profile"><div class="genotype-spectrum" aria-label="SNV/indel alternate-carrier genotype profile"><button type="button" class="spectrum-segment spectrum-het sample-popover-trigger" style="flex-grow:2" data-popover-title="Heterozygous SNV/indel carriers" data-popover-samples="INSILICO_001
+INSILICO_003" aria-label="Heterozygous: 2 carriers. Click to view samples." onclick="openSamplePopover(event, this)"><strong>2</strong></button></div></div></td></tr></tbody></table>
+    </div></section><section class='recurrent-gene-section'><div class='recurrent-gene-section-heading'><div><span class='eyebrow'>Not in the configured list</span><h3>Other genes</h3></div><span>0 genes</span></div>
+    <div class="table-controls">
+      <input class="search-box" id="unlistedGenesSearchBox" type="search" placeholder="Search gene or sample ID…" oninput="filterRecurrentGenes('unlistedGenes')">
+      <span class="result-count" id="unlistedGenesResultCount">Genes (0 shown)</span>
+    </div>
+    <div class="table-wrapper" tabindex="0" role="region" aria-label="Recurrently mutated genes">
+      <table class="candidate-table recurrent-gene-table unlistedGenes-table"><thead><tr><th class="sortable" onclick="sortRecurrentGenes(this, 0, 'text', 'unlistedGenes')">Gene</th><th class="sortable" onclick="sortRecurrentGenes(this, 1, 'text', 'unlistedGenes')">SNV/indel and SV counts</th><th class="sortable" onclick="sortRecurrentGenes(this, 2, 'number', 'unlistedGenes')">Distinct carriers</th><th class="sortable" onclick="sortRecurrentGenes(this, 3, 'text', 'unlistedGenes')">Genotype profile</th></tr></thead><tbody><tr><td colspan="4" class="muted">No genes outside the configured list met the focused recurrence criteria.</td></tr></tbody></table>
+    </div></section></div></section><section id='inputs' class='report-tab' role='tabpanel'><h2>Cohort Inputs</h2><table><thead><tr><th>Input</th><th>Path</th><th>Status</th></tr></thead><tbody><tr><td>Cohort root</td><td></td><td>Missing</td></tr><tr><td>Phase I root</td><td></td><td>Missing</td></tr><tr><td>Phase II root</td><td></td><td>Missing</td></tr><tr><td>GLnexus VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_snv_indel.vcf.gz</td><td>Found</td></tr><tr><td>SV evidence source</td><td>Jointly genotyped cohort VCF</td><td>Found</td></tr><tr><td>Jointly genotyped cohort SV VCF</td><td>results/public_insilico_reports/synthetic_inputs/public_insilico_joint_sv.vcf.gz</td><td>Found</td></tr><tr><td>Scored cohort SV priority table</td><td>results/public_insilico_reports/synthetic_inputs/cohort_sv_priority.tsv</td><td>Found</td></tr><tr><td>GGTyper results TSV</td><td></td><td>Missing</td></tr><tr><td>Candidate SV summary</td><td></td><td>Missing</td></tr><tr><td>Configured gene panel</td><td>results/public_insilico_reports/synthetic_inputs/demo_dsd_panel.csv</td><td>Found</td></tr></tbody></table><h2>Phase II Metadata Tables</h2><table><thead><tr><th>Table</th><th>Rows</th></tr></thead><tbody><tr><td>Configured samples TSV</td><td>3</td></tr><tr><td>GLnexus inputs TSV</td><td>0</td></tr><tr><td>GGTyper inputs TSV</td><td>0</td></tr><tr><td>Candidate SV summary TSV</td><td>0</td></tr><tr><td>GGTyper results TSV</td><td>0</td></tr></tbody></table></section>
+<footer>CALIGO cohort report.</footer>
+<script>
+const reportLoadingStatus = document.getElementById('reportLoadingStatus');
+const reportLoadingTrack = document.querySelector('#reportLoading [role="progressbar"]');
+if (reportLoadingStatus) reportLoadingStatus.textContent = 'Preparing interactive filters…';
+if (reportLoadingTrack) reportLoadingTrack.setAttribute('aria-valuetext', 'Preparing interactive filters');
+window.addEventListener('load', () => window.finishReportLoading?.());
+
+document.querySelectorAll('.tab-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.tab-button').forEach((element) => {
+      element.classList.remove('active');
+      element.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.report-tab').forEach((element) => element.classList.remove('active'));
+    button.classList.add('active');
+    button.setAttribute('aria-selected', 'true');
+    document.getElementById(button.dataset.tab).classList.add('active');
+  });
+});
+
+function sortRows(header, index, kind, state) {
+  const table = header.closest('table');
+  const body = table?.tBodies[0];
+  if (!body) return;
+  const ascending = state.index === index ? !state.ascending : true;
+  state.index = index;
+  state.ascending = ascending;
+  const rows = [...body.rows];
+  rows.sort((left, right) => {
+    const leftValue = left.cells[index]?.dataset.sort ?? '';
+    const rightValue = right.cells[index]?.dataset.sort ?? '';
+    if (kind === 'number') {
+      return ascending
+        ? Number(leftValue) - Number(rightValue)
+        : Number(rightValue) - Number(leftValue);
+    }
+    const comparison = leftValue.localeCompare(rightValue, undefined, {numeric: true, sensitivity: 'base'});
+    return ascending ? comparison : -comparison;
+  }).forEach((row) => body.appendChild(row));
+  table.querySelectorAll('th.sortable').forEach((cell) => cell.classList.remove('sort-asc', 'sort-desc'));
+  header.classList.add(ascending ? 'sort-asc' : 'sort-desc');
+}
+
+const cohortCandidateSort = {index: -1, ascending: true};
+function sortCohortCandidates(header, index, kind) {
+  sortRows(header, index, kind, cohortCandidateSort);
+}
+
+function selectedFilterValues(id, normalize = (value) => value) {
+  const filter = document.getElementById(id);
+  return new Set([...(filter?.querySelectorAll('input[type="checkbox"]:checked') || [])]
+    .map((checkbox) => normalize(checkbox.value))
+    .filter(Boolean));
+}
+
+function matchesSelectedFilter(values, rowValue) {
+  return values.size === 0 || values.has(rowValue);
+}
+
+function clearFilterSelect(id) {
+  const filter = document.getElementById(id);
+  if (!filter) return;
+  filter.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => { checkbox.checked = false; });
+  refreshMultiFilter(filter);
+}
+
+function toggleMultiFilter(event, button) {
+  event.stopPropagation();
+  const filter = button.closest('.multi-filter');
+  const menu = filter?.querySelector('[data-filter-menu]');
+  if (!filter || !menu) return;
+  const shouldOpen = menu.hidden;
+  document.querySelectorAll('.multi-filter [data-filter-menu]').forEach((other) => {
+    if (other !== menu) {
+      other.hidden = true;
+      other.closest('.multi-filter')?.querySelector('.multi-filter-toggle')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.querySelectorAll('.multi-filter [data-filter-selection-panel]').forEach((panel) => {
+    panel.hidden = true;
+    panel.closest('.multi-filter')?.querySelector('[data-filter-manage]')?.setAttribute('aria-expanded', 'false');
+  });
+  menu.hidden = !shouldOpen;
+  button.setAttribute('aria-expanded', String(shouldOpen));
+  if (shouldOpen) filter.querySelector('.multi-filter-search')?.focus();
+}
+
+function searchMultiFilter(input) {
+  const query = input.value.trim().toLowerCase();
+  input.closest('.multi-filter-menu')?.querySelectorAll('[data-filter-option]').forEach((option) => {
+    option.hidden = Boolean(query) && !(option.dataset.search || '').includes(query);
+  });
+}
+
+function updateMultiFilter(checkbox) {
+  const filter = checkbox.closest('.multi-filter');
+  if (filter) refreshMultiFilter(filter);
+}
+
+function toggleMultiFilterSelectionPanel(event, button) {
+  event.stopPropagation();
+  const filter = button.closest('.multi-filter');
+  const panel = filter?.querySelector('[data-filter-selection-panel]');
+  if (!filter || !panel || button.disabled) return;
+  const shouldOpen = panel.hidden;
+  document.querySelectorAll('.multi-filter [data-filter-menu],.multi-filter [data-filter-selection-panel]').forEach((other) => {
+    if (other !== panel) {
+      other.hidden = true;
+      other.closest('.multi-filter')?.querySelector('.multi-filter-toggle')?.setAttribute('aria-expanded', 'false');
+      other.closest('.multi-filter')?.querySelector('[data-filter-manage]')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  panel.hidden = !shouldOpen;
+  button.setAttribute('aria-expanded', String(shouldOpen));
+}
+
+function closeMultiFilterSelectionPanel(button) {
+  const panel = button.closest('[data-filter-selection-panel]');
+  if (!panel) return;
+  panel.hidden = true;
+  panel.closest('.multi-filter')?.querySelector('[data-filter-manage]')?.setAttribute('aria-expanded', 'false');
+}
+
+function removeMultiFilterValue(event, button) {
+  event.stopPropagation();
+  const filter = button.closest('.multi-filter');
+  const checkbox = filter?.querySelector(`input[type="checkbox"][value="${CSS.escape(button.dataset.value || '')}"]`);
+  if (!checkbox) return;
+  checkbox.checked = false;
+  refreshMultiFilter(filter);
+  const handler = filter.dataset.onChange;
+  if (handler === 'snv') filterCohortCandidates();
+  if (handler === 'sv') filterCohortSvPriority();
+}
+
+function refreshMultiFilter(filter) {
+  const checked = [...filter.querySelectorAll('input[type="checkbox"]:checked')];
+  const label = filter.dataset.filterLabel || 'values';
+  const summary = filter.querySelector('[data-filter-summary]');
+  const chips = filter.querySelector('[data-filter-chips]');
+  const selectionCount = filter.querySelector('[data-filter-selection-count]');
+  const manageButton = filter.querySelector('[data-filter-manage]');
+  if (summary) summary.textContent = checked.length ? `${checked.length} ${label} selected` : `All ${label}`;
+  if (!chips) return;
+  chips.replaceChildren();
+  if (selectionCount) selectionCount.textContent = checked.length ? `${checked.length} selected` : 'No selections';
+  if (manageButton) {
+    manageButton.disabled = checked.length === 0;
+    manageButton.textContent = checked.length ? `Manage (${checked.length})` : 'Manage';
+    if (checked.length === 0) {
+      manageButton.setAttribute('aria-expanded', 'false');
+      const panel = filter.querySelector('[data-filter-selection-panel]');
+      if (panel) panel.hidden = true;
+    }
+  }
+  checked.forEach((checkbox) => {
+    checkbox.closest('[data-filter-option]')?.classList.add('selected');
+    const chip = document.createElement('span');
+    chip.className = 'multi-filter-chip';
+    const marker = document.createElement('span');
+    marker.className = 'multi-filter-marker';
+    marker.style.background = checkbox.dataset.color || '#7f8c8d';
+    const text = document.createElement('span');
+    text.textContent = checkbox.dataset.optionLabel || checkbox.value;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'multi-filter-chip-remove';
+    remove.dataset.value = checkbox.value;
+    remove.setAttribute('aria-label', `Remove ${text.textContent}`);
+    remove.textContent = '×';
+    remove.addEventListener('click', (event) => removeMultiFilterValue(event, remove));
+    chip.append(marker, text, remove);
+    chips.appendChild(chip);
+  });
+  filter.querySelectorAll('input[type="checkbox"]:not(:checked)').forEach((checkbox) => {
+    checkbox.closest('[data-filter-option]')?.classList.remove('selected');
+  });
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.multi-filter [data-filter-menu],.multi-filter [data-filter-selection-panel]').forEach((panel) => {
+    panel.hidden = true;
+    panel.closest('.multi-filter')?.querySelector('.multi-filter-toggle')?.setAttribute('aria-expanded', 'false');
+    panel.closest('.multi-filter')?.querySelector('[data-filter-manage]')?.setAttribute('aria-expanded', 'false');
+  });
+});
+
+function parseGenomicRegion(value) {
+  const text = String(value || '').trim();
+  if (!text) return null;
+  const match = /^([^:\s]+)\s*:\s*([\d,]+)(?:\s*-\s*([\d,]+))?$/.exec(text);
+  if (!match) return null;
+  const start = Number.parseInt(match[2].replaceAll(',', ''), 10);
+  const end = Number.parseInt((match[3] || match[2]).replaceAll(',', ''), 10);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start < 1 || end < 1) return null;
+  return {
+    chrom: match[1].trim().toLowerCase().replace(/^chr/, ''),
+    start: Math.min(start, end),
+    end: Math.max(start, end),
+  };
+}
+
+function matchesGenomicRegion(region, chromosome, start, end) {
+  if (!region) return true;
+  const normalizedChromosome = String(chromosome || '').trim().toLowerCase().replace(/^chr/, '');
+  return normalizedChromosome === region.chrom && start <= region.end && end >= region.start;
+}
+
+function filterCohortCandidates() {
+  const genes = selectedFilterValues('candidateGeneFilter', (value) => value.toUpperCase());
+  const otherGenes = selectedFilterValues('candidateOtherGeneFilter', (value) => value.toUpperCase());
+  const types = selectedFilterValues('candidateTypeFilter');
+  const consequences = selectedFilterValues('candidateConsequenceFilter');
+  const clinvarClasses = selectedFilterValues('candidateClinvarFilter');
+  const caddMinimum = Number.parseFloat(document.getElementById('candidateCaddMin')?.value);
+  const afMaximum = Number.parseFloat(document.getElementById('candidateAfMax')?.value);
+  const carrierMinimum = Number.parseInt(document.getElementById('candidateCarrierMin')?.value, 10);
+  const chromosomes = selectedFilterValues(
+    'candidateChromFilter', (value) => value.trim().toLowerCase().replace(/^chr/, ''),
+  );
+  const region = parseGenomicRegion(document.getElementById('candidateRegionFilter')?.value);
+  const rows = [...document.querySelectorAll('.candidate-row')];
+  let shown = 0;
+  rows.forEach((row) => {
+    const rowChromosome = (row.dataset.chrom || '').toLowerCase().replace(/^chr/, '');
+    const rowType = row.dataset.type || '';
+    const rowStart = Number.parseInt(row.dataset.start || '', 10);
+    const rowEnd = Number.parseInt(row.dataset.end || '', 10);
+    const rowAf = row.dataset.af === '' ? null : Number.parseFloat(row.dataset.af);
+    const matches =
+      (genes.size === 0 || [...genes].some((gene) => (row.dataset.goiGenes || '').includes(`|${gene}|`))) &&
+      (otherGenes.size === 0 || [...otherGenes].some((gene) => (row.dataset.otherGenes || '').includes(`|${gene}|`))) &&
+      matchesSelectedFilter(types, rowType) &&
+      matchesSelectedFilter(consequences, row.dataset.consequence || '') &&
+      matchesSelectedFilter(clinvarClasses, row.dataset.clinvar || '') &&
+      (!Number.isFinite(caddMinimum) || Number.parseFloat(row.dataset.cadd) >= caddMinimum) &&
+      (!Number.isFinite(afMaximum) || (rowAf !== null && rowAf <= afMaximum)) &&
+      (!Number.isFinite(carrierMinimum) || Number.parseInt(row.dataset.carriers, 10) >= carrierMinimum) &&
+      matchesSelectedFilter(chromosomes, rowChromosome) &&
+      matchesGenomicRegion(region, rowChromosome, rowStart, rowEnd);
+    const visible = matches;
+    row.hidden = !visible;
+    if (visible) shown += 1;
+  });
+  const count = document.getElementById('candidateResultCount');
+  if (count) count.textContent = `Candidates (${shown.toLocaleString()} shown)`;
+}
+
+function resetCohortCandidateFilters() {
+  ['candidateRegionFilter']
+    .forEach((id) => { const element = document.getElementById(id); if (element) element.value = ''; });
+  ['candidateChromFilter', 'candidateGeneFilter', 'candidateOtherGeneFilter', 'candidateTypeFilter', 'candidateConsequenceFilter', 'candidateClinvarFilter']
+    .forEach(clearFilterSelect);
+  ['candidateCaddMin', 'candidateAfMax', 'candidateCarrierMin']
+    .forEach((id) => { const element = document.getElementById(id); if (element) element.value = element.min; });
+  const af = document.getElementById('candidateAfMax');
+  if (af) af.value = af.max;
+  filterCohortCandidates();
+}
+
+let activeSamplePopover = null;
+function closeSamplePopover() {
+  if (!activeSamplePopover) return;
+  activeSamplePopover.remove();
+  activeSamplePopover = null;
+}
+
+function openSamplePopover(event, trigger) {
+  event.preventDefault();
+  event.stopPropagation();
+  closeSamplePopover();
+  const samples = (trigger.dataset.popoverSamples || '').split('\n').filter(Boolean);
+  if (!samples.length) return;
+  const popover = document.createElement('section');
+  popover.className = 'sample-popover';
+  popover.setAttribute('role', 'dialog');
+  popover.setAttribute('aria-label', trigger.dataset.popoverTitle || 'Supporting samples');
+  const title = trigger.dataset.popoverTitle || 'Supporting samples';
+  const note = trigger.dataset.popoverNote || '';
+  const entries = samples.map((sample) => `<li>${sample}</li>`).join('');
+  popover.innerHTML = `<div class="sample-popover-header"><strong>${title}</strong><button type="button" class="sample-popover-close" aria-label="Close">×</button></div>${note ? `<p class="sample-popover-note">${note}</p>` : ''}<ol class="sample-popover-list">${entries}</ol>`;
+  document.body.appendChild(popover);
+  const rect = trigger.getBoundingClientRect();
+  const width = popover.offsetWidth;
+  const height = popover.offsetHeight;
+  popover.style.left = `${Math.min(Math.max(14, rect.left), window.innerWidth - width - 14)}px`;
+  popover.style.top = `${Math.min(Math.max(14, rect.bottom + 8), window.innerHeight - height - 14)}px`;
+  popover.querySelector('.sample-popover-close').addEventListener('click', closeSamplePopover);
+  activeSamplePopover = popover;
+}
+
+function openVariantPopover(event, trigger) {
+  event.preventDefault();
+  event.stopPropagation();
+  const variant = trigger.dataset.variant || '';
+  if (!variant) return;
+  closeSamplePopover();
+  const popover = document.createElement('section');
+  popover.className = 'sample-popover variant-popover';
+  popover.setAttribute('role', 'dialog');
+  popover.setAttribute('aria-label', 'Full indel allele');
+  const header = document.createElement('div');
+  header.className = 'sample-popover-header';
+  const title = document.createElement('strong');
+  title.textContent = 'Full indel allele';
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'sample-popover-close';
+  close.setAttribute('aria-label', 'Close');
+  close.textContent = '×';
+  header.append(title, close);
+  const value = document.createElement('code');
+  value.className = 'variant-popover-value';
+  value.textContent = variant;
+  popover.append(header, value);
+  document.body.appendChild(popover);
+  const rect = trigger.getBoundingClientRect();
+  const width = popover.offsetWidth;
+  const height = popover.offsetHeight;
+  popover.style.left = `${Math.min(Math.max(14, rect.left), window.innerWidth - width - 14)}px`;
+  popover.style.top = `${Math.min(Math.max(14, rect.bottom + 8), window.innerHeight - height - 14)}px`;
+  close.addEventListener('click', closeSamplePopover);
+  activeSamplePopover = popover;
+}
+
+let cohortSvOtherGeneIndex = null;
+function openOtherGenePopover(event, trigger) {
+  event.preventDefault();
+  event.stopPropagation();
+  if (cohortSvOtherGeneIndex === null) {
+    try {
+      const encoded = document.getElementById('cohortSvOtherGeneIndex')?.textContent || '{}';
+      cohortSvOtherGeneIndex = JSON.parse(encoded);
+    } catch (_error) {
+      cohortSvOtherGeneIndex = {};
+    }
+  }
+  const genes = cohortSvOtherGeneIndex[trigger.dataset.otherGeneSet] || [];
+  if (!genes.length) return;
+  const popoverTitle = trigger.dataset.genePopoverTitle || `Other affected genes (${genes.length})`;
+  const popoverNote = trigger.dataset.genePopoverNote || 'Gene symbols are loaded only when this control is opened.';
+  closeSamplePopover();
+  const popover = document.createElement('section');
+  popover.className = 'sample-popover';
+  popover.setAttribute('role', 'dialog');
+  popover.setAttribute('aria-label', popoverTitle);
+  const header = document.createElement('div');
+  header.className = 'sample-popover-header';
+  const title = document.createElement('strong');
+  title.textContent = popoverTitle;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'sample-popover-close';
+  close.setAttribute('aria-label', 'Close');
+  close.textContent = '×';
+  header.append(title, close);
+  const note = document.createElement('p');
+  note.className = 'sample-popover-note';
+  note.textContent = popoverNote;
+  const list = document.createElement('ol');
+  list.className = 'sample-popover-list';
+  genes.forEach((gene) => {
+    const entry = document.createElement('li');
+    entry.textContent = gene;
+    list.appendChild(entry);
+  });
+  popover.append(header, note, list);
+  document.body.appendChild(popover);
+  const rect = trigger.getBoundingClientRect();
+  const width = popover.offsetWidth;
+  const height = popover.offsetHeight;
+  popover.style.left = `${Math.min(Math.max(14, rect.left), window.innerWidth - width - 14)}px`;
+  popover.style.top = `${Math.min(Math.max(14, rect.bottom + 8), window.innerHeight - height - 14)}px`;
+  close.addEventListener('click', closeSamplePopover);
+  activeSamplePopover = popover;
+}
+
+function openGeneListPopover(event, trigger) {
+  event.preventDefault();
+  event.stopPropagation();
+  const genes = (trigger.dataset.popoverGenes || '').split('\n').filter(Boolean);
+  if (!genes.length) return;
+  closeSamplePopover();
+  const popover = document.createElement('section');
+  popover.className = 'sample-popover';
+  popover.setAttribute('role', 'dialog');
+  const titleText = trigger.dataset.popoverTitle || `GOI genes (${genes.length})`;
+  popover.setAttribute('aria-label', titleText);
+  const header = document.createElement('div');
+  header.className = 'sample-popover-header';
+  const title = document.createElement('strong');
+  title.textContent = titleText;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'sample-popover-close';
+  close.setAttribute('aria-label', 'Close');
+  close.textContent = '×';
+  header.append(title, close);
+  const list = document.createElement('ol');
+  list.className = 'sample-popover-list';
+  genes.forEach((gene) => {
+    const entry = document.createElement('li');
+    entry.textContent = gene;
+    list.appendChild(entry);
+  });
+  popover.append(header, list);
+  document.body.appendChild(popover);
+  const rect = trigger.getBoundingClientRect();
+  const width = popover.offsetWidth;
+  const height = popover.offsetHeight;
+  popover.style.left = `${Math.min(Math.max(14, rect.left), window.innerWidth - width - 14)}px`;
+  popover.style.top = `${Math.min(Math.max(14, rect.bottom + 8), window.innerHeight - height - 14)}px`;
+  close.addEventListener('click', closeSamplePopover);
+  activeSamplePopover = popover;
+}
+
+document.addEventListener('click', (event) => {
+  if (activeSamplePopover && !activeSamplePopover.contains(event.target)) closeSamplePopover();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeSamplePopover();
+});
+
+const recurrentGeneSorts = {};
+function sortRecurrentGenes(header, index, kind, tableId) {
+  const state = recurrentGeneSorts[tableId] || {index: -1, ascending: true};
+  recurrentGeneSorts[tableId] = state;
+  sortRows(header, index, kind, state);
+}
+
+function filterRecurrentGenes(tableId) {
+  const query = (document.getElementById(`${tableId}SearchBox`)?.value || '').trim().toLowerCase();
+  const rows = [...document.querySelectorAll(`.${tableId}-row`)];
+  let shown = 0;
+  rows.forEach((row) => {
+    const visible = !query || (row.dataset.search || '').includes(query);
+    row.hidden = !visible;
+    if (visible) shown += 1;
+  });
+  const count = document.getElementById(`${tableId}ResultCount`);
+  if (count) count.textContent = `Genes (${shown.toLocaleString()} shown)`;
+}
+
+const cohortSvPrioritySort = {index: -1, ascending: true};
+let cohortSvPriorityTier = 0;
+let cohortSvPriorityPage = 0;
+const cohortSvPriorityPageSize = 100;
+let cohortSvPriorityFilteredRows = null;
+
+function cohortSvPriorityRows() {
+  const source = document.getElementById('cohortSvPriorityRows');
+  if (!source) return [];
+  try {
+    return JSON.parse(source.textContent || '[]');
+  } catch (_error) {
+    return [];
+  }
+}
+
+function renderCohortSvPriorityRows() {
+  const table = document.querySelector('.cohort-sv-priority-table');
+  const body = table?.tBodies[0];
+  const rows = cohortSvPriorityFilteredRows ?? cohortSvPriorityRows();
+  if (!body) return;
+  const sorted = [...rows];
+  if (cohortSvPrioritySort.index >= 0) {
+    const index = cohortSvPrioritySort.index;
+    sorted.sort((left, right) => {
+      const leftValue = left.sort?.[index] ?? '';
+      const rightValue = right.sort?.[index] ?? '';
+      if (Number.isFinite(Number(leftValue)) && Number.isFinite(Number(rightValue))) {
+        return cohortSvPrioritySort.ascending ? Number(leftValue) - Number(rightValue) : Number(rightValue) - Number(leftValue);
+      }
+      const comparison = String(leftValue).localeCompare(String(rightValue), undefined, {numeric: true, sensitivity: 'base'});
+      return cohortSvPrioritySort.ascending ? comparison : -comparison;
+    });
+  }
+  const pageCount = Math.max(1, Math.ceil(sorted.length / cohortSvPriorityPageSize));
+  cohortSvPriorityPage = Math.min(Math.max(0, cohortSvPriorityPage), pageCount - 1);
+  const start = cohortSvPriorityPage * cohortSvPriorityPageSize;
+  body.innerHTML = sorted.slice(start, start + cohortSvPriorityPageSize).map((row) => row.html).join('');
+  const count = document.getElementById('cohortSvPriorityResultCount');
+  if (count) count.textContent = `Variants (${sorted.length.toLocaleString()} matching)`;
+  const controls = document.getElementById('cohortSvPriorityPages');
+  const status = document.getElementById('cohortSvPriorityPageStatus');
+  const previous = document.getElementById('cohortSvPriorityPrevious');
+  const next = document.getElementById('cohortSvPriorityNext');
+  if (controls) controls.hidden = sorted.length <= cohortSvPriorityPageSize;
+  if (status) status.textContent = sorted.length ? `Showing ${(start + 1).toLocaleString()}–${Math.min(start + cohortSvPriorityPageSize, sorted.length).toLocaleString()} of ${sorted.length.toLocaleString()}` : 'No matching variants';
+  if (previous) previous.disabled = cohortSvPriorityPage === 0;
+  if (next) next.disabled = cohortSvPriorityPage >= pageCount - 1;
+}
+
+function changeCohortSvPriorityPage(change) {
+  cohortSvPriorityPage += change;
+  renderCohortSvPriorityRows();
+}
+
+function sortCohortSvPriority(header, index, kind) {
+  cohortSvPrioritySort.ascending = cohortSvPrioritySort.index === index ? !cohortSvPrioritySort.ascending : true;
+  cohortSvPrioritySort.index = index;
+  header.closest('table')?.querySelectorAll('th.sortable').forEach((cell) => cell.classList.remove('sort-asc', 'sort-desc'));
+  header.classList.add(cohortSvPrioritySort.ascending ? 'sort-asc' : 'sort-desc');
+  renderCohortSvPriorityRows();
+}
+
+function setCohortSvPriorityTier(tier, button) {
+  cohortSvPriorityTier = tier;
+  document.querySelectorAll('.cohort-sv-priority-filter').forEach((element) => element.classList.remove('active'));
+  button.classList.add('active');
+  filterCohortSvPriority();
+}
+
+function filterCohortSvPriority() {
+  const genes = selectedFilterValues('cohortSvGeneFilter', (value) => value.toUpperCase());
+  const types = selectedFilterValues('cohortSvTypeFilter');
+  const proximities = selectedFilterValues('cohortSvProximityFilter');
+  const contexts = selectedFilterValues('cohortSvContextFilter');
+  const clinvarValues = selectedFilterValues('cohortSvClinvarFilter');
+  const caddMinimum = Number.parseFloat(document.getElementById('cohortSvCaddMin')?.value);
+  const afInput = document.getElementById('cohortSvAfMax');
+  const afMaximum = Number.parseFloat(afInput?.value);
+  const carrierMinimum = Number.parseInt(document.getElementById('cohortSvCarrierMin')?.value, 10);
+  const chromosomes = selectedFilterValues(
+    'cohortSvChromFilter', (value) => value.trim().toLowerCase().replace(/^chr/, ''),
+  );
+  const region = parseGenomicRegion(document.getElementById('cohortSvRegionFilter')?.value);
+  const afIsUnrestricted = afInput && afInput.value === afInput.max;
+  cohortSvPriorityFilteredRows = cohortSvPriorityRows().filter((row) => {
+    const rowAf = row.af;
+    const matches =
+      (genes.size === 0 || [...genes].some((gene) => (row.genes || []).includes(gene))) &&
+      matchesSelectedFilter(types, row.type || '') &&
+      matchesSelectedFilter(proximities, row.proximity || '') &&
+      matchesSelectedFilter(contexts, row.context || '') &&
+      matchesSelectedFilter(clinvarValues, row.clinvar || '') &&
+      (!Number.isFinite(caddMinimum) || caddMinimum < 0 || row.cadd >= caddMinimum) &&
+      (!Number.isFinite(afMaximum) || (rowAf === null ? Boolean(afIsUnrestricted) : rowAf <= afMaximum)) &&
+      (!Number.isFinite(carrierMinimum) || row.carriers >= carrierMinimum) &&
+      matchesSelectedFilter(chromosomes, row.chrom || '') &&
+      matchesGenomicRegion(region, row.chrom || '', row.start, row.end);
+    return (cohortSvPriorityTier === 0 || row.tier === cohortSvPriorityTier) && matches;
+  });
+  cohortSvPriorityPage = 0;
+  renderCohortSvPriorityRows();
+}
+
+function resetCohortSvPriorityFilters() {
+  ['cohortSvRegionFilter']
+    .forEach((id) => { const element = document.getElementById(id); if (element) element.value = ''; });
+  ['cohortSvChromFilter', 'cohortSvGeneFilter', 'cohortSvTypeFilter', 'cohortSvProximityFilter', 'cohortSvContextFilter', 'cohortSvClinvarFilter']
+    .forEach(clearFilterSelect);
+  ['cohortSvCaddMin', 'cohortSvCarrierMin']
+    .forEach((id) => { const element = document.getElementById(id); if (element) element.value = element.min; });
+  const af = document.getElementById('cohortSvAfMax');
+  if (af) af.value = af.max;
+  cohortSvPriorityTier = 0;
+  document.querySelectorAll('.cohort-sv-priority-filter').forEach((element) => element.classList.remove('active'));
+  document.querySelector('.cohort-sv-priority-filter')?.classList.add('active');
+  filterCohortSvPriority();
+}
+
+const cohortSvSort = {index: -1, ascending: true};
+let cohortSvMinimumCarriers = 0;
+function sortCohortSv(header, index, kind) {
+  sortRows(header, index, kind, cohortSvSort);
+}
+
+function setCohortSvCarrierFilter(minimum, button) {
+  cohortSvMinimumCarriers = minimum;
+  document.querySelectorAll('.cohort-sv-filter').forEach((element) => element.classList.remove('active'));
+  button.classList.add('active');
+  filterCohortSv();
+}
+
+function filterCohortSv() {
+  const query = (document.getElementById('cohortSvSearchBox')?.value || '').trim().toLowerCase();
+  const rows = [...document.querySelectorAll('.cohort-sv-row')];
+  let shown = 0;
+  rows.forEach((row) => {
+    const carriers = Number(row.dataset.carriers || 0);
+    const matches = !query || (row.dataset.search || '').includes(query);
+    const visible = carriers >= cohortSvMinimumCarriers && matches;
+    row.hidden = !visible;
+    if (visible) shown += 1;
+  });
+  const count = document.getElementById('cohortSvResultCount');
+  if (count) count.textContent = `SVs (${shown.toLocaleString()} shown)`;
+}
+filterCohortSvPriority();
+</script>
+</main>
+</body>
+</html>
