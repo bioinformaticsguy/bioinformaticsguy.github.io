@@ -5,4 +5,5 @@ Gemfile.lock
 package-json.lock
 _site
 node_modules
+vendor/
 _drafts

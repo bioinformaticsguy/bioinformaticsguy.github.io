@@ -92,6 +92,7 @@ exclude: [
   'package-lock.json',
   'src',
   'node_modules',
+  'vendor',
   'initpost.sh',
   'Gemfile',
   'Gemfile.lock',
